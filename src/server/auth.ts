@@ -1,10 +1,12 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { type GetServerSidePropsContext } from "next";
 import {
   getServerSession,
   type NextAuthOptions,
   type DefaultSession,
 } from "next-auth";
-import DiscordProvider from "next-auth/providers/discord";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { env } from "~/env.mjs";
 import { prisma } from "~/server/db";
@@ -47,19 +49,34 @@ export const authOptions: NextAuthOptions = {
   },
   adapter: PrismaAdapter(prisma),
   providers: [
-    DiscordProvider({
-      clientId: env.DISCORD_CLIENT_ID,
-      clientSecret: env.DISCORD_CLIENT_SECRET,
-    }),
-    /**
-     * ...add more providers here.
-     *
-     * Most other providers require a bit more work than the Discord provider. For example, the
-     * GitHub provider requires you to add the `refresh_token_expires_in` field to the Account
-     * model. Refer to the NextAuth.js docs for the provider you want to use. Example:
-     *
-     * @see https://next-auth.js.org/providers/github
-     */
+    // https://next-auth.js.org/configuration/providers/oauth#using-a-custom-provider
+    {
+      id: "airtable",
+      name: "Airtable",
+      type: "oauth",
+      authorization: {
+        url: "https://airtable.com/oauth2/v1/authorize",
+        params: {
+          scope: "data.records:write schema.bases:read",
+          redirect_uri: env.AIRTABLE_REDIRECT_URI,
+        },
+      },
+      checks: ["pkce", "state"],
+      token: "https://api.airtable.com/oauth2/v1/token",
+      userinfo: {
+        // @ts-ignore
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
+        request: () => {},
+      },
+      // @ts-ignore
+      profile(profile) {
+        return {
+          profile: profile,
+        };
+      },
+      clientId: env.AIRTABLE_CLIENT_ID,
+      clientSecret: env.AIRTABLE_CLIENT_SECRET,
+    },
   ],
 };
 
