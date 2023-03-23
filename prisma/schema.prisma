@@ -64,3 +64,13 @@ model VerificationToken {
 
     @@unique([identifier, token])
 }
+
+model PKCE {
+    state   String @unique
+    code_verifier String
+    code_challenge String
+    code_challenge_method String
+    expires    DateTime
+
+    @@unique([code_verifier, code_challenge, code_challenge_method])
+}
