@@ -7,7 +7,7 @@ import { motion } from "framer-motion";
 const Home: NextPage = () => {
   const handleClick = async (e: any) => {
     e.preventDefault();
-    console.log("clicked");
+    location.href = `http://localhost:3000/api/auth/redirect`;
   };
 
   return (
