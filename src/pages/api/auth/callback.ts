@@ -3,6 +3,7 @@ import Redis from "ioredis";
 import { env } from "~/env.mjs";
 import axios from "axios";
 import qs from "qs";
+import { prisma } from "~/server/db";
 
 export default async function handler(
   req: NextApiRequest,
@@ -42,8 +43,8 @@ export default async function handler(
     Authorization: authorizationHeader,
   };
 
-  res.send("check the terminal running the server for your access token");
-  axios({
+  // get access token from airtable using the code
+  const data = await axios({
     method: "POST",
     url: `https://airtable.com/oauth2/v1/token`,
     headers,
@@ -54,12 +55,35 @@ export default async function handler(
       code,
       grant_type: "authorization_code",
     }),
-  })
-    .then((response) => {
-      const prettyPrintedResult = JSON.stringify(response.data, null, 2);
-      console.log(prettyPrintedResult);
+  }).catch((e) => {
+    console.log("uh oh, something went wrong", e.response.data);
+  });
+
+  const { access_token, refresh_token, expires_in, refresh_expires_in } =
+    data?.data;
+
+  // get userdata from airtable
+  const userdata = await axios
+    .get("https://api.airtable.com/v0/meta/whoami", {
+      headers: {
+        Authorization: `Bearer ${access_token}`,
+      },
     })
     .catch((e) => {
       console.log("uh oh, something went wrong", e.response.data);
     });
+
+  const { id, scopes } = userdata?.data;
+
+  // check db to find userid
+  // if no user -> create
+  // make jwt and send to /dashboard?token={jwt}&newuser={true|false}
+
+  const user = await prisma.user.findUnique({
+    where: {
+      airtable: id,
+    },
+  });
+
+  return res.send(`${scopes}`);
 }
