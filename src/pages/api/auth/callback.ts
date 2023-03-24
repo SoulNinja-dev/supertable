@@ -4,6 +4,11 @@ import { env } from "~/env.mjs";
 import axios from "axios";
 import qs from "qs";
 import { prisma } from "~/server/db";
+import jwt from "jsonwebtoken";
+
+function generateJWTToken(payload: any, expireTime: any) {
+  return jwt.sign(payload, env.JWT_SECRET, { expiresIn: expireTime });
+}
 
 export default async function handler(
   req: NextApiRequest,
@@ -79,11 +84,27 @@ export default async function handler(
   // if no user -> create
   // make jwt and send to /dashboard?token={jwt}&newuser={true|false}
 
+  // setting cookie
+  const jwtToken = generateJWTToken(
+    {
+      access_token: id,
+    },
+    expires_in
+  );
+
   const user = await prisma.user.findUnique({
     where: {
       airtable: id,
     },
   });
 
-  return res.send(`${scopes}`);
+  if (!user) {
+    const newUser = await prisma.user.create({
+      data: {
+        airtable: id,
+      },
+    });
+  }
+
+  res.redirect("/dashboard?token=" + jwtToken + "&newuser=" + !user);
 }

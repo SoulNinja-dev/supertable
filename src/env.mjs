@@ -12,6 +12,7 @@ const server = z.object({
   AIRTABLE_REDIRECT_URI: z.string(),
   AIRTABLE_CLIENT_SECRET: z.string(),
   REDIS_URL: z.string(),
+  JWT_SECRET: z.string(),
 });
 
 /**
@@ -35,6 +36,7 @@ const processEnv = {
   AIRTABLE_CLIENT_SECRET: process.env.AIRTABLE_CLIENT_SECRET,
   AIRTABLE_REDIRECT_URI: process.env.AIRTABLE_REDIRECT_URI,
   REDIS_URL: process.env.REDIS_URL,
+  JWT_SECRET: process.env.JWT_SECRET,
 };
 
 // Don't touch the part below
