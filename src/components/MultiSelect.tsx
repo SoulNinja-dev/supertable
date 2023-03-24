@@ -11,7 +11,7 @@ const MultiSelect = ({ options, placeholder }: Props) => {
     <OutsideClickHandler onOutsideClick={() => setOpen(false)}>
       <div className="relative flex flex-col">
         <div
-          className={`relative w-56 cursor-pointer rounded-lg bg-white px-4 py-1.5 font-semibold  ${
+          className={`gap-8 cursor-pointer flex flex-row items-center justify-between rounded-lg bg-white px-4 py-1.5 font-semibold  ${
             selected.length >= 1 ? "text-[#1a1a1a]" : "text-[#d0d0d0]"
           } outline-none ring-2 ring-[#d0d0d0]`}
           onClick={() => setOpen(!open)}
@@ -19,7 +19,9 @@ const MultiSelect = ({ options, placeholder }: Props) => {
           onBlur={() => setOpen(false)}
         >
           {selected.length >= 1
-            ? `${selected.length} ${selected.length > 1 ? "options" : "option"} selected`
+            ? `${selected.length} ${
+                selected.length > 1 ? "options" : "option"
+              } selected`
             : placeholder}
           <div className="absolute top-[50%] right-2 -translate-y-[40%] text-[#1a1a1a]">
             <svg
