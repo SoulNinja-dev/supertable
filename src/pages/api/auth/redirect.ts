@@ -3,9 +3,11 @@ import crypto from "crypto";
 import Redis from "ioredis";
 import { env } from "~/env.mjs";
 
-const redis = new Redis(env.REDIS_URL);
-
-export default function handler(req: NextApiRequest, res: NextApiResponse) {
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
+  const redis = new Redis(env.REDIS_URL);
   const clientId = env.AIRTABLE_CLIENT_ID;
   const redirectUri = env.AIRTABLE_REDIRECT_URI;
   const scope = "data.records:write schema.bases:read";
@@ -21,7 +23,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
     .replace(/\+/g, "-") // replace + with -
     .replace(/\//g, "_"); // replace / with _ now base64url encoded
 
-  redis.set(state, JSON.stringify({ codeVerifier }));
+  await redis.set(state, JSON.stringify({ codeVerifier }));
 
   // build the authorization URL
   const authorizationUrl = new URL(`https://airtable.com/oauth2/v1/authorize`);
@@ -35,6 +37,8 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
   authorizationUrl.searchParams.set("redirect_uri", redirectUri);
   authorizationUrl.searchParams.set("response_type", "code");
   authorizationUrl.searchParams.set("scope", scope);
+
+  console.log("authorization URL: ", authorizationUrl.toString());
 
   // redirect the user and request authorization
   res.redirect(authorizationUrl.toString());
