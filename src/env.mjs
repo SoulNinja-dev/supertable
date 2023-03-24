@@ -7,17 +7,6 @@ import { z } from "zod";
 const server = z.object({
   DATABASE_URL: z.string().url(),
   NODE_ENV: z.enum(["development", "test", "production"]),
-  NEXTAUTH_SECRET:
-    process.env.NODE_ENV === "production"
-      ? z.string().min(1)
-      : z.string().min(1).optional(),
-  NEXTAUTH_URL: z.preprocess(
-    // This makes Vercel deployments not fail if you don't set NEXTAUTH_URL
-    // Since NextAuth.js automatically uses the VERCEL_URL if present.
-    (str) => process.env.VERCEL_URL ?? str,
-    // VERCEL_URL doesn't include `https` so it cant be validated as a URL
-    process.env.VERCEL ? z.string().min(1) : z.string().url(),
-  ),
   // Add `.min(1) on ID and SECRET if you want to make sure they're not empty
   AIRTABLE_CLIENT_ID: z.string(),
   AIRTABLE_REDIRECT_URI: z.string(),
@@ -41,12 +30,9 @@ const client = z.object({
 const processEnv = {
   DATABASE_URL: process.env.DATABASE_URL,
   NODE_ENV: process.env.NODE_ENV,
-  NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET,
-  NEXTAUTH_URL: process.env.NEXTAUTH_URL,
   AIRTABLE_CLIENT_ID: process.env.AIRTABLE_CLIENT_ID,
   AIRTABLE_CLIENT_SECRET: process.env.AIRTABLE_CLIENT_SECRET,
   AIRTABLE_REDIRECT_URI: process.env.AIRTABLE_REDIRECT_URI,
-  // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
 };
 
 // Don't touch the part below
@@ -72,7 +58,7 @@ if (!!process.env.SKIP_ENV_VALIDATION == false) {
   if (parsed.success === false) {
     console.error(
       "❌ Invalid environment variables:",
-      parsed.error.flatten().fieldErrors,
+      parsed.error.flatten().fieldErrors
     );
     throw new Error("Invalid environment variables");
   }
@@ -86,7 +72,7 @@ if (!!process.env.SKIP_ENV_VALIDATION == false) {
         throw new Error(
           process.env.NODE_ENV === "production"
             ? "❌ Attempted to access a server-side environment variable on the client"
-            : `❌ Attempted to access server-side environment variable '${prop}' on the client`,
+            : `❌ Attempted to access server-side environment variable '${prop}' on the client`
         );
       return target[/** @type {keyof typeof target} */ (prop)];
     },
