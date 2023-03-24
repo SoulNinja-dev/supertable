@@ -1,16 +1,21 @@
 import { AnimatePresence, motion } from "framer-motion";
-import { useState } from "react";
+import { type Dispatch, type SetStateAction, useState } from "react";
 import OutsideClickHandler from "react-outside-click-handler";
 
-const SingleSelect = ({ options, placeholder }: Props) => {
+const SingleSelect = ({
+  options,
+  placeholder,
+  selected,
+  setSelected,
+}: Props) => {
   const [open, setOpen] = useState(false);
-  const [selected, setSelected] = useState<number>();
+  // const [selected, setSelected] = useState<number>();
 
   return (
     <OutsideClickHandler onOutsideClick={() => setOpen(false)}>
       <div className="relative flex flex-col">
         <div
-          className={`relative w-56 cursor-pointer rounded-lg bg-white px-4 py-1.5 font-semibold  ${
+          className={`flex cursor-pointer flex-row items-center justify-between gap-8 rounded-lg bg-white px-4 py-1.5 font-semibold  ${
             selected !== undefined ? "text-[#1a1a1a]" : "text-[#d0d0d0]"
           } outline-none ring-2 ring-[#d0d0d0]`}
           onClick={() => setOpen(!open)}
@@ -18,7 +23,7 @@ const SingleSelect = ({ options, placeholder }: Props) => {
           onBlur={() => setOpen(false)}
         >
           {selected !== undefined ? options[selected] : placeholder}
-          <div className="absolute top-[50%] right-2 -translate-y-[40%] text-[#1a1a1a]">
+          <div className="text-[#1a1a1a]">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
@@ -43,7 +48,7 @@ const SingleSelect = ({ options, placeholder }: Props) => {
               exit={{ opacity: 0, y: 20, scale: 0.6 }}
               transition={{ duration: 0.3, ease: "easeIn" }}
             >
-              <div className="absolute z-[9999] w-full rounded-lg bg-white mt-2 shadow-xl ring-2 ring-[#d0d0d0]">
+              <div className="absolute z-[9999] mt-2 w-full rounded-lg bg-white shadow-xl ring-2 ring-[#d0d0d0]">
                 {options?.map((option, ind) => (
                   <div
                     key={ind}
@@ -68,6 +73,8 @@ const SingleSelect = ({ options, placeholder }: Props) => {
 interface Props {
   options: (string | number)[];
   placeholder: string;
+  selected: number | undefined;
+  setSelected: (arg0: number) => void | Dispatch<SetStateAction<number>>;
 }
 
 export default SingleSelect;
