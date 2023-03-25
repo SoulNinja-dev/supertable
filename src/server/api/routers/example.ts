@@ -1,3 +1,7 @@
+/* eslint-disable @typescript-eslint/restrict-template-expressions */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { z } from "zod";
 
 import {
@@ -16,9 +20,25 @@ export const exampleRouter = createTRPCRouter({
       };
     }),
 
-  getAll: publicProcedure.query(({ ctx }) => {
-    return ctx.prisma.example.findMany();
-  }),
+  getSchemas: protectedProcedure
+    .output(
+      z.object({
+        bases: z.array(
+          z.object({
+            id: z.string(),
+            name: z.string(),
+            permissionLevel: z.string(),
+          })
+        ),
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      const account = await ctx.prisma.account.findFirst({
+        where: {
+          provider: "airtable",
+          userId: ctx.session?.user.id,
+        },
+      });
 
   getSchemas: protectedProcedure
     .output(
