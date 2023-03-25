@@ -4,6 +4,10 @@ import Head from "next/head";
 import { motion } from "framer-motion";
 
 const Home: NextPage = () => {
+  const handleClick = () => {
+    location.href = `${window.location.origin}/api/auth/redirect`;
+  };
+
   return (
     <>
       <Head>
@@ -18,7 +22,10 @@ const Home: NextPage = () => {
             animate={{ scale: 1 }}
             transition={{ delay: 0.3 }}
           >
-            <button className="rounded bg-black py-2 px-4 font-semibold text-white outline-none transition duration-200 ease-in-out hover:bg-black/60 focus:bg-black/60">
+            <button
+              className="rounded bg-black py-2 px-4 font-semibold text-white outline-none transition duration-200 ease-in-out hover:bg-black/60 focus:bg-black/60"
+              onClick={handleClick}
+            >
               Login with Airtable
             </button>
           </motion.div>
