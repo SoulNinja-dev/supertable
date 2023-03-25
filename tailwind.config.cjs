@@ -8,6 +8,9 @@ const config = {
       fontFamily: {
         inter: ["Inter", ...defaultTheme.fontFamily.sans],
       },
+      colors: {
+        sidebar: "#f5f5f5",
+      }
     },
   },
   plugins: [],
