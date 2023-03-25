@@ -1,13 +1,11 @@
 import { type NextPage } from "next";
 import Head from "next/head";
 
-import { api } from "~/utils/api";
 import { motion } from "framer-motion";
 
 const Home: NextPage = () => {
-  const handleClick = async (e: any) => {
-    e.preventDefault();
-    location.href = `http://localhost:3000/api/auth/redirect`;
+  const handleClick = () => {
+    location.href = `${window.location.origin}/api/auth/redirect`;
   };
 
   return (

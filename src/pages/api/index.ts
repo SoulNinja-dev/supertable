@@ -4,9 +4,9 @@ interface Data {
   data: string;
 }
 
-export default async function handler(
+export default function handler(
   req: NextApiRequest,
   res: NextApiResponse<Data>
 ) {
-  res.status(200).json({ data: `hihihihi` });
+  res.status(200).json({ data: `hiii we're up` });
 }
