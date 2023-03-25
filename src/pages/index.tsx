@@ -1,7 +1,6 @@
 import { type NextPage } from "next";
 import Head from "next/head";
 
-import { api } from "~/utils/api";
 import { motion } from "framer-motion";
 
 const Home: NextPage = () => {
@@ -12,14 +11,14 @@ const Home: NextPage = () => {
         <meta name="description" content="Welcome to Supertable" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main className="min-h-screen bg-black font-inter">
-        <div className="flex min-h-screen flex-col items-center justify-center bg-[#5e08e9]/60">
+      <main className="min-h-screen bg-white font-inter">
+        <div className="flex min-h-screen flex-col items-center justify-center">
           <motion.div
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
             transition={{ delay: 0.3 }}
           >
-            <button className="rounded bg-[#fea200] py-2 px-4 text-[#5e08e9] outline-none transition duration-200 ease-in-out hover:bg-[#ffd797] focus:bg-[#ffd797]">
+            <button className="rounded bg-black py-2 px-4 font-semibold text-white outline-none transition duration-200 ease-in-out hover:bg-black/60 focus:bg-black/60">
               Login with Airtable
             </button>
           </motion.div>
