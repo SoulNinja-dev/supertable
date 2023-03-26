@@ -4,7 +4,7 @@ import type {
   NextPage,
 } from "next";
 import Head from "next/head";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Settings from "~/components/Settings";
 import DashboardComponent from "~/components/Dashboard";
 import Sidebar from "~/components/Sidebar";
@@ -17,8 +17,16 @@ const Dashboard: NextPage<
 > = () => {
   const [page, setPage] = useState<"dashboard" | "settings" | "form">("form");
   const [form, setForm] = useState<string>();
+  const [bases, setBases] = useState<any>([]);
 
   const { data, isFetching, error } = api.base.getSchemas.useQuery();
+
+  useEffect(() => {
+    if (data) {
+      console.log("BASES:", data);
+      setBases(data);
+    }
+  }, [data]);
 
   return (
     <div className="h-screen bg-black">
@@ -27,7 +35,7 @@ const Dashboard: NextPage<
       </Head>
       <div className="h-screen bg-white font-inter text-white">
         <div className="grid grid-cols-5 gap-4">
-          <Sidebar page={page} setPage={setPage} />
+          <Sidebar page={page} setPage={setPage} bases={bases} />
           <main className="col-span-4 h-screen overflow-y-scroll">
             {page === "dashboard" ? (
               <DashboardComponent />
