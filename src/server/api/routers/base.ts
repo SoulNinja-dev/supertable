@@ -9,6 +9,7 @@ import {
   publicProcedure,
   protectedProcedure,
 } from "~/server/api/trpc";
+import { TRPCError } from "@trpc/server";
 
 export const baseRouter = createTRPCRouter({
   getSchemas: protectedProcedure
@@ -32,24 +33,37 @@ export const baseRouter = createTRPCRouter({
       });
 
       if (!account) {
-        throw new Error("Account not found");
+        throw new TRPCError({
+          message: "Account not found",
+          code: "BAD_REQUEST",
+        });
       }
 
       const accessToken = account.access_token;
 
       if (!accessToken) {
-        throw new Error("Access token not found");
+        throw new TRPCError({
+          message: "Access token not found",
+          code: "BAD_REQUEST",
+        });
       }
 
-      const res = await axios.get("https://api.airtable.com/v0/meta/bases", {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      });
+      try {
+        const res = await axios.get("https://api.airtable.com/v0/meta/bases", {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        });
 
-      console.log("BASES:::", res);
+        console.log("BASES!!: ", res.data);
 
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-      return res.data;
+        return res.data;
+      } catch (e: any) {
+        console.log(JSON.stringify(e));
+        throw new TRPCError({
+          message: "Error fetching bases",
+          code: "BAD_REQUEST",
+        });
+      }
     }),
 });
