@@ -1,7 +1,7 @@
-import {
+import type {
   GetServerSideProps,
   InferGetServerSidePropsType,
-  type NextPage,
+  NextPage,
 } from "next";
 import Head from "next/head";
 
@@ -9,12 +9,13 @@ import { motion } from "framer-motion";
 import { signIn, useSession } from "next-auth/react";
 import { getServerSession } from "next-auth";
 import { authOptions } from "~/server/auth";
+import { api } from "~/utils/api";
 
 const Home: NextPage<
   InferGetServerSidePropsType<typeof getServerSideProps>
-> = ({ msg }) => {
+> = () => {
   const session = useSession();
-
+  const { data, isFetching } = api.base.getSchemas.useQuery();
   return (
     <>
       <Head>
@@ -40,17 +41,18 @@ const Home: NextPage<
                   });
                 }}
               >
-                Login with Airtable
+                {isFetching ? "Loading..." : JSON.stringify(data)}
               </button>
             )}
           </motion.div>
         </div>
+        <div></div>
       </main>
     </>
   );
 };
 
-export const getServerSideProps: GetServerSideProps<{ msg?: string }> = async (
+export const getServerSideProps: GetServerSideProps<{ data: string }> = async (
   context
 ) => {
   const session = await getServerSession(context.req, context.res, authOptions);
@@ -64,7 +66,7 @@ export const getServerSideProps: GetServerSideProps<{ msg?: string }> = async (
   }
   return {
     props: {
-      msg: "hello",
+      data: "200",
     },
   };
 };

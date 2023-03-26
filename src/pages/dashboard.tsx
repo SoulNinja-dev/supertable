@@ -1,15 +1,24 @@
-import type { NextPage } from "next";
+import type {
+  GetServerSideProps,
+  InferGetServerSidePropsType,
+  NextPage,
+} from "next";
 import Head from "next/head";
 import { useState } from "react";
 import Settings from "~/components/Settings";
 import DashboardComponent from "~/components/Dashboard";
 import Sidebar from "~/components/Sidebar";
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "~/server/auth";
+import { api } from "~/utils/api";
 
-const Dashboard: NextPage = () => {
-  const [page, setPage] = useState<"dashboard" | "settings" | "form">(
-    "settings"
-  );
+const Dashboard: NextPage<
+  InferGetServerSidePropsType<typeof getServerSideProps>
+> = () => {
+  const [page, setPage] = useState<"dashboard" | "settings" | "form">("form");
   const [form, setForm] = useState<string>();
+
+  const { data, isFetching, error } = api.base.getSchemas.useQuery();
 
   return (
     <div className="h-screen bg-black">
@@ -25,7 +34,15 @@ const Dashboard: NextPage = () => {
             ) : page === "settings" ? (
               <Settings />
             ) : (
-              <></>
+              <>
+                <div className="text-center text-black">
+                  {isFetching
+                    ? "loading..."
+                    : error
+                    ? JSON.stringify(error)
+                    : JSON.stringify(data)}
+                </div>
+              </>
             )}
           </main>
         </div>
@@ -35,3 +52,20 @@ const Dashboard: NextPage = () => {
 };
 
 export default Dashboard;
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const session = await getServerSession(context.req, context.res, authOptions);
+
+  if (!session?.user) {
+    return {
+      redirect: {
+        destination: "/",
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {},
+  };
+};
