@@ -2,12 +2,9 @@ import { type NextPage } from "next";
 import Head from "next/head";
 
 import { motion } from "framer-motion";
+import { signIn } from "next-auth/react";
 
 const Home: NextPage = () => {
-  const handleClick = () => {
-    location.href = `${window.location.origin}/api/auth/redirect`;
-  };
-
   return (
     <>
       <Head>
@@ -24,7 +21,11 @@ const Home: NextPage = () => {
           >
             <button
               className="rounded bg-black py-2 px-4 font-semibold text-white outline-none transition duration-200 ease-in-out hover:bg-black/60 focus:bg-black/60"
-              onClick={handleClick}
+              onClick={() => {
+                signIn("airtable").catch((e) => {
+                  console.log(e);
+                });
+              }}
             >
               Login with Airtable
             </button>
