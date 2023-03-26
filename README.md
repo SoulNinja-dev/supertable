@@ -1,27 +1,32 @@
-# Create T3 App
+user in airtable has these:
 
-This is a [T3 Stack](https://create.t3.gg/) project bootstrapped with `create-t3-app`.
+- authdeck
+  - userform
+  - contributor form
+  - member form
+- supertable
+  - userform
+  - review form
+  - subscriber form
 
-## What's next? How do I make an app with this?
+oauth -> access to only authdeck base
 
-We try to keep this project as simple as possible, so you can start with just the scaffolding we set up for you, and add additional things later when they become necessary.
+to add access to supertable
+-> signIn("airtable")
+-> everytime we pull data for dashboard
 
-If you are not familiar with the different technologies used in this project, please refer to the respective docs. If you still are in the wind, please join our [Discord](https://t3.gg/discord) and ask for help.
+- check what bases we have access to
+- store base id and other data WE need ( theme, seo )
+- user -> bases
 
-- [Next.js](https://nextjs.org)
-- [Prisma](https://prisma.io)
-- [Tailwind CSS](https://tailwindcss.com)
-- [tRPC](https://trpc.io)
+_after user gives access to supertable after doing oauth again_
 
-## Learn More
+-> we pull data for airtable
+-> make new baseid and get forms from supertable
+-> AND also have authdeck filled
 
-To learn more about the [T3 Stack](https://create.t3.gg/), take a look at the following resources:
+_if user removes access to authdeck_
 
-- [Documentation](https://create.t3.gg/)
-- [Learn the T3 Stack](https://create.t3.gg/en/faq#what-learning-resources-are-currently-available) — Check out these awesome tutorials
-
-You can check out the [create-t3-app GitHub repository](https://github.com/t3-oss/create-t3-app) — your feedback and contributions are welcome!
-
-## How do I deploy this?
-
-Follow our deployment guides for [Vercel](https://create.t3.gg/en/deployment/vercel), [Netlify](https://create.t3.gg/en/deployment/netlify) and [Docker](https://create.t3.gg/en/deployment/docker) for more information.
+- we pull data from airtable
+- see that authdeck was NOT there
+- hidden:true
