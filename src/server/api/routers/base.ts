@@ -12,22 +12,25 @@ import {
 import { TRPCError } from "@trpc/server";
 import getAccessToken from "~/utils/getAccessToken";
 
-
-const BaseObjectValidator =  z.object({
+const BaseObjectValidator = z.object({
   id: z.string(),
   name: z.string(),
   permissionLevel: z.string(),
-})
+});
 
-export type BaseObject = z.infer<typeof BaseObjectValidator>
+const TableObjectValidator = z.object({
+  id: z.string(),
+  name: z.string(),
+});
+
+export type BaseObject = z.infer<typeof BaseObjectValidator>;
+export type TableObject = z.infer<typeof TableObjectValidator>;
 
 export const baseRouter = createTRPCRouter({
   getBases: protectedProcedure
     .output(
       z.object({
-        bases: z.array(
-         BaseObjectValidator
-        ),
+        bases: z.array(BaseObjectValidator),
       })
     )
     .query(async ({ ctx }) => {
@@ -57,13 +60,7 @@ export const baseRouter = createTRPCRouter({
     )
     .output(
       z.object({
-        tables: z.array(
-          z.object({
-            id: z.string(),
-            name: z.string(),
-            description: z.string().optional(),
-          })
-        ),
+        tables: z.array(TableObjectValidator),
       })
     )
     .query(async ({ ctx, input }) => {
@@ -78,7 +75,6 @@ export const baseRouter = createTRPCRouter({
             },
           }
         );
-
         const tables = res.data.tables.map(
           (table: { id: string; name: string; description?: string }) => ({
             id: table.id,
@@ -86,7 +82,6 @@ export const baseRouter = createTRPCRouter({
             description: table.description,
           })
         );
-
         return { tables };
       } catch (e: any) {
         console.log(JSON.stringify(e));
@@ -104,11 +99,3 @@ export const baseRouter = createTRPCRouter({
 // createFields from tableid
 // getForms from tableid
 // setForms from tableid
-
-
-const TableObjectValidator = z.object({
-  id: z.string(),
-  name: z.string(),
-});
-
-export type TableObject = z.infer<typeof TableObjectValidator>;
