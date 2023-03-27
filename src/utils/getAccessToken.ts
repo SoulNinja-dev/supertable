@@ -10,6 +10,7 @@ export default async (ctx: Context) => {
       userId: ctx.session?.user.id,
     },
   });
+  account?.expires_at
 
   if (!account) {
     throw new TRPCError({
@@ -51,6 +52,7 @@ export default async (ctx: Context) => {
           grant_type: "refresh_token",
           refresh_token: refreshToken,
           client_id: env.AIRTABLE_CLIENT_ID,
+          scope: "data.records:write schema.bases:read",
         }),
         {
           headers: {
