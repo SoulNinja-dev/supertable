@@ -1,7 +1,11 @@
-import { useEffect } from "react";
-import FormCard from "./FormCard";
+import React from "react";
+import { BaseObject } from "~/server/api/routers/base";
+import { api } from "~/utils/api";
+import TableCard from "./TableCard";
 
 const DashboardComponent = () => {
+  const { data } = api.base.getBases.useQuery();
+
   return (
     <div className="flex flex-col gap-8 p-6 text-black">
       <div className="flex flex-row items-center justify-between text-3xl font-semibold">
@@ -27,31 +31,22 @@ const DashboardComponent = () => {
           />
         </div>
       </div>
-      <div className="text-xl font-semibold">Recent Forms</div>
-      <div className="flex flex-row flex-wrap gap-6">
-        <FormCard
+      {data && data.bases.map((base) => <BaseSection key={base.id} {...base} />)}
+    </div>
+  );
+};
+
+const BaseSection: React.FC<BaseObject> = ({ id, name }) => {
+  return (
+    <div>
+      <div className="text-2xl font-semibold mb-4">{name}</div>
+      <div className="flex flex-row flex-wrap items-stretch gap-6">
+        <TableCard
           title="form title"
           desc="some desc for the form lorem ipsum and a little bit more"
           cover="https://picsum.photos/1000/500"
           id=""
-        />
-        <FormCard
-          title="contributor form"
-          desc="join xyz dao as a contiributor mhm hi lol"
-          cover="https://picsum.photos/1000/500"
-          id=""
-        />
-        <FormCard
-          title="form title"
-          desc="join that same xyz wait not abc dao as a member huh?"
-          cover="https://picsum.photos/1000/500"
-          id=""
-        />
-        <FormCard
-          title="idk what else is left"
-          desc="bruh this is just random for testing idk what other form to make"
-          cover="https://picsum.photos/1000/500"
-          id=""
+          key={id}
         />
       </div>
     </div>

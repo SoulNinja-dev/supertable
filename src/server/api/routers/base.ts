@@ -12,16 +12,21 @@ import {
 import { TRPCError } from "@trpc/server";
 import getAccessToken from "~/utils/getAccessToken";
 
+
+const BaseObjectValidator =  z.object({
+  id: z.string(),
+  name: z.string(),
+  permissionLevel: z.string(),
+})
+
+export type BaseObject = z.infer<typeof BaseObjectValidator>
+
 export const baseRouter = createTRPCRouter({
   getBases: protectedProcedure
     .output(
       z.object({
         bases: z.array(
-          z.object({
-            id: z.string(),
-            name: z.string(),
-            permissionLevel: z.string(),
-          })
+         BaseObjectValidator
         ),
       })
     )
