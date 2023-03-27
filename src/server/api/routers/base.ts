@@ -10,6 +10,7 @@ import {
   protectedProcedure,
 } from "~/server/api/trpc";
 import { TRPCError } from "@trpc/server";
+import getAccessToken from "~/utils/getAccessToken";
 
 export const baseRouter = createTRPCRouter({
   getSchemas: protectedProcedure
@@ -25,29 +26,7 @@ export const baseRouter = createTRPCRouter({
       })
     )
     .query(async ({ ctx, input }) => {
-      const account = await ctx.prisma.account.findFirst({
-        where: {
-          provider: "airtable",
-          userId: ctx.session?.user.id,
-        },
-      });
-
-      if (!account) {
-        throw new TRPCError({
-          message: "Account not found",
-          code: "BAD_REQUEST",
-        });
-      }
-
-      const accessToken = account.access_token;
-
-      if (!accessToken) {
-        throw new TRPCError({
-          message: "Access token not found",
-          code: "BAD_REQUEST",
-        });
-      }
-
+      const accessToken = await getAccessToken(ctx);
       try {
         const res = await axios.get("https://api.airtable.com/v0/meta/bases", {
           headers: {

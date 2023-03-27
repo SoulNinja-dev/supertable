@@ -115,6 +115,7 @@ interface Props {
 interface Base {
   id: string;
   name: string;
+  permissionLevel: string;
 }
 
 export default Sidebar;

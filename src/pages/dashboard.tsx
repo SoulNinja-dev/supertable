@@ -21,7 +21,7 @@ const Dashboard: NextPage<
   const session = useSession();
   const [bases, setBases] = useState<any>([]);
 
-  const { data, isFetching, error } = api.base.getSchemas.useQuery();
+  const { data, isLoading } = api.base.getSchemas.useQuery();
 
   useEffect(() => {
     if (data) {
@@ -46,7 +46,7 @@ const Dashboard: NextPage<
             ) : (
               <>
                 <div className="text-center text-black">
-                  {isFetching ? "loading..." : "loaded"}
+                  {isLoading ? "loading..." : "loaded"}
                 </div>
               </>
             )}
