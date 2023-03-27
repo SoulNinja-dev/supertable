@@ -105,6 +105,7 @@ export const authOptions: NextAuthOptions = {
             throw new Error("Missing access token");
           }
 
+          console.log("tokens", tokens);
           const res = await axios.get<{ id: string }>(
             "https://api.airtable.com/v0/meta/whoami",
             {

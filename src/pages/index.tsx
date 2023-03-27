@@ -15,7 +15,6 @@ const Home: NextPage<
   InferGetServerSidePropsType<typeof getServerSideProps>
 > = () => {
   const session = useSession();
-  const { data, isFetching } = api.base.getSchemas.useQuery();
   return (
     <>
       <Head>
@@ -41,7 +40,7 @@ const Home: NextPage<
                   });
                 }}
               >
-                {isFetching ? "Loading..." : JSON.stringify(data)}
+                Login with Airtable
               </button>
             )}
           </motion.div>
