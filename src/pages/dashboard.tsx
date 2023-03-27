@@ -20,15 +20,26 @@ const Dashboard: NextPage<
   );
   const [form, setForm] = useState<string>();
   const [bases, setBases] = useState<any>([]);
+  const [tables, setTables] = useState<any>([]);
 
-  const { data } = api.base.getBases.useQuery();
+  const { data: fetchedBase } = api.base.getBases.useQuery();
+  const { data: fetchedTables } = api.base.getTables.useQuery({
+    baseId: "appixBdaYV1IavfBc",
+  });
 
   useEffect(() => {
-    if (data) {
-      console.log("BASES:", data);
-      setBases(data);
+    if (fetchedBase) {
+      console.log("BASES:", fetchedBase);
+      setBases(fetchedBase);
     }
-  }, [data]);
+  }, [fetchedBase]);
+
+  useEffect(() => {
+    if (fetchedTables) {
+      console.log("TABLES:", fetchedTables);
+      setBases(fetchedTables);
+    }
+  }, [fetchedTables]);
 
   return (
     <div className="h-screen bg-black">
