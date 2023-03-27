@@ -31,23 +31,22 @@ const DashboardComponent = () => {
           />
         </div>
       </div>
-      {data && data.bases.map((base) => <BaseSection key={base.id} {...base} />)}
+      {data &&
+        data.bases.map((base) => <BaseSection key={base.id} {...base} />)}
     </div>
   );
 };
 
 const BaseSection: React.FC<BaseObject> = ({ id, name }) => {
+  const { data } = api.base.getTables.useQuery({ baseId: id });
   return (
     <div>
-      <div className="text-2xl font-semibold mb-4">{name}</div>
+      <div className="mb-4 text-2xl font-semibold">{name}</div>
       <div className="flex flex-row flex-wrap items-stretch gap-6">
-        <TableCard
-          title="form title"
-          desc="some desc for the form lorem ipsum and a little bit more"
-          cover="https://picsum.photos/1000/500"
-          id=""
-          key={id}
-        />
+        {data &&
+          data.tables.map(({ name, id, description }) => (
+            <TableCard name={name} desc={description} id={id} key={id} />
+          ))}
       </div>
     </div>
   );
