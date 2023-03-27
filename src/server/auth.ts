@@ -25,6 +25,10 @@ interface AirtableProfile {
   email?: string;
 }
 
+const credentials = Buffer.from(
+  `${env.AIRTABLE_CLIENT_ID}:${env.AIRTABLE_SECRET}`
+).toString("base64");
+
 export const authOptions: NextAuthOptions = {
   callbacks: {
     session({ session, user }) {
@@ -56,6 +60,7 @@ export const authOptions: NextAuthOptions = {
       token: {
         url: "https://airtable.com/oauth2/v1/token",
         async request(context) {
+          console.log("TOKEN", context);
           const { code } = context.params;
           const redirect_uri =
             context.params.redirect_uri ||
@@ -67,9 +72,6 @@ export const authOptions: NextAuthOptions = {
           if (!context.checks.code_verifier) {
             throw new Error("Missing code_verifier");
           }
-          const credentials = Buffer.from(
-            `${clientId}:${clientSecret}`
-          ).toString("base64");
 
           const res = await axios.post(
             "https://airtable.com/oauth2/v1/token",
@@ -77,7 +79,6 @@ export const authOptions: NextAuthOptions = {
               code,
               redirect_uri: redirect_uri as string,
               grant_type: "authorization_code",
-              client_id: clientId,
               code_verifier: context.checks.code_verifier,
             }),
             {
@@ -99,6 +100,7 @@ export const authOptions: NextAuthOptions = {
       userinfo: {
         // @ts-ignore
         request: async ({ client, tokens }) => {
+          console.log(tokens);
           if (!tokens.access_token) {
             throw new Error("Missing access token");
           }

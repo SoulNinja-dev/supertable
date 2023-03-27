@@ -11,12 +11,14 @@ import Sidebar from "~/components/Sidebar";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "~/server/auth";
 import { api } from "~/utils/api";
+import { useSession } from "next-auth/react";
 
 const Dashboard: NextPage<
   InferGetServerSidePropsType<typeof getServerSideProps>
 > = () => {
-  const [page, setPage] = useState<"dashboard" | "settings" | "form">("form");
+  const [page, setPage] = useState<"dashboard" | "settings" | "form">("dashboard");
   const [form, setForm] = useState<string>();
+  const session = useSession();
 
   const { data, isFetching, error } = api.base.getSchemas.useQuery();
 
@@ -36,11 +38,7 @@ const Dashboard: NextPage<
             ) : (
               <>
                 <div className="text-center text-black">
-                  {isFetching
-                    ? "loading..."
-                    : error
-                    ? JSON.stringify(error)
-                    : JSON.stringify(data)}
+                  {isFetching ? "loading..." : "loaded"}
                 </div>
               </>
             )}
