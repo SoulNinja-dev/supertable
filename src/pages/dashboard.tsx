@@ -20,8 +20,14 @@ const Dashboard: NextPage<
   const [form, setForm] = useState<string>();
   const session = useSession();
   const [bases, setBases] = useState<any>([]);
+  const { data: fetchedBase } = api.base.getBases.useQuery();
 
-
+  useEffect(() => {
+    if (fetchedBase) {
+      console.log("BASES:", fetchedBase);
+      setBases(fetchedBase);
+    }
+  }, [fetchedBase]);
 
   return (
     <div className="h-screen bg-black">

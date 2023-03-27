@@ -49,24 +49,45 @@ export const baseRouter = createTRPCRouter({
       }
     }),
 
-  getSchema: protectedProcedure
+  getTables: protectedProcedure
     .input(
       z.object({
         baseId: z.string(),
       })
     )
+    .output(
+      z.object({
+        tables: z.array(
+          z.object({
+            id: z.string(),
+            name: z.string(),
+            description: z.string().optional(),
+          })
+        ),
+      })
+    )
     .query(async ({ ctx, input }) => {
       const accessToken = await getAccessToken(ctx);
+      const baseId = input.baseId;
       try {
-        const res = await axios.get("https://api.airtable.com/v0/meta/bases", {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        });
+        const res = await axios.get(
+          `https://api.airtable.com/v0/meta/bases/${baseId}/tables`,
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          }
+        );
 
-        console.log("BASES!!: ", res.data);
+        const tables = res.data.tables.map(
+          (table: { id: string; name: string; description?: string }) => ({
+            id: table.id,
+            name: table.name,
+            description: table.description,
+          })
+        );
 
-        return res.data;
+        return { tables };
       } catch (e: any) {
         console.log(JSON.stringify(e));
         throw new TRPCError({
@@ -84,9 +105,10 @@ export const baseRouter = createTRPCRouter({
 // getForms from tableid
 // setForms from tableid
 
-/*
 
-Settings
-- 
+const TableObjectValidator = z.object({
+  id: z.string(),
+  name: z.string(),
+});
 
-*/
+export type TableObject = z.infer<typeof TableObjectValidator>;
