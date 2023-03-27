@@ -15,11 +15,13 @@ import { api } from "~/utils/api";
 const Dashboard: NextPage<
   InferGetServerSidePropsType<typeof getServerSideProps>
 > = () => {
-  const [page, setPage] = useState<"dashboard" | "settings" | "form">("form");
+  const [page, setPage] = useState<"dashboard" | "settings" | "form">(
+    "dashboard"
+  );
   const [form, setForm] = useState<string>();
   const [bases, setBases] = useState<any>([]);
 
-  const { data, isFetching, error } = api.base.getSchemas.useQuery();
+  const { data } = api.base.getSchemas.useQuery();
 
   useEffect(() => {
     if (data) {
@@ -42,15 +44,7 @@ const Dashboard: NextPage<
             ) : page === "settings" ? (
               <Settings />
             ) : (
-              <>
-                <div className="text-center text-black">
-                  {isFetching
-                    ? "loading..."
-                    : error
-                    ? JSON.stringify(error)
-                    : JSON.stringify(data)}
-                </div>
-              </>
+              <></>
             )}
           </main>
         </div>
