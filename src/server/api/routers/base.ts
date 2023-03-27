@@ -13,7 +13,7 @@ import { TRPCError } from "@trpc/server";
 import getAccessToken from "~/utils/getAccessToken";
 
 export const baseRouter = createTRPCRouter({
-  getSchemas: protectedProcedure
+  getBases: protectedProcedure
     .output(
       z.object({
         bases: z.array(
@@ -23,6 +23,31 @@ export const baseRouter = createTRPCRouter({
             permissionLevel: z.string(),
           })
         ),
+      })
+    )
+    .query(async ({ ctx }) => {
+      const accessToken = await getAccessToken(ctx);
+      try {
+        const res = await axios.get("https://api.airtable.com/v0/meta/bases", {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        });
+
+        return res.data;
+      } catch (e: any) {
+        console.log(JSON.stringify(e));
+        throw new TRPCError({
+          message: "Error fetching bases",
+          code: "BAD_REQUEST",
+        });
+      }
+    }),
+
+  getSchema: protectedProcedure
+    .input(
+      z.object({
+        baseId: z.string(),
       })
     )
     .query(async ({ ctx, input }) => {
@@ -46,3 +71,17 @@ export const baseRouter = createTRPCRouter({
       }
     }),
 });
+
+// getBases -> get bases from the user
+// getTables from baseid -> get all tables from baseid
+// getFields from tableid -> get all fields from baseid:tableid
+// createFields from tableid
+// getForms from tableid
+// setForms from tableid
+
+/*
+
+Settings
+- 
+
+*/

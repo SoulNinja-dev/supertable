@@ -21,7 +21,7 @@ const Dashboard: NextPage<
   const [form, setForm] = useState<string>();
   const [bases, setBases] = useState<any>([]);
 
-  const { data } = api.base.getSchemas.useQuery();
+  const { data } = api.base.getBases.useQuery();
 
   useEffect(() => {
     if (data) {
