@@ -43,11 +43,13 @@ export const FieldValidator = z.object({
   options: z.union([
     z.undefined(),
     z.object({
-      choices: z.array(z.object({
-        id: z.string(),
-        color: z.string().optional(),
-        name: z.string(),
-      })),
+      choices: z.array(
+        z.object({
+          id: z.string(),
+          color: z.string().optional(),
+          name: z.string(),
+        })
+      ),
     }),
     z.object({
       precision: z.enum(["second", "minute", "hour"]),
@@ -76,8 +78,6 @@ export const FieldValidator = z.object({
     }),
   ]),
 });
-
-
 
 export const FullTableObjectValidator = z.object({
   id: z.string(),

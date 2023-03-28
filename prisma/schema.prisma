@@ -48,9 +48,9 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  airtable String  @unique
   username String?
-  forms    Form[]
-  settings Setting?
+  bases    Base[]
 
   // nextauth is a pile of shit
   name          String?
@@ -62,34 +62,162 @@ model User {
   sessions Session[]
 }
 
+model Base {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  airtable       String  @unique
+  user_id        String
+  domain         String?
+  theme          String?
+  seoDescription String?
+  seoImage       String?
+  tables         Table[]
+
+  user User @relation(fields: [user_id], references: [id])
+}
+
+model Table {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  airtable       String  @unique
+  base_id        String
+  theme          String?
+  seoDescription String?
+  seoImage       String?
+
+  forms  Form[]
+  fields Field[]
+
+  base Base @relation(fields: [base_id], references: [id])
+}
+
 model Form {
   id        String   @id @default(cuid())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  airtable_id    String   @unique
-  user_id        String
+  table_id       String
+  fields         Field[]
   title          String?
+  description    String?
   slug           String?
   seoDescription String?
-  seoCover       String?
+  seoImage       String?
   headerImage    String?
   connectWallet  Boolean?
   theme          String?
+  submitMsg      String?
+  contraints     String?
 
-  user User @relation(fields: [user_id], references: [id])
+  table Table @relation(fields: [table_id], references: [id])
 }
 
-model Setting {
+model Field {
   id        String   @id @default(cuid())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  user_id        String  @unique
-  domain         String?
-  theme          String?
-  seoDescription String?
-  seoCover       String?
+  table_id    String
+  form_id     String?
+  type        FieldTypeEnum
+  name        String
+  description String?
+  options     Options[]
 
-  user User @relation(fields: [user_id], references: [id])
+  table Table @relation(fields: [table_id], references: [id])
+  form  Form? @relation(fields: [form_id], references: [id])
+}
+
+model Options {
+  id       String @id
+  field_id String
+
+  choices     Choice[]
+  precision   PrecisionEnum?
+  dateFormat  FormatEnum?
+  resultType  ResultTypeEnum?
+  maxValue    Float?
+  minValue    Float?
+  maxLength   Int?
+  phoneFormat PhoneFormatEnum?
+  isReversed  Boolean?
+
+  field Field @relation(fields: [field_id], references: [id])
+}
+
+model Choice {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  options_id String
+  name       String
+  color      String?
+
+  options Options @relation(fields: [options_id], references: [id])
+}
+
+enum FieldTypeEnum {
+  singleLineText
+  email
+  url
+  multilineText
+  number
+  percent
+  currency
+  singleSelect
+  multipleSelects
+  singleCollaborator
+  multipleCollaborators
+  multipleRecordLinks
+  date
+  dateTime
+  phoneNumber
+  multipleAttachments
+  checkbox
+  formula
+  createdTime
+  rollup
+  count
+  lookup
+  multipleLookupValues
+  autoNumber
+  barcode
+  rating
+  richText
+  duration
+  lastModifiedTime
+  button
+  createdBy
+  lastModifiedBy
+  externalSyncSource
+  attachment
+}
+
+enum PrecisionEnum {
+  second
+  minute
+  hour
+}
+
+enum FormatEnum {
+  friendly
+  iso
+  isoWithTime
+}
+
+enum ResultTypeEnum {
+  number
+  text
+  percent
+  duration
+}
+
+enum PhoneFormatEnum {
+  V1
+  V2
 }
