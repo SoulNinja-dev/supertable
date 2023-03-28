@@ -48,7 +48,6 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  airtable String  @unique
   username String?
   bases    Base[]
 

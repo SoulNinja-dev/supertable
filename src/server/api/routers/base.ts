@@ -140,8 +140,3 @@ export const baseRouter = createTRPCRouter({
       }
     }),
 });
-
-// getFields from tableid -> get all fields from baseid:tableid
-// createFields from tableid
-// getForms from tableid
-// setForms from tableid
