@@ -39,13 +39,11 @@ export default async (ctx: Context) => {
     ).toString("base64");
 
     try {
-      console.log("REFRESH TOKEN");
       const res = await axios.post(
         `https://airtable.com/oauth2/v1/token`,
         new URLSearchParams({
           grant_type: "refresh_token",
           refresh_token: refreshToken,
-          client_id: env.AIRTABLE_CLIENT_ID,
           scope: "data.records:write schema.bases:read",
         }),
         {
