@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import { useRouter } from "next/router";
 
 const TableCard = ({ name, desc, id, baseId }: Props) => {
@@ -18,9 +19,9 @@ const TableCard = ({ name, desc, id, baseId }: Props) => {
         <div className="flex flex-row items-center justify-between pt-4">
           <div></div>
           <div className="flex flex-row items-center gap-3">
-            <button
+            <Link
               className="flex items-center rounded-md bg-black py-1 pl-3 text-base text-white transition duration-200 ease-in-out hover:bg-black/70"
-              onClick={() => router.push(`/dashboard/${baseId}/${id}`)}
+              href={`/dashboard/${baseId}/${id}`}
             >
               <span>View Forms</span>
               <Image
@@ -29,7 +30,7 @@ const TableCard = ({ name, desc, id, baseId }: Props) => {
                 width={24}
                 height={24}
               />
-            </button>
+            </Link>
           </div>
         </div>
       </div>

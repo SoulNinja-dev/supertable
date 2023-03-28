@@ -85,3 +85,5 @@ export const FullTableObjectValidator = z.object({
   description: z.string().optional(),
   fields: z.array(FieldValidator),
 });
+
+export type TableObject = z.infer<typeof FullTableObjectValidator>;
