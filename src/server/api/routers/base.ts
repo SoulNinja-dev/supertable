@@ -4,6 +4,7 @@
 import { z } from "zod";
 import axios from "axios";
 
+
 import {
   createTRPCRouter,
   publicProcedure,
@@ -11,6 +12,7 @@ import {
 } from "~/server/api/trpc";
 import { TRPCError } from "@trpc/server";
 import getAccessToken from "~/utils/getAccessToken";
+import { FullTableObjectValidator } from "~/models/table";
 
 const BaseObjectValidator = z.object({
   id: z.string(),
@@ -21,7 +23,10 @@ const BaseObjectValidator = z.object({
 const TableObjectValidator = z.object({
   id: z.string(),
   name: z.string(),
+  description: z.string().optional(),
 });
+
+
 
 export type BaseObject = z.infer<typeof BaseObjectValidator>;
 export type TableObject = z.infer<typeof TableObjectValidator>;
@@ -83,6 +88,49 @@ export const baseRouter = createTRPCRouter({
           })
         );
         return { tables };
+      } catch (e: any) {
+        console.log(JSON.stringify(e));
+        throw new TRPCError({
+          message: "Error fetching bases",
+          code: "BAD_REQUEST",
+        });
+      }
+    }),
+
+    getTable: protectedProcedure
+    .input(
+      z.object({
+        baseId: z.string(),
+        tableId: z.string(),
+      })
+    )
+    .output(
+      FullTableObjectValidator
+    )
+    .query(async ({ ctx, input }) => {
+      const accessToken = await getAccessToken(ctx);
+      
+      const baseId = input.baseId;
+      try {
+        const res = await axios.get<{tables: any[]}>(
+          `https://api.airtable.com/v0/meta/bases/${baseId}/tables`,
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          }
+        );
+
+        const table = res.data.tables.find((table) => table.id === input.tableId);
+
+        if (!table) {
+          throw new TRPCError({
+            message: "Table not found",
+            code: "BAD_REQUEST",
+          });
+        }
+        
+        return table;
       } catch (e: any) {
         console.log(JSON.stringify(e));
         throw new TRPCError({

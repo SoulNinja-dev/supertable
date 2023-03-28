@@ -37,15 +37,15 @@ const DashboardComponent = () => {
   );
 };
 
-const BaseSection: React.FC<BaseObject> = ({ id, name }) => {
-  const { data } = api.base.getTables.useQuery({ baseId: id });
+const BaseSection: React.FC<BaseObject> = ({ id: baseId, name }) => {
+  const { data } = api.base.getTables.useQuery({ baseId });
   return (
     <div>
       <div className="mb-4 text-2xl font-semibold">{name}</div>
       <div className="flex flex-row flex-wrap items-stretch gap-6">
         {data &&
           data.tables.map(({ name, id, description }) => (
-            <TableCard name={name} desc={description} id={id} key={id} />
+            <TableCard baseId={baseId} name={name} desc={description} id={id} key={id} />
           ))}
       </div>
     </div>
