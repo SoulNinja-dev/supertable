@@ -16,18 +16,18 @@ const TablePage: NextPage<{ baseId: string; tableId: string }> = ({
   const router = useRouter();
   const [setTable] = useTableStore((state) => [state.setTable]);
 
-  const { data } = api.base.getTable.useQuery(
-    { baseId, tableId },
-    {
-      retry: false,
-    }
-  );
+  // const { data } = api.base.getTable.useQuery(
+  //   { baseId, tableId },
+  //   {
+  //     retry: false,
+  //   }
+  // );
 
-  useEffect(() => {
-    if (data) {
-      setTable(data);
-    }
-  }, [data]);
+  // useEffect(() => {
+  //   if (data) {
+  //     setTable(data);
+  //   }
+  // }, [data]);
 
   return (
     <div className="h-screen">
@@ -48,7 +48,10 @@ const Sidebar = () => {
   return (
     <div className="flex h-full w-64 flex-col items-center justify-between bg-sidebar">
       <div className="flex h-20 w-full flex-col justify-center px-8 pt-20">
-        <Link className="flex text-lg items-center cursor-pointer" href="/dashboard">
+        <Link
+          className="flex cursor-pointer items-center text-lg"
+          href="/dashboard"
+        >
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="24"

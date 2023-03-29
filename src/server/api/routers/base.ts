@@ -1,23 +1,19 @@
-/* eslint-disable @typescript-eslint/restrict-template-expressions */ /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { z } from "zod";
 import axios from "axios";
 
+/*
+getBases -> get bases under user account
+editBase{baseId} -> edit a base's settings etc
+*/
 
-import {
-  createTRPCRouter,
-  publicProcedure,
-  protectedProcedure,
-} from "~/server/api/trpc";
-import { TRPCError } from "@trpc/server";
+import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 import getAccessToken from "~/utils/getAccessToken";
-import { FullTableObjectValidator } from "~/models/table";
+import getBases from "~/utils/getBases";
 
 const BaseObjectValidator = z.object({
   id: z.string(),
   name: z.string(),
-  permissionLevel: z.string(),
+  permissionLevel: z.string().optional(),
 });
 
 const TableObjectValidator = z.object({
@@ -25,8 +21,6 @@ const TableObjectValidator = z.object({
   name: z.string(),
   description: z.string().optional(),
 });
-
-
 
 export type BaseObject = z.infer<typeof BaseObjectValidator>;
 export type TableObject = z.infer<typeof TableObjectValidator>;
@@ -39,104 +33,112 @@ export const baseRouter = createTRPCRouter({
       })
     )
     .query(async ({ ctx }) => {
+      // what the following code does
+      // 1. get all bases from airtable
+      // 2. get existing bases from user's account
+      // 3. filter out bases that already exist
+      // 4. create new bases
+      // 5. update existing bases properties
+      // 6. return bases to user
+
       const accessToken = await getAccessToken(ctx);
+      const bases: BaseObject[] = await getBases({ accessToken });
+
+      const prisma = ctx.prisma;
+      const userId = ctx.session?.user.id;
+
+      const existingBases = await prisma.base.findMany({
+        where: {
+          user_id: userId,
+        },
+        select: {
+          id: true,
+          airtable: true,
+        },
+      });
+
+      const existingBaseIds = existingBases.map((base) => base.airtable);
+      const newBases = bases.filter(
+        (base) => !existingBaseIds.includes(base.id)
+      );
+
+      const baseUpdates = bases
+        .filter((base) => existingBaseIds.includes(base.id))
+        .map((base) => ({
+          where: { airtable: base.id },
+          data: {
+            name: base.name,
+          },
+        }));
+
+      const baseCreates = newBases.map((base) => ({
+        airtable: base.id,
+        name: base.name,
+        user_id: userId,
+      }));
+
+      await prisma.base.createMany({ data: baseCreates });
+      await Promise.all(
+        baseUpdates.map((update) =>
+          prisma.base.update({
+            ...update,
+            select: { id: true },
+          })
+        )
+      );
+
+      // return bases to user
+      const data = await prisma.base.findMany({
+        where: {
+          user_id: userId,
+        },
+        select: {
+          id: true,
+          name: true,
+        },
+      });
+
+      return { bases: data };
+    }),
+
+  editBase: protectedProcedure
+    .input(
+      z.object({
+        baseId: z.string(),
+        domain: z.string().optional(),
+        theme: z.string().optional(),
+        seoDescription: z.string().optional(),
+        seoImage: z.string().optional(),
+      })
+    )
+    .output(
+      z.object({
+        success: z.boolean(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      // get base from baseid
+      // update properties from input
+
+      const prisma = ctx.prisma;
+      const baseId = input.baseId;
+
       try {
-        const res = await axios.get("https://api.airtable.com/v0/meta/bases", {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
+        await prisma.base.update({
+          where: {
+            id: baseId,
+          },
+          data: {
+            domain: input.domain,
+            theme: input.theme,
+            seoDescription: input.seoDescription,
+            seoImage: input.seoImage,
           },
         });
-
-        return res.data;
-      } catch (e: any) {
-        console.log(JSON.stringify(e));
-        throw new TRPCError({
-          message: "Error fetching bases",
-          code: "BAD_REQUEST",
-        });
-      }
-    }),
-
-  getTables: protectedProcedure
-    .input(
-      z.object({
-        baseId: z.string(),
-      })
-    )
-    .output(
-      z.object({
-        tables: z.array(TableObjectValidator),
-      })
-    )
-    .query(async ({ ctx, input }) => {
-      const accessToken = await getAccessToken(ctx);
-      const baseId = input.baseId;
-      try {
-        const res = await axios.get(
-          `https://api.airtable.com/v0/meta/bases/${baseId}/tables`,
-          {
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
-            },
-          }
-        );
-        const tables = res.data.tables.map(
-          (table: { id: string; name: string; description?: string }) => ({
-            id: table.id,
-            name: table.name,
-            description: table.description,
-          })
-        );
-        return { tables };
-      } catch (e: any) {
-        console.log(JSON.stringify(e));
-        throw new TRPCError({
-          message: "Error fetching bases",
-          code: "BAD_REQUEST",
-        });
-      }
-    }),
-
-    getTable: protectedProcedure
-    .input(
-      z.object({
-        baseId: z.string(),
-        tableId: z.string(),
-      })
-    )
-    .output(
-      FullTableObjectValidator
-    )
-    .query(async ({ ctx, input }) => {
-      const accessToken = await getAccessToken(ctx);
-      
-      const baseId = input.baseId;
-      try {
-        const res = await axios.get<{tables: any[]}>(
-          `https://api.airtable.com/v0/meta/bases/${baseId}/tables`,
-          {
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
-            },
-          }
-        );
-
-        const table = res.data.tables.find((table) => table.id === input.tableId);
-
-        if (!table) {
-          throw new TRPCError({
-            message: "Table not found",
-            code: "BAD_REQUEST",
-          });
-        }
-        
-        return table;
-      } catch (e: any) {
-        console.log(JSON.stringify(e));
-        throw new TRPCError({
-          message: "Error fetching bases",
-          code: "BAD_REQUEST",
-        });
+        return { success: true };
+      } catch (e) {
+        console.log(e);
+        return { success: false };
       }
     }),
 });

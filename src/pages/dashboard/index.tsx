@@ -16,7 +16,9 @@ import { useSession } from "next-auth/react";
 const Dashboard: NextPage<
   InferGetServerSidePropsType<typeof getServerSideProps>
 > = () => {
-  const [page, setPage] = useState<"dashboard" | "settings" | "form">("dashboard");
+  const [page, setPage] = useState<"dashboard" | "settings" | "form">(
+    "dashboard"
+  );
   const [form, setForm] = useState<string>();
   const session = useSession();
   const [bases, setBases] = useState<any>([]);
