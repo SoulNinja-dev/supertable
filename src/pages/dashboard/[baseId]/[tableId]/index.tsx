@@ -22,13 +22,18 @@ const TablePage: NextPage<{ baseId: string; tableId: string }> = ({
   const router = useRouter();
   const [setTable] = useTableStore((state) => [state.setTable]);
 
-  const { data } = api.base.getTable.useQuery({ baseId, tableId });
+  // const { data } = api.base.getTable.useQuery(
+  //   { baseId, tableId },
+  //   {
+  //     retry: false,
+  //   }
+  // );
 
-  useEffect(() => {
-    if (data) {
-      setTable(data);
-    }
-  }, [data]);
+  // useEffect(() => {
+  //   if (data) {
+  //     setTable(data);
+  //   }
+  // }, [data]);
 
   return (
     <div className="h-screen">

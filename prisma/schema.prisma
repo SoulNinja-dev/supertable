@@ -68,6 +68,7 @@ model Base {
 
   airtable       String  @unique
   user_id        String
+  name           String
   domain         String?
   theme          String?
   seoDescription String?
