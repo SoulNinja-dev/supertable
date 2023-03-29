@@ -53,8 +53,17 @@ export default async (ctx: Context) => {
           },
         }
       );
-      const { access_token, refresh_token, expires_in, refresh_expires_in } =
-        res.data;
+      const {
+        access_token,
+        refresh_token,
+        expires_in,
+        refresh_expires_in,
+      }: {
+        access_token: string;
+        refresh_token: string;
+        expires_in: number;
+        refresh_expires_in: number;
+      } = res.data;
 
       const expires_at = Math.floor(new Date().getTime() / 1000) + expires_in;
 

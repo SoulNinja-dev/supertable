@@ -1,5 +1,4 @@
 import { z } from "zod";
-import axios from "axios";
 
 /*
 getBases -> get bases under user account
@@ -16,14 +15,7 @@ const BaseObjectValidator = z.object({
   permissionLevel: z.string().optional(),
 });
 
-const TableObjectValidator = z.object({
-  id: z.string(),
-  name: z.string(),
-  description: z.string().optional(),
-});
-
 export type BaseObject = z.infer<typeof BaseObjectValidator>;
-export type TableObject = z.infer<typeof TableObjectValidator>;
 
 export const baseRouter = createTRPCRouter({
   getBases: protectedProcedure
@@ -43,24 +35,31 @@ export const baseRouter = createTRPCRouter({
 
       const accessToken = await getAccessToken(ctx);
       const bases: BaseObject[] = await getBases({ accessToken });
+      console.log("BASES 1: ", bases);
 
       const prisma = ctx.prisma;
       const userId = ctx.session?.user.id;
+      console.log("USER ID: ", userId);
 
       const existingBases = await prisma.base.findMany({
         where: {
-          user_id: userId,
+          userId,
         },
         select: {
           id: true,
           airtable: true,
         },
       });
+      console.log("EXISTING BASES: ", existingBases);
 
       const existingBaseIds = existingBases.map((base) => base.airtable);
-      const newBases = bases.filter(
-        (base) => !existingBaseIds.includes(base.id)
-      );
+      console.log("EXISTING BASE IDS: ", existingBaseIds);
+
+      // filter existing base ids out of bases
+      const newBases = bases.filter((base) => {
+        return !existingBaseIds.includes(base.id);
+      });
+      console.log("NEW BASES: ", newBases);
 
       const baseUpdates = bases
         .filter((base) => existingBaseIds.includes(base.id))
@@ -70,19 +69,20 @@ export const baseRouter = createTRPCRouter({
             name: base.name,
           },
         }));
+      console.log("BASE UPDATES: ", baseUpdates);
 
       const baseCreates = newBases.map((base) => ({
         airtable: base.id,
         name: base.name,
-        user_id: userId,
+        userId,
       }));
+      console.log("BASE CREATES: ", baseCreates);
 
       await prisma.base.createMany({ data: baseCreates });
       await Promise.all(
         baseUpdates.map((update) =>
           prisma.base.update({
             ...update,
-            select: { id: true },
           })
         )
       );
@@ -90,13 +90,14 @@ export const baseRouter = createTRPCRouter({
       // return bases to user
       const data = await prisma.base.findMany({
         where: {
-          user_id: userId,
+          userId,
         },
         select: {
           id: true,
           name: true,
         },
       });
+      console.log("BASES NEW: ", data);
 
       return { bases: data };
     }),
@@ -116,7 +117,7 @@ export const baseRouter = createTRPCRouter({
         success: z.boolean(),
       })
     )
-    .mutation(async ({ ctx, input }) => {
+    .query(async ({ ctx, input }) => {
       // get base from baseid
       // update properties from input
 
@@ -129,10 +130,11 @@ export const baseRouter = createTRPCRouter({
             id: baseId,
           },
           data: {
-            domain: input.domain,
-            theme: input.theme,
-            seoDescription: input.seoDescription,
-            seoImage: input.seoImage,
+            domain: input.domain != null ? input.domain : undefined,
+            theme: input.theme != null ? input.theme : undefined,
+            seoDescription:
+              input.seoDescription != null ? input.seoDescription : undefined,
+            seoImage: input.seoImage != null ? input.seoImage : undefined,
           },
         });
         return { success: true };

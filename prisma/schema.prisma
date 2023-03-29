@@ -67,7 +67,7 @@ model Base {
   updatedAt DateTime @updatedAt
 
   airtable       String  @unique
-  user_id        String
+  userId         String
   name           String
   domain         String?
   theme          String?
@@ -75,7 +75,7 @@ model Base {
   seoImage       String?
   tables         Table[]
 
-  user User @relation(fields: [user_id], references: [id])
+  user User @relation(fields: [userId], references: [id])
 }
 
 model Table {
@@ -84,7 +84,7 @@ model Table {
   updatedAt DateTime @updatedAt
 
   airtable       String  @unique
-  base_id        String
+  baseId         String
   theme          String?
   seoDescription String?
   seoImage       String?
@@ -92,7 +92,7 @@ model Table {
   forms  Form[]
   fields Field[]
 
-  base Base @relation(fields: [base_id], references: [id])
+  base Base @relation(fields: [baseId], references: [id])
 }
 
 model Form {
@@ -100,7 +100,7 @@ model Form {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  table_id       String
+  tableId        String
   fields         Field[]
   title          String?
   description    String?
@@ -113,7 +113,7 @@ model Form {
   submitMsg      String?
   contraints     String?
 
-  table Table @relation(fields: [table_id], references: [id])
+  table Table @relation(fields: [tableId], references: [id])
 }
 
 model Field {
@@ -121,20 +121,20 @@ model Field {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  table_id    String
-  form_id     String?
+  tableId     String
+  formId      String?
   type        FieldTypeEnum
   name        String
   description String?
   options     Options[]
 
-  table Table @relation(fields: [table_id], references: [id])
-  form  Form? @relation(fields: [form_id], references: [id])
+  table Table @relation(fields: [tableId], references: [id])
+  form  Form? @relation(fields: [formId], references: [id])
 }
 
 model Options {
-  id       String @id
-  field_id String
+  id      String @id
+  fieldId String
 
   choices     Choice[]
   precision   PrecisionEnum?
@@ -146,7 +146,7 @@ model Options {
   phoneFormat PhoneFormatEnum?
   isReversed  Boolean?
 
-  field Field @relation(fields: [field_id], references: [id])
+  field Field @relation(fields: [fieldId], references: [id])
 }
 
 model Choice {
@@ -154,11 +154,11 @@ model Choice {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  options_id String
-  name       String
-  color      String?
+  optionsId String
+  name      String
+  color     String?
 
-  options Options @relation(fields: [options_id], references: [id])
+  options Options @relation(fields: [optionsId], references: [id])
 }
 
 enum FieldTypeEnum {
