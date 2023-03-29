@@ -38,7 +38,7 @@ const DashboardComponent = () => {
 };
 
 const BaseSection: React.FC<BaseObject> = ({ id: baseId, name }) => {
-  const { data } = api.base.getTables.useQuery({ baseId });
+  const { data } = api.table.getTables.useQuery({ baseId });
   return (
     <div>
       <div className="mb-4 text-2xl font-semibold">{name}</div>

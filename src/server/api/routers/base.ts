@@ -1,10 +1,5 @@
 import { z } from "zod";
 
-/*
-getBases -> get bases under user account
-editBase{baseId} -> edit a base's settings etc
-*/
-
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 import getAccessToken from "~/utils/getAccessToken";
 import getBases from "~/utils/getBases";
@@ -115,9 +110,6 @@ export const baseRouter = createTRPCRouter({
       })
     )
     .query(async ({ ctx, input }) => {
-      // get base from baseid
-      // update properties from input
-
       const prisma = ctx.prisma;
       const baseId = input.baseId;
 

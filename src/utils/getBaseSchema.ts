@@ -19,7 +19,7 @@ export default async ({
   } catch (e: any) {
     console.log(JSON.stringify(e));
     throw new TRPCError({
-      message: "Error fetching bases",
+      message: "Error fetching base schemas",
       code: "BAD_REQUEST",
     });
   }

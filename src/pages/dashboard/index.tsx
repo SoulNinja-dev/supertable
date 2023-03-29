@@ -41,8 +41,7 @@ const Dashboard: NextPage<
           <Sidebar page={page} setPage={setPage} bases={bases} />
           <main className="col-span-4 h-screen overflow-y-scroll">
             {page === "dashboard" ? (
-              // <DashboardComponent />
-              <p>hi</p>
+              <DashboardComponent />
             ) : page === "settings" ? (
               <Settings />
             ) : (
