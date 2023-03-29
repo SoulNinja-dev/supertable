@@ -5,9 +5,15 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
+import dynamic from "next/dynamic";
+
 import { authOptions } from "~/server/auth";
 import { useTableStore } from "~/stores/tableStore";
 import { api } from "~/utils/api";
+
+const FormBuilder = dynamic(() => import("~/components/FormBuilder"), {
+  ssr: false,
+});
 
 const TablePage: NextPage<{ baseId: string; tableId: string }> = ({
   baseId,
@@ -16,12 +22,7 @@ const TablePage: NextPage<{ baseId: string; tableId: string }> = ({
   const router = useRouter();
   const [setTable] = useTableStore((state) => [state.setTable]);
 
-  const { data } = api.base.getTable.useQuery(
-    { baseId, tableId },
-    {
-      retry: false,
-    }
-  );
+  const { data } = api.base.getTable.useQuery({ baseId, tableId });
 
   useEffect(() => {
     if (data) {
@@ -36,7 +37,14 @@ const TablePage: NextPage<{ baseId: string; tableId: string }> = ({
       </Head>
       <div className="flex h-screen bg-white font-inter text-black">
         <Sidebar />
-        hi
+        <main className="flex-1">
+          
+            {/* Topbar */}
+            <div className="w-full-bg-white h-14 border-b-2 border-gray-300"></div>
+
+            <FormBuilder />
+         
+        </main>
       </div>
     </div>
   );
@@ -46,9 +54,12 @@ const Sidebar = () => {
   const router = useRouter();
   const [table] = useTableStore((state) => [state.table]);
   return (
-    <div className="flex h-full w-64 flex-col items-center justify-between bg-sidebar">
+    <div className="flex h-full w-64 flex-col items-center justify-between border-r-2 border-gray-300 bg-white">
       <div className="flex h-20 w-full flex-col justify-center px-8 pt-20">
-        <Link className="flex text-lg items-center cursor-pointer" href="/dashboard">
+        <Link
+          className="flex cursor-pointer items-center text-lg"
+          href="/dashboard"
+        >
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="24"
