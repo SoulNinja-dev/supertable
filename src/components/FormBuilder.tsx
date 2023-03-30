@@ -6,6 +6,7 @@ import {
   Draggable,
   resetServerContext,
 } from "react-beautiful-dnd";
+import ContentEditable from "react-contenteditable";
 import { useTableStore } from "~/stores/tableStore";
 
 resetServerContext();
@@ -31,6 +32,9 @@ export const TableFieldsColumn: React.FC<KanbanColumnProps> = ({
 
 export const FormFieldsColumn: React.FC<KanbanColumnProps> = ({ children }) => {
   const [winReady, setwinReady] = useState(false);
+  const [formName, setFormName] = useState("Form");
+  const [formDescription, setFormDescription] = useState("Add description to this form")
+
   useEffect(() => {
     setwinReady(true);
   }, []);
@@ -49,18 +53,20 @@ export const FormFieldsColumn: React.FC<KanbanColumnProps> = ({ children }) => {
           <Image src="/sparkles.svg" width={20} height={20} alt="sparkles" />
           Add a Logo
         </div>
-        <div
-          contentEditable="true"
+        <ContentEditable
+          onChange={(e) => {
+            setFormName(e.target.value)
+          }}
           className="mt-4 w-full px-4 py-2 text-3xl font-semibold text-gray-500 transition-colors duration-200 ease-out hover:bg-gray-200/80 focus:bg-gray-200/60 focus:outline-gray-400/50"
-        >
-          Form
-        </div>
-        <div
-          contentEditable="true"
+          html={formName}
+        />
+        <ContentEditable
+          onChange={(e) => {
+            setFormDescription(e.target.value)
+          }}
           className="mt-1 w-full px-4 py-2 text-sm font-medium text-gray-500 transition-colors duration-200 ease-out hover:bg-gray-200/80 focus:bg-gray-200/60 focus:outline-gray-400/50"
-        >
-          Add description to this form
-        </div>
+          html={formDescription}
+        />
       </div>
 
       {winReady && children}
@@ -223,7 +229,7 @@ const FormBuilder: React.FC = () => {
 
           if (column.id === "tableFields") {
             return (
-              <TableFieldsColumn>
+              <TableFieldsColumn key={column.id}>
                 <Droppable droppableId={column.id}>
                   {(provided, snapshot) => (
                     <div
