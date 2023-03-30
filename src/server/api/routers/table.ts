@@ -1,21 +1,14 @@
+import { TRPCError } from "@trpc/server";
 import { z } from "zod";
-import axios from "axios";
-
-/*
-getBases -> get bases under user account
-editBase{baseId} -> edit a base's settings etc
-*/
 
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
-import { TRPCError } from "@trpc/server";
 import getAccessToken from "~/utils/getAccessToken";
-import { FullTableObjectValidator } from "~/models/table";
 import getBaseSchema from "~/utils/getBaseSchema";
 
 const TableObjectValidator = z.object({
   id: z.string(),
   name: z.string(),
-  description: z.string().optional(),
+  description: z.string(),
 });
 
 export type TableObject = z.infer<typeof TableObjectValidator>;
@@ -34,23 +27,97 @@ export const tableRouter = createTRPCRouter({
       })
     )
     .query(async ({ ctx, input }) => {
-      const accessToken = await getAccessToken(ctx);
-      const baseId = input.baseId;
-
-      /*
-        we have to create new records on the db
-        and add the fields as well if the table is new 
-        and update the existing ones if it's changed
-      */
-      const data = await getBaseSchema({ accessToken, baseId });
-      const tables = data.map(
-        (table: { id: string; name: string; description?: string }) => ({
-          id: table.id,
-          name: table.name,
-          description: table.description,
+      const accessToken: string = await getAccessToken(ctx);
+      const { baseId } = input;
+      const airtable = await ctx.prisma.base
+        .findUnique({
+          where: {
+            id: baseId,
+          },
+          select: {
+            airtable: true,
+          },
         })
-      );
-      return { tables };
+        .then((base) => {
+          if (!base)
+            throw new TRPCError({
+              code: "INTERNAL_SERVER_ERROR",
+              message: "Base not found",
+            });
+          return base.airtable;
+        });
+
+      const data = await getBaseSchema({ accessToken, baseId: airtable });
+
+      // cleaning airtable output
+      const tables: TableObject[] = data.map((table: TableObject) => ({
+        id: table.id,
+        name: table.name,
+        description: table.description != null ? table.description : "",
+      }));
+
+      // get current tables stored in db under the base
+      const prisma = ctx.prisma;
+
+      const existingTables = await prisma.table.findMany({
+        where: {
+          baseId,
+        },
+        select: {
+          id: true,
+          airtable: true,
+        },
+      });
+
+      const existingTableIds = existingTables.map((table) => table.airtable);
+
+      // filter existing table ids out of tables
+      const newTables = tables.filter((table: TableObject) => {
+        return !existingTableIds.includes(table.id);
+      });
+
+      // create new tables in db
+      const tableCreates = newTables.map((table: TableObject) => ({
+        airtable: table.id,
+        name: table.name,
+        description: table.description != null ? table.description : "",
+        baseId,
+      }));
+
+      await prisma.table.createMany({
+        data: tableCreates,
+      });
+
+      // update properties
+      for (const table of existingTables) {
+        const airtableTable = tables.find((t) => t.id === table.airtable);
+        if (airtableTable) {
+          await prisma.table.update({
+            where: {
+              id: table.id,
+            },
+            data: {
+              name: airtableTable.name,
+            },
+          });
+        }
+      }
+
+      const filtered: TableObject[] = await prisma.table.findMany({
+        where: {
+          baseId,
+          airtable: {
+            in: tables.map((table) => table.id),
+          },
+        },
+        select: {
+          id: true,
+          name: true,
+          description: true,
+        },
+      });
+
+      return { tables: filtered };
     }),
 
   getTable: protectedProcedure.query(() => {
@@ -69,6 +136,7 @@ export const tableRouter = createTRPCRouter({
       ],
     };
   }),
+
   editTable: protectedProcedure
     .input(
       z.object({

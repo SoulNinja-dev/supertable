@@ -1,10 +1,5 @@
 import { z } from "zod";
 
-/*
-getBases -> get bases under user account
-editBase{baseId} -> edit a base's settings etc
-*/
-
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 import getAccessToken from "~/utils/getAccessToken";
 import getBases from "~/utils/getBases";
@@ -27,19 +22,17 @@ export const baseRouter = createTRPCRouter({
     .query(async ({ ctx }) => {
       // what the following code does
       // 1. get all bases from airtable
-      // 2. get existing bases from user's account
-      // 3. filter out bases that already exist
-      // 4. create new bases
-      // 5. update existing bases properties
-      // 6. return bases to user
+      // 2. add new bases which they sent
+      // 3. update existing properties
+      // 4. filter bases using airtable ids which they sent
+      // 5. then send
 
       const accessToken = await getAccessToken(ctx);
       const bases: BaseObject[] = await getBases({ accessToken });
-      console.log("BASES 1: ", bases);
+      console.log("bases from airtable: ", bases);
 
       const prisma = ctx.prisma;
       const userId = ctx.session?.user.id;
-      console.log("USER ID: ", userId);
 
       const existingBases = await prisma.base.findMany({
         where: {
@@ -50,55 +43,54 @@ export const baseRouter = createTRPCRouter({
           airtable: true,
         },
       });
-      console.log("EXISTING BASES: ", existingBases);
+      console.log("bases from db: ", existingBases);
 
       const existingBaseIds = existingBases.map((base) => base.airtable);
-      console.log("EXISTING BASE IDS: ", existingBaseIds);
 
       // filter existing base ids out of bases
       const newBases = bases.filter((base) => {
         return !existingBaseIds.includes(base.id);
       });
-      console.log("NEW BASES: ", newBases);
-
-      const baseUpdates = bases
-        .filter((base) => existingBaseIds.includes(base.id))
-        .map((base) => ({
-          where: { airtable: base.id },
-          data: {
-            name: base.name,
-          },
-        }));
-      console.log("BASE UPDATES: ", baseUpdates);
+      console.log("new bases created on airtable: ", newBases);
 
       const baseCreates = newBases.map((base) => ({
         airtable: base.id,
         name: base.name,
         userId,
       }));
-      console.log("BASE CREATES: ", baseCreates);
+      console.log("proper objects to be added to the db: ", baseCreates);
 
       await prisma.base.createMany({ data: baseCreates });
-      await Promise.all(
-        baseUpdates.map((update) =>
-          prisma.base.update({
-            ...update,
-          })
-        )
-      );
 
-      // return bases to user
+      // update properties
+      for (const base of existingBases) {
+        const airtableBase = bases.find((b) => b.id === base.airtable);
+        if (airtableBase) {
+          await prisma.base.update({
+            where: {
+              id: base.id,
+            },
+            data: {
+              name: airtableBase.name,
+            },
+          });
+        }
+      }
+
       const data = await prisma.base.findMany({
         where: {
           userId,
+          airtable: {
+            in: bases.map((base) => base.id),
+          },
         },
         select: {
           id: true,
           name: true,
         },
       });
-      console.log("BASES NEW: ", data);
 
+      console.log("updated and filtered bases: ", data);
       return { bases: data };
     }),
 
@@ -118,9 +110,6 @@ export const baseRouter = createTRPCRouter({
       })
     )
     .query(async ({ ctx, input }) => {
-      // get base from baseid
-      // update properties from input
-
       const prisma = ctx.prisma;
       const baseId = input.baseId;
 

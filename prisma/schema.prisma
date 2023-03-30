@@ -85,6 +85,8 @@ model Table {
 
   airtable       String  @unique
   baseId         String
+  name           String
+  description    String
   theme          String?
   seoDescription String?
   seoImage       String?

@@ -35,7 +35,6 @@ const Dashboard: NextPage<
           <main className="col-span-4 h-screen overflow-y-scroll">
             {page === "dashboard" ? (
               <DashboardComponent />
-              
             ) : page === "settings" ? (
               <Settings />
             ) : (
