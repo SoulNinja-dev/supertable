@@ -2,7 +2,7 @@ import { signOut } from "next-auth/react";
 import Image from "next/image";
 import type { Dispatch, SetStateAction } from "react";
 
-const Sidebar = ({ page, setPage, bases }: Props) => {
+const Sidebar = ({ page, setPage }: Props) => {
   return (
     <aside className="col-span-1 flex h-screen flex-col gap-36 bg-sidebar px-10 py-10 text-black">
       <div className="flex flex-row items-center gap-2 text-2xl font-semibold text-black">
@@ -85,7 +85,7 @@ interface Props {
   setPage: (
     arg0: "dashboard" | "settings" | "form"
   ) => void | Dispatch<SetStateAction<"dashboard" | "settings" | "form">>;
-  bases: Base[];
+  
 }
 
 interface Base {

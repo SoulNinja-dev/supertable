@@ -12,6 +12,7 @@ import { getServerSession } from "next-auth/next";
 import { authOptions } from "~/server/auth";
 import { api } from "~/utils/api";
 import { useSession } from "next-auth/react";
+import { BaseObject } from "~/server/api/routers/base";
 
 const Dashboard: NextPage<
   InferGetServerSidePropsType<typeof getServerSideProps>
@@ -21,15 +22,7 @@ const Dashboard: NextPage<
   );
   const [form, setForm] = useState<string>();
   const session = useSession();
-  const [bases, setBases] = useState<any>([]);
-  const { data: fetchedBase } = api.base.getBases.useQuery();
 
-  useEffect(() => {
-    if (fetchedBase) {
-      console.log("BASES:", fetchedBase);
-      setBases(fetchedBase);
-    }
-  }, [fetchedBase]);
 
   return (
     <div className="h-screen bg-black">
@@ -38,11 +31,11 @@ const Dashboard: NextPage<
       </Head>
       <div className="h-screen bg-white font-inter text-white">
         <div className="grid grid-cols-5 gap-4">
-          <Sidebar page={page} setPage={setPage} bases={bases} />
+          <Sidebar page={page} setPage={setPage} />
           <main className="col-span-4 h-screen overflow-y-scroll">
             {page === "dashboard" ? (
-              // <DashboardComponent />
-              <p>hi</p>
+              <DashboardComponent />
+              
             ) : page === "settings" ? (
               <Settings />
             ) : (

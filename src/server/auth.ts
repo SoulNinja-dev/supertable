@@ -60,7 +60,6 @@ export const authOptions: NextAuthOptions = {
       token: {
         url: "https://airtable.com/oauth2/v1/token",
         async request(context) {
-          console.log("TOKEN", context);
           const { code } = context.params;
           const redirect_uri =
             context.params.redirect_uri ||
@@ -88,6 +87,7 @@ export const authOptions: NextAuthOptions = {
               },
             }
           );
+          console.log(res.data)
           return {
             // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
             tokens: res.data,

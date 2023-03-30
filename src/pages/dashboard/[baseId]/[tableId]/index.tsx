@@ -81,6 +81,11 @@ const Sidebar = () => {
           </svg>
           {table.name}
         </Link>
+        <div className="flex flex-col">
+          <button className="border-">
+
+          </button>
+        </div>
       </div>
     </div>
   );
