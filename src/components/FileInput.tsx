@@ -1,4 +1,4 @@
-const FileInput = ({}) => {
+const FileInput = () => {
   return (
     <div className="flex w-72 flex-row items-center justify-between rounded-lg font-semibold text-[#d0d0d0] ring-2 ring-[#d0d0d0]">
       <input type="file" id="test" className="hidden" />

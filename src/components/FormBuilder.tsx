@@ -8,6 +8,7 @@ import {
 } from "react-beautiful-dnd";
 import ContentEditable from "react-contenteditable";
 import { useTableStore } from "~/stores/tableStore";
+import TableField from "./TableField";
 
 resetServerContext();
 
@@ -144,6 +145,7 @@ const getListStyle = (isDraggingOver: boolean, isColumn2: boolean) => ({
 
 const FormBuilder: React.FC = () => {
   const [table] = useTableStore((state) => [state.table]);
+  console.log(table)
 
   const [data, setData] = React.useState(initialData);
 
@@ -260,7 +262,8 @@ const FormBuilder: React.FC = () => {
                                     snapshot.isDragging,
                                     provided.draggableProps.style
                                   )}
-                                  name={"Checkbox"}
+                                  type="checkbox"
+                                  name={"Alive"}
                                 />
                               );
                             }}
@@ -329,26 +332,6 @@ const FormBuilder: React.FC = () => {
   );
 };
 
-interface TableFieldProps extends HTMLProps<HTMLDivElement> {
-  name: string;
-}
 
-const TableField = React.forwardRef<HTMLDivElement, TableFieldProps>(
-  ({ name, ...props }, ref) => {
-    return (
-      <div {...props} ref={ref} className=" flex items-center gap-x-2">
-        <span>
-          <Image
-            src="/field-icons/check-square.svg"
-            width={16}
-            height={16}
-            alt="Check square icon"
-          />
-        </span>
-        {name}
-      </div>
-    );
-  }
-);
 
 export default FormBuilder;
