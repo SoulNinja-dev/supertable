@@ -22,12 +22,22 @@ const TablePage: NextPage<{ baseId: string; tableId: string }> = ({
   const router = useRouter();
   const [setTable] = useTableStore((state) => [state.setTable]);
 
-  // const { data } = api.base.getTable.useQuery(
-  //   { baseId, tableId },
+  // const { data: res } = api.table.getTable.useQuery(
+  //   { tableId },
   //   {
   //     retry: false,
   //   }
   // );
+
+  // console.log("GET TABLE: ", res);
+
+  // const { data } = api.table.editTable.useQuery({
+  //   id: tableId,
+  //   seoImage: "urmomlol.png",
+  //   theme: "blue",
+  // });
+
+  // console.log("EDIT TABLE: ", data);
 
   // useEffect(() => {
   //   if (data) {
@@ -43,12 +53,10 @@ const TablePage: NextPage<{ baseId: string; tableId: string }> = ({
       <div className="flex h-screen bg-white font-inter text-black">
         <Sidebar />
         <main className="flex-1">
-          
-            {/* Topbar */}
-            <div className="w-full-bg-white h-14 border-b-2 border-gray-300"></div>
+          {/* Topbar */}
+          <div className="w-full-bg-white h-14 border-b-2 border-gray-300"></div>
 
-            <FormBuilder />
-         
+          <FormBuilder />
         </main>
       </div>
     </div>
