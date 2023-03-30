@@ -21,7 +21,7 @@ getTables{baseId} -> get tables under base (id, name, desc)
 getTable{tableId} -> get entire table data ( fields id, and form ids included )
 editTable{tableId} -> edit a table's settings etc
 
-getForms{tableId} -> use getTable instead
+getForms{tableId} -> get forms under tableId
 getForm{formId} -> get form deets
 createForm{tableId} -> create a form on a table
 editForm{formId} -> edit a form

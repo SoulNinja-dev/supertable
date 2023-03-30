@@ -45,6 +45,53 @@ const TablePage: NextPage<{ baseId: string; tableId: string }> = ({
   //   }
   // }, [data]);
 
+  // form stuff
+
+  // create form
+  // const { data: createForm } = api.form.createForm.useQuery({
+  //   tableId: tableId,
+  //   baseId: baseId,
+  //   title: "users form",
+  //   description: "beta users not sigma :(",
+  // });
+
+  // console.log("CREATE FORM: ", createForm);
+
+  // get forms
+  // const { data: getForms } = api.form.getForms.useQuery({
+  //   tableId: tableId,
+  // });
+  // console.log("GET FORMS: ", getForms);
+
+  // get form
+  // const { data: getForm } = api.form.getForm.useQuery({
+  //   formId: "clfvmin74000g5iozftoaq8r1",
+  // });
+  // console.log("GET FORM: ", getForm);
+
+  // edit form
+  // const { data: editForm } = api.form.editForm.useQuery(
+  //   {
+  //     formId: "clfvmin74000g5iozftoaq8r1",
+  //     title: "not users form",
+  //     slug: "not-users-form",
+  //   },
+  //   {
+  //     retry: false,
+  //   }
+  // );
+  // console.log("EDIT FORM: ", editForm);
+
+  // delete form :pray:
+  const { data: deleteForm } = api.form.deleteForm.useQuery(
+    {
+      formId: "clfvmjy32000m5ioz4clyzpyl",
+      baseId: baseId,
+    },
+    { retry: false }
+  );
+  console.log("DELETE FORM: ", deleteForm);
+
   return (
     <div className="h-screen">
       <Head>

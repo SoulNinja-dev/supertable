@@ -1,140 +1,209 @@
 import { z } from "zod";
-import axios from "axios";
 
-/*
-getBases -> get bases under user account
-editBase{baseId} -> edit a base's settings etc
-*/
-
-import {
-  createTRPCRouter,
-  publicProcedure,
-  protectedProcedure,
-} from "~/server/api/trpc";
+import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 import { TRPCError } from "@trpc/server";
-import getAccessToken from "~/utils/getAccessToken";
-import { FullTableObjectValidator } from "~/models/table";
 
-const BaseObjectValidator = z.object({
-  id: z.string(),
-  name: z.string(),
-  permissionLevel: z.string(),
-});
-
-const TableObjectValidator = z.object({
-  id: z.string(),
-  name: z.string(),
-  description: z.string().optional(),
-});
-
-export type BaseObject = z.infer<typeof BaseObjectValidator>;
-export type TableObject = z.infer<typeof TableObjectValidator>;
-
-export const baseRouter = createTRPCRouter({
-  getBases: protectedProcedure
-    .output(
-      z.object({
-        bases: z.array(BaseObjectValidator),
-      })
-    )
-    .query(async ({ ctx }) => {
-      const accessToken = await getAccessToken(ctx);
-      try {
-        const res = await axios.get("https://api.airtable.com/v0/meta/bases", {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        });
-
-        return res.data;
-      } catch (e: any) {
-        console.log(JSON.stringify(e));
-        throw new TRPCError({
-          message: "Error fetching bases",
-          code: "BAD_REQUEST",
-        });
-      }
-    }),
-
-  getTables: protectedProcedure
+export const formRouter = createTRPCRouter({
+  getForms: protectedProcedure
     .input(
       z.object({
-        baseId: z.string(),
-      })
-    )
-    .output(
-      z.object({
-        tables: z.array(TableObjectValidator),
+        tableId: z.string(),
       })
     )
     .query(async ({ ctx, input }) => {
-      const accessToken = await getAccessToken(ctx);
-      const baseId = input.baseId;
-      try {
-        const res = await axios.get(
-          `https://api.airtable.com/v0/meta/bases/${baseId}/tables`,
-          {
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
-            },
-          }
-        );
-        const tables = res.data.tables.map(
-          (table: { id: string; name: string; description?: string }) => ({
-            id: table.id,
-            name: table.name,
-            description: table.description,
-          })
-        );
-        return { tables };
-      } catch (e: any) {
-        console.log(JSON.stringify(e));
-        throw new TRPCError({
-          message: "Error fetching bases",
-          code: "BAD_REQUEST",
-        });
-      }
+      const forms: {
+        id: string;
+        slug: string | null;
+        title: string | null;
+        description: string | null;
+      }[] = await ctx.prisma.form.findMany({
+        where: {
+          tableId: input.tableId,
+        },
+        select: {
+          id: true,
+          slug: true,
+          title: true,
+          description: true,
+        },
+      });
+      console.log("GET FORMS:", forms);
+      return { forms };
     }),
 
-  getTable: protectedProcedure
+  getForm: protectedProcedure
+    .input(
+      z.object({
+        formId: z.string(),
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      const formId = input.formId;
+
+      const form: any = await ctx.prisma.form.findUnique({
+        where: {
+          id: formId,
+        },
+      });
+      if (!form) {
+        return new TRPCError({
+          code: "NOT_FOUND",
+          message: "Form not found",
+        });
+      }
+      return { form };
+    }),
+
+  createForm: protectedProcedure
     .input(
       z.object({
         baseId: z.string(),
         tableId: z.string(),
+        title: z.string().optional(),
+        description: z.string().optional(),
+        slug: z.string().optional(),
+        seoDescription: z.string().optional(),
+        seoImage: z.string().optional(),
+        headerImage: z.string().optional(),
+        connectWallet: z.boolean().optional(),
+        submitMsg: z.string().optional(),
+        contraints: z.string().optional(),
       })
     )
-    .output(FullTableObjectValidator)
     .query(async ({ ctx, input }) => {
-      const accessToken = await getAccessToken(ctx);
+      const userId = await ctx.prisma.base.findUnique({
+        where: {
+          id: input.baseId,
+        },
+        select: {
+          userId: true,
+        },
+      });
 
-      const baseId = input.baseId;
-      try {
-        const res = await axios.get<{ tables: any[] }>(
-          `https://api.airtable.com/v0/meta/bases/${baseId}/tables`,
-          {
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
-            },
-          }
-        );
-
-        const table = res.data.tables.find(
-          (table) => table.id === input.tableId
-        );
-
-        if (!table) {
-          throw new TRPCError({
-            message: "Table not found",
-            code: "BAD_REQUEST",
-          });
-        }
-
-        return table;
-      } catch (e: any) {
-        console.log(JSON.stringify(e));
+      if (!userId) {
         throw new TRPCError({
-          message: "Error fetching bases",
-          code: "BAD_REQUEST",
+          code: "NOT_FOUND",
+          message: "Base not found",
+        });
+      }
+
+      if (userId.userId !== ctx.session.user.id) {
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "naughty behavior",
+        });
+      }
+      const form = await ctx.prisma.form.create({
+        data: {
+          tableId: input.tableId,
+          title: input.title,
+          description: input.description,
+          slug: input.slug,
+          seoDescription: input.seoDescription,
+          seoImage: input.seoImage,
+          headerImage: input.headerImage,
+          connectWallet: input.connectWallet,
+          submitMsg: input.submitMsg,
+          contraints: input.contraints,
+        },
+      });
+      console.log("CREATED FORM: ", form);
+
+      return { form };
+    }),
+
+  editForm: protectedProcedure
+    .input(
+      z.object({
+        formId: z.string(),
+        title: z.string().optional(),
+        description: z.string().optional(),
+        slug: z.string().optional(),
+        seoDescription: z.string().optional(),
+        seoImage: z.string().optional(),
+        headerImage: z.string().optional(),
+        connectWallet: z.boolean().optional(),
+        submitMsg: z.string().optional(),
+        contraints: z.string().optional(),
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      try {
+        const form = await ctx.prisma.form.update({
+          where: {
+            id: input.formId,
+          },
+          data: {
+            title: input.title,
+            description: input.description,
+            slug: input.slug,
+            seoDescription: input.seoDescription,
+            seoImage: input.seoImage,
+            headerImage: input.headerImage,
+            connectWallet: input.connectWallet,
+            submitMsg: input.submitMsg,
+            contraints: input.contraints,
+          },
+        });
+
+        console.log("EDITED FORM: ", form);
+        return { success: true };
+      } catch (e) {
+        console.log("EDIT FORM ERROR: ", e);
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Error editing form",
+        });
+      }
+    }),
+
+  deleteForm: protectedProcedure
+    .input(
+      z.object({
+        formId: z.string(),
+        baseId: z.string(),
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      // check if user owns form
+      // get base id from user
+      // get user id and match with session.user.id
+
+      const userId = await ctx.prisma.base.findUnique({
+        where: {
+          id: input.baseId,
+        },
+        select: {
+          userId: true,
+        },
+      });
+
+      if (!userId) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Base not found",
+        });
+      }
+
+      if (userId.userId !== ctx.session.user.id) {
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "naughty behavior",
+        });
+      }
+
+      try {
+        await ctx.prisma.form.delete({
+          where: {
+            id: input.formId,
+          },
+        });
+        return { success: true };
+      } catch (e) {
+        console.log("DELETE FORM ERROR: ", e);
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Error deleting form",
         });
       }
     }),
