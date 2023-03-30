@@ -92,7 +92,7 @@ export const tableRouter = createTRPCRouter({
       for (const table of existingTables) {
         const airtableTable = tables.find((t) => t.id === table.airtable);
         if (airtableTable) {
-          await prisma.base.update({
+          await prisma.table.update({
             where: {
               id: table.id,
             },
@@ -103,7 +103,7 @@ export const tableRouter = createTRPCRouter({
         }
       }
 
-      const filtered = await prisma.table.findMany({
+      const filtered: TableObject[] = await prisma.table.findMany({
         where: {
           baseId,
           airtable: {
