@@ -41,8 +41,8 @@ export const tableRouter = createTRPCRouter({
         .then((base) => {
           if (!base)
             throw new TRPCError({
-              code: "INTERNAL_SERVER_ERROR",
-              message: "Base not found",
+              code: "BAD_REQUEST",
+              message: "base not found - wrong baseId",
             });
           return base.airtable;
         });
@@ -120,22 +120,27 @@ export const tableRouter = createTRPCRouter({
       return { tables: filtered };
     }),
 
-  getTable: protectedProcedure.query(() => {
-    return {
-      id: "123",
-      name: "test",
-      description: "test",
-      fields: [
-        {
-          id: "123",
-          name: "test",
-          type: "text",
-          description: "test",
-          options: [],
+  getTable: protectedProcedure
+    .input(
+      z.object({
+        tableId: z.string(),
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      const table = await ctx.prisma.table.findUnique({
+        where: {
+          id: input.tableId,
         },
-      ],
-    };
-  }),
+        include: {
+          fields: true,
+          forms: true,
+        },
+      });
+      if (!table) {
+        return null;
+      }
+      return { table };
+    }),
 
   editTable: protectedProcedure
     .input(
@@ -155,7 +160,7 @@ export const tableRouter = createTRPCRouter({
       const prisma = ctx.prisma;
       const id = input.id;
 
-      await prisma.base.update({
+      await prisma.table.update({
         where: {
           id,
         },

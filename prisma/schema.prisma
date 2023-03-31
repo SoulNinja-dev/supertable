@@ -110,7 +110,7 @@ model Form {
   seoDescription String?
   seoImage       String?
   headerImage    String?
-  connectWallet  Boolean?
+  connectWallet  Boolean @default(false)
   theme          String?
   submitMsg      String?
   contraints     String?

@@ -22,18 +22,75 @@ const TablePage: NextPage<{ baseId: string; tableId: string }> = ({
   const router = useRouter();
   const [setTable] = useTableStore((state) => [state.setTable]);
 
-  // const { data } = api.base.getTable.useQuery(
-  //   { baseId, tableId },
+  // const { data: res } = api.table.getTable.useQuery(
+  //   { tableId },
   //   {
   //     retry: false,
   //   }
   // );
+
+  // console.log("GET TABLE: ", res);
+
+  // const { data } = api.table.editTable.useQuery({
+  //   id: tableId,
+  //   seoImage: "urmomlol.png",
+  //   theme: "blue",
+  // });
+
+  // console.log("EDIT TABLE: ", data);
 
   // useEffect(() => {
   //   if (data) {
   //     setTable(data);
   //   }
   // }, [data]);
+
+  // form stuff
+
+  // create form
+  // const { data: createForm } = api.form.createForm.useQuery({
+  //   tableId: tableId,
+  //   baseId: baseId,
+  //   title: "users form",
+  //   description: "beta users not sigma :(",
+  // });
+
+  // console.log("CREATE FORM: ", createForm);
+
+  // get forms
+  // const { data: getForms } = api.form.getForms.useQuery({
+  //   tableId: tableId,
+  // });
+  // console.log("GET FORMS: ", getForms);
+
+  // get form
+  // const { data: getForm } = api.form.getForm.useQuery({
+  //   formId: "clfvmin74000g5iozftoaq8r1",
+  // });
+  // console.log("GET FORM: ", getForm);
+
+  // edit form
+  // const { data: editForm } = api.form.editForm.useQuery(
+  //   {
+  //     formId: "clfvmin74000g5iozftoaq8r1",
+  //     title: "not users form",
+  //     slug: "not-users-form",
+  //   },
+  //   {
+  //     retry: false,
+  //   }
+  // );
+  // console.log("EDIT FORM: ", editForm);
+
+  // delete form :pray:
+  const { data: deleteForm } = api.form.deleteForm.useQuery(
+    {
+      formId: "clfvmjy32000m5ioz4clyzpyl",
+      baseId: baseId,
+    },
+    { retry: false }
+  );
+  console.log("DELETE FORM: ", deleteForm);
 
   return (
     <div className="h-screen">
@@ -43,12 +100,10 @@ const TablePage: NextPage<{ baseId: string; tableId: string }> = ({
       <div className="flex h-screen bg-white font-inter text-black">
         <Sidebar />
         <main className="flex-1">
-          
-            {/* Topbar */}
-            <div className="w-full-bg-white h-14 border-b-2 border-gray-300"></div>
+          {/* Topbar */}
+          <div className="w-full-bg-white h-14 border-b-2 border-gray-300"></div>
 
-            <FormBuilder />
-         
+          <FormBuilder />
         </main>
       </div>
     </div>
