@@ -19,3 +19,11 @@ export const FormObjectValidator = z.object({
 })
 
 export type FormObject = z.infer<typeof FormObjectValidator>;
+
+export const FullFormObjectValidator = FormObjectValidator.and(z.object({
+  fields: z.array(z.object({
+    fieldId: z.string(),
+  }))
+}))
+
+export type FullFormObject = z.infer<typeof FullFormObjectValidator>;

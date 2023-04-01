@@ -10,6 +10,7 @@ import dynamic from "next/dynamic";
 import { authOptions } from "~/server/auth";
 import { useTableStore } from "~/stores/tableStore";
 import { api } from "~/utils/api";
+import { useFormStore } from "~/stores/formStore";
 
 const FormBuilder = dynamic(() => import("~/components/FormBuilder"), {
   ssr: false,
@@ -20,11 +21,12 @@ const TablePage: NextPage<{ baseId: string; tableId: string }> = ({
   tableId,
 }) => {
   const router = useRouter();
-  const [setTable, setLoading] = useTableStore((state) => [state.setTable, state.setLoading]);
+  const [setTable, setLoading] = useTableStore((state) => [
+    state.setTable,
+    state.setLoading,
+  ]);
 
-  const { data: tableRes } = api.table.getTable.useQuery(
-    { tableId },
-  );
+  const { data: tableRes } = api.table.getTable.useQuery({ tableId });
 
   // console.log("GET TABLE: ", res);
 
@@ -80,14 +82,13 @@ const TablePage: NextPage<{ baseId: string; tableId: string }> = ({
   // console.log("EDIT FORM: ", editForm);
 
   // delete form :pray:
-  
+
   useEffect(() => {
     if (tableRes) {
       setTable(tableRes);
       setLoading(false);
     }
-  }, [tableRes])
-
+  }, [tableRes]);
 
   return (
     <div className="h-screen">
@@ -110,9 +111,33 @@ const TablePage: NextPage<{ baseId: string; tableId: string }> = ({
 const Sidebar = () => {
   const router = useRouter();
   const [table] = useTableStore((state) => [state.table]);
+  const [setForm] = useFormStore((state) => [state.setForm])
+  const { data: forms, refetch: refetchForms } = api.form.getForms.useQuery({
+    tableId: router.query.tableId as string,
+  });
+  const { mutateAsync } = api.form.createForm.useMutation();
+  const { mutateAsync: fetchCurrentForm } = api.form.getForm.useMutation();
+  
+
+  const handleCreateForm = async () => {
+    const res = await mutateAsync({
+      tableId: router.query.tableId as string,
+      baseId: router.query.baseId as string,
+      title: "Untitled Form",
+      description: "No description",
+    });
+    await refetchForms();
+  };
+
+  const handleSelectForm = async (formId: string) => {
+    const currentForm = await fetchCurrentForm({formId});
+    setForm(currentForm);
+
+  };
+
   return (
     <div className="flex h-full w-64 flex-col items-center justify-between border-r-2 border-gray-300 bg-white">
-      <div className="flex h-20 w-full flex-col justify-center px-8 pt-20">
+      <div className="flex h-20 w-full flex-col justify-start px-4 pt-20">
         <Link
           className="flex cursor-pointer items-center text-lg"
           href="/dashboard"
@@ -133,10 +158,37 @@ const Sidebar = () => {
           </svg>
           {table.name}
         </Link>
-        <div className="flex flex-col">
-          <button className="border-">
-
+        <div className="mt-10 flex flex-col items-start gap-y-5">
+          <button
+            className="flex items-center gap-x-2 rounded-lg border-[2px] border-black px-4 py-2 w-full"
+            onClick={handleCreateForm}
+          >
+            <Image src="/plus.svg" width={20} height={20} alt="Adding" />
+            Create Form
           </button>
+          {forms?.map((form) => (
+            <button
+              className="flex items-center gap-x-2 rounded-lg py-2 hover:bg-gray-100 transition-colors duration-100 ease-in-out w-full px-4"
+              key={form.id}
+              onClick={() => handleSelectForm(form.id)}
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                fill="none"
+                stroke="currentColor"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                className="feather feather-table"
+                viewBox="0 0 24 24"
+              >
+                <path d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v18m0 0h10a2 2 0 002-2V9M9 21H5a2 2 0 01-2-2V9m0 0h18"></path>
+              </svg>
+              {form.title}
+            </button>
+          ))}
         </div>
       </div>
     </div>

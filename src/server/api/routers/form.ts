@@ -2,6 +2,7 @@ import { z } from "zod";
 
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 import { TRPCError } from "@trpc/server";
+import { FormObjectValidator, FullFormObjectValidator } from "~/models/form";
 
 export const formRouter = createTRPCRouter({
   getForms: protectedProcedure
@@ -9,6 +10,16 @@ export const formRouter = createTRPCRouter({
       z.object({
         tableId: z.string(),
       })
+    )
+    .output(
+      z.array(
+        z.object({
+          id: z.string(),
+          slug: z.string().nullable(),
+          title: z.string().nullable(),
+          description: z.string().nullable(),
+        })
+      )
     )
     .query(async ({ ctx, input }) => {
       const forms: {
@@ -27,8 +38,8 @@ export const formRouter = createTRPCRouter({
           description: true,
         },
       });
-      console.log("GET FORMS:", forms);
-      return { forms };
+      
+      return forms;
     }),
 
   getForm: protectedProcedure
@@ -37,13 +48,23 @@ export const formRouter = createTRPCRouter({
         formId: z.string(),
       })
     )
-    .query(async ({ ctx, input }) => {
+    .output(
+      FullFormObjectValidator
+    )
+    .mutation(async ({ ctx, input }) => {
       const formId = input.formId;
 
       const form: any = await ctx.prisma.form.findUnique({
         where: {
           id: formId,
         },
+        include: {
+          fields: {
+            select: {
+              fieldId: true,
+            }
+          },
+        }
       });
       if (!form) {
         return new TRPCError({
@@ -51,7 +72,7 @@ export const formRouter = createTRPCRouter({
           message: "Form not found",
         });
       }
-      return { form };
+      return form;
     }),
 
   createForm: protectedProcedure
@@ -70,7 +91,10 @@ export const formRouter = createTRPCRouter({
         contraints: z.string().optional(),
       })
     )
-    .query(async ({ ctx, input }) => {
+    .output(
+      FormObjectValidator
+    )
+    .mutation(async ({ ctx, input }) => {
       const userId = await ctx.prisma.base.findUnique({
         where: {
           id: input.baseId,
@@ -109,7 +133,7 @@ export const formRouter = createTRPCRouter({
       });
       console.log("CREATED FORM: ", form);
 
-      return { form };
+      return form;
     }),
 
   editForm: protectedProcedure
