@@ -20,7 +20,7 @@ const TablePage: NextPage<{ baseId: string; tableId: string }> = ({
   tableId,
 }) => {
   const router = useRouter();
-  const [setTable] = useTableStore((state) => [state.setTable]);
+  const [setTable, setLoading] = useTableStore((state) => [state.setTable, state.setLoading]);
 
   const { data: tableRes } = api.table.getTable.useQuery(
     { tableId },
@@ -84,6 +84,7 @@ const TablePage: NextPage<{ baseId: string; tableId: string }> = ({
   useEffect(() => {
     if (tableRes) {
       setTable(tableRes);
+      setLoading(false);
     }
   }, [tableRes])
 

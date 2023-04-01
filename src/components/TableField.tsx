@@ -11,7 +11,7 @@ interface TableFieldProps extends HTMLProps<HTMLDivElement> {
 const icons: Record<FieldType, string> = {
   checkbox: "/field-icons/check-square.svg",
   currency: "/field-icons/currency.svg",
-  attachment: "/field-icons/file.svg",
+  multipleAttachments: "/field-icons/file.svg",
   duration: "/field-icons/duration.svg",
   url: "/field-icons/link.svg",
   multilineText: "/field-icons/long-text.svg",

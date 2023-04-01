@@ -1,11 +1,11 @@
 import { create } from 'zustand';
-import { TableObject } from '~/models/table';
+import { FullTableObject } from '~/models/table';
 
 interface TableStore {
   loading: boolean;
   setLoading: (loading: boolean) => void;
-  table: TableObject;
-  setTable: (table: TableObject) => void;
+  table: FullTableObject;
+  setTable: (table: FullTableObject) => void;
 }
 
 export const useTableStore = create<TableStore>()(
@@ -15,6 +15,13 @@ export const useTableStore = create<TableStore>()(
       name: '',
       description: '',
       fields: [],
+      airtable: '',
+      forms: [],
+      updatedAt: new Date(),
+      createdAt: new Date(),
+      theme: '',
+      seoImage: '',
+      seoDescription: '',
     },
     setTable: (table) => set({ table }),
     loading: true,

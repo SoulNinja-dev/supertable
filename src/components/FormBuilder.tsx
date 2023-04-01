@@ -12,26 +12,69 @@ import TableField from "./TableField";
 
 resetServerContext();
 
-interface KanbanColumnProps {
-  children: React.ReactNode;
-}
 
-export const TableFieldsColumn: React.FC<KanbanColumnProps> = ({
-  children,
-}) => {
+
+export const TableFieldsColumn: React.FC = () => {
+  const [table, loading] = useTableStore((state) => [state.table, state.loading]);
   const [winReady, setwinReady] = useState(false);
+
   useEffect(() => {
     setwinReady(true);
   }, []);
+
   return (
     <div className="flex flex-col items-start gap-y-3">
       {" "}
-      {winReady && children}
+      {winReady && !loading && !!table.id && (
+         <Droppable droppableId={"tableFields"}>
+         {(provided, snapshot) => (
+           <div
+             ref={provided.innerRef}
+             style={getListStyle(
+               snapshot.isDraggingOver,
+               false
+             )}
+             {...provided.droppableProps}
+             className="relative flex flex-col space-y-4"
+           >
+             {table.fields.map(({ id, name, type, options }, index) => {
+               
+
+               return (
+                 <Draggable
+                   key={id}
+                   draggableId={id}
+                   index={index}
+                 >
+                   {(provided, snapshot) => {
+                     return (
+                       <TableField
+                         ref={provided.innerRef}
+                         {...provided.draggableProps}
+                         {...provided.dragHandleProps}
+                         style={getTableFieldStyle(
+                           snapshot.isDragging,
+                           provided.draggableProps.style
+                         )}
+                         type={type}
+                         name={name}
+                       />
+                     );
+                   }}
+                 </Draggable>
+               );
+             })}
+
+             {provided.placeholder}
+           </div>
+         )}
+       </Droppable>
+      )}
     </div>
   );
 };
 
-export const FormFieldsColumn: React.FC<KanbanColumnProps> = ({ children }) => {
+export const FormFieldsColumn: React.FC = () => {
   const [winReady, setwinReady] = useState(false);
   const [formName, setFormName] = useState("Form");
   const [formDescription, setFormDescription] = useState("Add description to this form")
@@ -70,7 +113,54 @@ export const FormFieldsColumn: React.FC<KanbanColumnProps> = ({ children }) => {
         />
       </div>
 
-      {winReady && children}
+      {/* {winReady && children} */}
+      {
+        winReady && (
+          <Droppable droppableId={"formFields"}>
+                {(provided, snapshot) => (
+                  <div
+                    ref={provided.innerRef}
+                    style={getListStyle(
+                      snapshot.isDraggingOver,
+                      true
+                    )}
+                    {...provided.droppableProps}
+                    className="flex flex-col space-y-4"
+                  >
+                    {/* {items.map((item, index) => {
+                      if (!item) return null;
+
+                      return (
+                        <Draggable
+                          key={item.id}
+                          draggableId={item.id}
+                          index={index}
+                        >
+                          {(provided, snapshot) => {
+                            return (
+                              <div
+                                ref={provided.innerRef}
+                                {...provided.draggableProps}
+                                {...provided.dragHandleProps}
+                                style={getFormFieldStyle(
+                                  snapshot.isDragging,
+                                  provided.draggableProps.style
+                                )}
+                              >
+                                {item.content}
+                              </div>
+                            );
+                          }}
+                        </Draggable>
+                      );
+                    })} */}
+
+                    {provided.placeholder}
+                  </div>
+                )}
+              </Droppable>
+        )
+      }
     </div>
   );
 };
@@ -219,113 +309,17 @@ const FormBuilder: React.FC = () => {
   return (
     <DragDropContext onDragEnd={onDragEnd}>
       <div className="flex h-full bg-sidebar">
-        {data.columnOrder.map((columnId) => {
-          const column = data.columns[columnId];
-          if (!column) return null;
-          const items = column.itemIds
-            .map((itemId) => data.items[itemId])
-            .filter((item) => item !== undefined) as ItemType[];
+      
 
-          const isFormFieldsColumn = column.id === "formFields";
+      
+              <TableFieldsColumn />
+               
+       
 
-          if (column.id === "tableFields") {
-            return (
-              <TableFieldsColumn key={column.id}>
-                <Droppable droppableId={column.id}>
-                  {(provided, snapshot) => (
-                    <div
-                      ref={provided.innerRef}
-                      style={getListStyle(
-                        snapshot.isDraggingOver,
-                        isFormFieldsColumn
-                      )}
-                      {...provided.droppableProps}
-                      className="relative flex flex-col space-y-4"
-                    >
-                      {items.map((item, index) => {
-                        if (!item) return null;
-
-                        return (
-                          <Draggable
-                            key={item.id}
-                            draggableId={item.id}
-                            index={index}
-                          >
-                            {(provided, snapshot) => {
-                              return (
-                                <TableField
-                                  ref={provided.innerRef}
-                                  {...provided.draggableProps}
-                                  {...provided.dragHandleProps}
-                                  style={getTableFieldStyle(
-                                    snapshot.isDragging,
-                                    provided.draggableProps.style
-                                  )}
-                                  type="checkbox"
-                                  name={"Alive"}
-                                />
-                              );
-                            }}
-                          </Draggable>
-                        );
-                      })}
-
-                      {provided.placeholder}
-                    </div>
-                  )}
-                </Droppable>
-              </TableFieldsColumn>
-            );
-          }
-
-          return (
-            <FormFieldsColumn key={columnId}>
-              <Droppable droppableId={column.id}>
-                {(provided, snapshot) => (
-                  <div
-                    ref={provided.innerRef}
-                    style={getListStyle(
-                      snapshot.isDraggingOver,
-                      isFormFieldsColumn
-                    )}
-                    {...provided.droppableProps}
-                    className="flex flex-col space-y-4"
-                  >
-                    {items.map((item, index) => {
-                      if (!item) return null;
-
-                      return (
-                        <Draggable
-                          key={item.id}
-                          draggableId={item.id}
-                          index={index}
-                        >
-                          {(provided, snapshot) => {
-                            return (
-                              <div
-                                ref={provided.innerRef}
-                                {...provided.draggableProps}
-                                {...provided.dragHandleProps}
-                                style={getFormFieldStyle(
-                                  snapshot.isDragging,
-                                  provided.draggableProps.style
-                                )}
-                              >
-                                {item.content}
-                              </div>
-                            );
-                          }}
-                        </Draggable>
-                      );
-                    })}
-
-                    {provided.placeholder}
-                  </div>
-                )}
-              </Droppable>
-            </FormFieldsColumn>
-          );
-        })}
+        
+            <FormFieldsColumn />
+              
+         
       </div>
     </DragDropContext>
   );
