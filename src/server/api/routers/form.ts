@@ -151,7 +151,7 @@ export const formRouter = createTRPCRouter({
         contraints: z.string().optional(),
       })
     )
-    .query(async ({ ctx, input }) => {
+    .mutation(async ({ ctx, input }) => {
       try {
         const form = await ctx.prisma.form.update({
           where: {
@@ -169,8 +169,8 @@ export const formRouter = createTRPCRouter({
             contraints: input.contraints,
           },
         });
-
-        console.log("EDITED FORM: ", form);
+        
+        
         return { success: true };
       } catch (e) {
         console.log("EDIT FORM ERROR: ", e);

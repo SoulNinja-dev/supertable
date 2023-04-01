@@ -1,5 +1,5 @@
 import Image from "next/image";
-import React, { HTMLProps, useEffect, useState } from "react";
+import React, { HTMLProps, useEffect, useMemo, useState } from "react";
 import {
   DragDropContext,
   Droppable,
@@ -7,15 +7,25 @@ import {
   resetServerContext,
 } from "react-beautiful-dnd";
 import ContentEditable from "react-contenteditable";
+import { useDebounceCallback } from "~/hooks/useDelayedRequest";
+import { useFormStore } from "~/stores/formStore";
 import { useTableStore } from "~/stores/tableStore";
+import { api } from "~/utils/api";
 import TableField from "./TableField";
 
 resetServerContext();
 
-
-
 export const TableFieldsColumn: React.FC = () => {
-  const [table, loading] = useTableStore((state) => [state.table, state.loading]);
+  const [table, loading] = useTableStore((state) => [
+    state.table,
+    state.loading,
+  ]);
+  const [currentForm] = useFormStore((state) => [state.form]);
+  const formFields = useMemo(
+    () => currentForm.fields.map((field) => field.fieldId),
+    [currentForm.fields]
+  );
+
   const [winReady, setwinReady] = useState(false);
 
   useEffect(() => {
@@ -26,49 +36,42 @@ export const TableFieldsColumn: React.FC = () => {
     <div className="flex flex-col items-start gap-y-3">
       {" "}
       {winReady && !loading && !!table.id && (
-         <Droppable droppableId={"tableFields"}>
-         {(provided, snapshot) => (
-           <div
-             ref={provided.innerRef}
-             style={getListStyle(
-               snapshot.isDraggingOver,
-               false
-             )}
-             {...provided.droppableProps}
-             className="relative flex flex-col space-y-4"
-           >
-             {table.fields.map(({ id, name, type, options }, index) => {
-               
+        <Droppable droppableId={"tableFields"}>
+          {(provided, snapshot) => (
+            <div
+              ref={provided.innerRef}
+              style={getListStyle(snapshot.isDraggingOver, false)}
+              {...provided.droppableProps}
+              className="relative flex flex-col space-y-4"
+            >
+              {table.fields
+                .filter(({ id }) => !formFields.includes(id))
+                .map(({ id, name, type, options }, index) => {
+                  return (
+                    <Draggable key={id} draggableId={id} index={index}>
+                      {(provided, snapshot) => {
+                        return (
+                          <TableField
+                            ref={provided.innerRef}
+                            {...provided.draggableProps}
+                            {...provided.dragHandleProps}
+                            style={getTableFieldStyle(
+                              snapshot.isDragging,
+                              provided.draggableProps.style
+                            )}
+                            type={type}
+                            name={name}
+                          />
+                        );
+                      }}
+                    </Draggable>
+                  );
+                })}
 
-               return (
-                 <Draggable
-                   key={id}
-                   draggableId={id}
-                   index={index}
-                 >
-                   {(provided, snapshot) => {
-                     return (
-                       <TableField
-                         ref={provided.innerRef}
-                         {...provided.draggableProps}
-                         {...provided.dragHandleProps}
-                         style={getTableFieldStyle(
-                           snapshot.isDragging,
-                           provided.draggableProps.style
-                         )}
-                         type={type}
-                         name={name}
-                       />
-                     );
-                   }}
-                 </Draggable>
-               );
-             })}
-
-             {provided.placeholder}
-           </div>
-         )}
-       </Droppable>
+              {provided.placeholder}
+            </div>
+          )}
+        </Droppable>
       )}
     </div>
   );
@@ -76,12 +79,19 @@ export const TableFieldsColumn: React.FC = () => {
 
 export const FormFieldsColumn: React.FC = () => {
   const [winReady, setwinReady] = useState(false);
-  const [formName, setFormName] = useState("Form");
-  const [formDescription, setFormDescription] = useState("Add description to this form")
+  const [currentForm, setForm] = useFormStore((state) => [
+    state.form,
+    state.setForm,
+  ]);
+  const debounceFormTitleSet = useDebounceCallback(500);
+  const debounceFormDescriptionSet = useDebounceCallback(500);
+  const { data: newCurrentForm, mutateAsync } = api.form.editForm.useMutation();
+  const [updateTableForm] = useTableStore((state) => [state.updateTableForm]);
 
   useEffect(() => {
     setwinReady(true);
   }, []);
+
   return (
     <div className="flex flex-1 flex-col items-center gap-y-3 ">
       {/* Cover Image */}
@@ -99,35 +109,57 @@ export const FormFieldsColumn: React.FC = () => {
         </div>
         <ContentEditable
           onChange={(e) => {
-            setFormName(e.target.value)
+            if (e.currentTarget.innerText === currentForm.title) return;
+            if (currentForm.id)
+              debounceFormTitleSet(async () => {
+                mutateAsync({
+                  formId: currentForm.id,
+                  title: e.currentTarget.innerText,
+                });
+                setForm({
+                  ...currentForm,
+                  title: e.currentTarget.innerText,
+                });
+                updateTableForm({
+                  id: currentForm.id,
+                  title: e.currentTarget.innerText,
+                });
+              });
           }}
           className="mt-4 w-full px-4 py-2 text-3xl font-semibold text-gray-500 transition-colors duration-200 ease-out hover:bg-gray-200/80 focus:bg-gray-200/60 focus:outline-gray-400/50"
-          html={formName}
+          html={currentForm.title || ""}
         />
         <ContentEditable
           onChange={(e) => {
-            setFormDescription(e.target.value)
+            if (e.currentTarget.innerText === currentForm.description) return;
+            if (currentForm.id)
+              debounceFormTitleSet(async () => {
+                mutateAsync({
+                  formId: currentForm.id,
+                  description: e.currentTarget.innerText,
+                });
+                setForm({
+                  ...currentForm,
+                  description: e.currentTarget.innerText,
+                });
+              });
           }}
           className="mt-1 w-full px-4 py-2 text-sm font-medium text-gray-500 transition-colors duration-200 ease-out hover:bg-gray-200/80 focus:bg-gray-200/60 focus:outline-gray-400/50"
-          html={formDescription}
+          html={currentForm.description || ""}
         />
       </div>
 
       {/* {winReady && children} */}
-      {
-        winReady && (
-          <Droppable droppableId={"formFields"}>
-                {(provided, snapshot) => (
-                  <div
-                    ref={provided.innerRef}
-                    style={getListStyle(
-                      snapshot.isDraggingOver,
-                      true
-                    )}
-                    {...provided.droppableProps}
-                    className="flex flex-col space-y-4"
-                  >
-                    {/* {items.map((item, index) => {
+      {winReady && (
+        <Droppable droppableId={"formFields"}>
+          {(provided, snapshot) => (
+            <div
+              ref={provided.innerRef}
+              style={getListStyle(snapshot.isDraggingOver, true)}
+              {...provided.droppableProps}
+              className="flex flex-col space-y-4"
+            >
+              {/* {items.map((item, index) => {
                       if (!item) return null;
 
                       return (
@@ -155,12 +187,11 @@ export const FormFieldsColumn: React.FC = () => {
                       );
                     })} */}
 
-                    {provided.placeholder}
-                  </div>
-                )}
-              </Droppable>
-        )
-      }
+              {provided.placeholder}
+            </div>
+          )}
+        </Droppable>
+      )}
     </div>
   );
 };
@@ -309,22 +340,12 @@ const FormBuilder: React.FC = () => {
   return (
     <DragDropContext onDragEnd={onDragEnd}>
       <div className="flex h-full bg-sidebar">
-      
+        <TableFieldsColumn />
 
-      
-              <TableFieldsColumn />
-               
-       
-
-        
-            <FormFieldsColumn />
-              
-         
+        <FormFieldsColumn />
       </div>
     </DragDropContext>
   );
 };
-
-
 
 export default FormBuilder;

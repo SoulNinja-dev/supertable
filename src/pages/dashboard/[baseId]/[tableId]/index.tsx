@@ -26,62 +26,8 @@ const TablePage: NextPage<{ baseId: string; tableId: string }> = ({
     state.setLoading,
   ]);
 
-  const { data: tableRes } = api.table.getTable.useQuery({ tableId });
-
-  // console.log("GET TABLE: ", res);
-
-  // const { data } = api.table.editTable.useQuery({
-  //   id: tableId,
-  //   seoImage: "urmomlol.png",
-  //   theme: "blue",
-  // });
-
-  // console.log("EDIT TABLE: ", data);
-
-  // useEffect(() => {
-  //   if (data) {
-  //     setTable(data);
-  //   }
-  // }, [data]);
-
-  // form stuff
-
-  // create form
-  // const { data: createForm } = api.form.createForm.useQuery({
-  //   tableId: tableId,
-  //   baseId: baseId,
-  //   title: "users form",
-  //   description: "beta users not sigma :(",
-  // });
-
-  // console.log("CREATE FORM: ", createForm);
-
-  // get forms
-  // const { data: getForms } = api.form.getForms.useQuery({
-  //   tableId: tableId,
-  // });
-  // console.log("GET FORMS: ", getForms);
-
-  // get form
-  // const { data: getForm } = api.form.getForm.useQuery({
-  //   formId: "clfvmin74000g5iozftoaq8r1",
-  // });
-  // console.log("GET FORM: ", getForm);
-
-  // edit form
-  // const { data: editForm } = api.form.editForm.useQuery(
-  //   {
-  //     formId: "clfvmin74000g5iozftoaq8r1",
-  //     title: "not users form",
-  //     slug: "not-users-form",
-  //   },
-  //   {
-  //     retry: false,
-  //   }
-  // );
-  // console.log("EDIT FORM: ", editForm);
-
-  // delete form :pray:
+  const { data: tableRes, refetch } = api.table.getTable.useQuery({ tableId });
+  const [currentForm] = useFormStore((state) => [state.form]);
 
   useEffect(() => {
     if (tableRes) {
@@ -96,10 +42,16 @@ const TablePage: NextPage<{ baseId: string; tableId: string }> = ({
         <title>Supertable | Dashboard</title>
       </Head>
       <div className="flex h-screen bg-white font-inter text-black">
-        <Sidebar />
+        <Sidebar refetchTable={refetch} />
         <main className="flex-1">
           {/* Topbar */}
-          <div className="w-full-bg-white h-14 border-b-2 border-gray-300"></div>
+          <div className="w-full-bg-white h-14 border-b-2 border-gray-300">
+            {currentForm && (
+              <div className="flex h-full items-center justify-between px-4 font-bold">
+                {currentForm.title}
+              </div>
+            )}
+          </div>
 
           <FormBuilder />
         </main>
@@ -108,16 +60,16 @@ const TablePage: NextPage<{ baseId: string; tableId: string }> = ({
   );
 };
 
-const Sidebar = () => {
+const Sidebar: React.FC<{refetchTable: () => Promise<any>}> = ({ refetchTable }) => {
   const router = useRouter();
   const [table] = useTableStore((state) => [state.table]);
-  const [setForm] = useFormStore((state) => [state.setForm])
-  const { data: forms, refetch: refetchForms } = api.form.getForms.useQuery({
-    tableId: router.query.tableId as string,
-  });
+  const [setForm] = useFormStore((state) => [state.setForm]);
+  // const { data: forms, refetch: refetchForms } = api.form.getForms.useQuery({
+  //   tableId: router.query.tableId as string,
+  // });
   const { mutateAsync } = api.form.createForm.useMutation();
-  const { mutateAsync: fetchCurrentForm } = api.form.getForm.useMutation();
-  
+  const { data: currentForm, mutateAsync: fetchCurrentForm } =
+    api.form.getForm.useMutation();
 
   const handleCreateForm = async () => {
     const res = await mutateAsync({
@@ -126,14 +78,29 @@ const Sidebar = () => {
       title: "Untitled Form",
       description: "No description",
     });
-    await refetchForms();
+    await refetchTable();
   };
 
   const handleSelectForm = async (formId: string) => {
-    const currentForm = await fetchCurrentForm({formId});
+    const currentForm = await fetchCurrentForm({ formId });
     setForm(currentForm);
-
+    // add query param formid to url
+    router.push(
+      `/dashboard/${router.query.baseId}/${router.query.tableId}?formId=${formId}`,
+      undefined,
+      { shallow: true }
+    );
   };
+
+  useEffect(() => {
+    if (!currentForm) {
+      if (router.query.formId) {
+        handleSelectForm(router.query.formId as string);
+      } else if (table.forms && table.forms[0]) {
+        handleSelectForm(table.forms[0].id);
+      }
+    }
+  }, [router.query]);
 
   return (
     <div className="flex h-full w-64 flex-col items-center justify-between border-r-2 border-gray-300 bg-white">
@@ -160,15 +127,15 @@ const Sidebar = () => {
         </Link>
         <div className="mt-10 flex flex-col items-start gap-y-5">
           <button
-            className="flex items-center gap-x-2 rounded-lg border-[2px] border-black px-4 py-2 w-full"
+            className="flex w-full items-center gap-x-2 rounded-lg border-[2px] border-black px-4 py-2"
             onClick={handleCreateForm}
           >
             <Image src="/plus.svg" width={20} height={20} alt="Adding" />
             Create Form
           </button>
-          {forms?.map((form) => (
+          {table && table.forms?.map((form) => (
             <button
-              className="flex items-center gap-x-2 rounded-lg py-2 hover:bg-gray-100 transition-colors duration-100 ease-in-out w-full px-4"
+              className="flex w-full items-center gap-x-2 rounded-lg py-2 px-4 transition-colors duration-100 ease-in-out hover:bg-gray-100"
               key={form.id}
               onClick={() => handleSelectForm(form.id)}
             >
