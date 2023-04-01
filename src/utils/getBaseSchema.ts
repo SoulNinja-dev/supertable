@@ -10,7 +10,21 @@ export default async ({
 }) => {
   try {
     const url = `https://api.airtable.com/v0/meta/bases/${baseId}/tables`;
-    const res = await axios.get(url, {
+    const res = await axios.get<{
+      tables: {
+        description: string;
+        id: string;
+        name: string;
+        primaryField: string;
+        fields: {
+          type: string;
+          id: string;
+          name: string;
+          description?: string;
+          options?: any;
+        }[];
+      }[];
+    }>(url, {
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },

@@ -46,7 +46,7 @@ export const baseRouter = createTRPCRouter({
       console.log("bases from db: ", existingBases);
 
       const existingBaseIds = existingBases.map((base) => base.airtable);
-
+      
       // filter existing base ids out of bases
       const newBases = bases.filter((base) => {
         return !existingBaseIds.includes(base.id);

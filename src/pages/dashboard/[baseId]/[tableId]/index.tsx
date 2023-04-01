@@ -22,12 +22,9 @@ const TablePage: NextPage<{ baseId: string; tableId: string }> = ({
   const router = useRouter();
   const [setTable] = useTableStore((state) => [state.setTable]);
 
-  // const { data: res } = api.table.getTable.useQuery(
-  //   { tableId },
-  //   {
-  //     retry: false,
-  //   }
-  // );
+  const { data: tableRes } = api.table.getTable.useQuery(
+    { tableId },
+  );
 
   // console.log("GET TABLE: ", res);
 
@@ -83,14 +80,13 @@ const TablePage: NextPage<{ baseId: string; tableId: string }> = ({
   // console.log("EDIT FORM: ", editForm);
 
   // delete form :pray:
-  const { data: deleteForm } = api.form.deleteForm.useQuery(
-    {
-      formId: "clfvmjy32000m5ioz4clyzpyl",
-      baseId: baseId,
-    },
-    { retry: false }
-  );
-  console.log("DELETE FORM: ", deleteForm);
+  
+  useEffect(() => {
+    if (tableRes) {
+      setTable(tableRes);
+    }
+  }, [tableRes])
+
 
   return (
     <div className="h-screen">

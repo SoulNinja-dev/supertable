@@ -1,5 +1,7 @@
+import { FieldTypeEnum } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
+import { FullTableObjectValidator, type FullTableObject } from "~/models/table";
 
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 import getAccessToken from "~/utils/getAccessToken";
@@ -48,12 +50,13 @@ export const tableRouter = createTRPCRouter({
         });
 
       const data = await getBaseSchema({ accessToken, baseId: airtable });
-
+      console.log(data)
       // cleaning airtable output
-      const tables: TableObject[] = data.map((table: TableObject) => ({
-        id: table.id,
-        name: table.name,
-        description: table.description != null ? table.description : "",
+      const tables = data.map(({ id, name, description, fields }) => ({
+        id,
+        name,
+        description,
+        fields
       }));
 
       // get current tables stored in db under the base
@@ -72,32 +75,61 @@ export const tableRouter = createTRPCRouter({
       const existingTableIds = existingTables.map((table) => table.airtable);
 
       // filter existing table ids out of tables
-      const newTables = tables.filter((table: TableObject) => {
+      const newTables = tables.filter((table) => {
         return !existingTableIds.includes(table.id);
       });
 
       // create new tables in db
-      const tableCreates = newTables.map((table: TableObject) => ({
+      const tableCreates = newTables.map((table) => ({
         airtable: table.id,
         name: table.name,
-        description: table.description != null ? table.description : "",
+        description: table.description,
         baseId,
+        fields: table.fields
       }));
 
+      
       await prisma.table.createMany({
-        data: tableCreates,
+        data: tableCreates.map(({baseId, airtable, name, fields, description}) => ({
+          baseId,
+          airtable,
+          name,
+          description: description || "",
+        })),
       });
 
       // update properties
       for (const table of existingTables) {
         const airtableTable = tables.find((t) => t.id === table.airtable);
         if (airtableTable) {
+          console.log("Update Table", airtableTable)
+     
           await prisma.table.update({
             where: {
               id: table.id,
             },
             data: {
               name: airtableTable.name,
+              fields: {
+                upsert: airtableTable.fields.map(({id, name, type, description, options}) => ({
+                  create: {
+                    id,
+                    name,
+                    type: type as FieldTypeEnum,
+                    description: description || "",
+                    options,
+                  },
+                  where: {
+                    id
+                  },
+                  update: {
+                    name,
+                    type: type as FieldTypeEnum,
+                    description,
+                    options: options,
+                  }
+                })),
+              }
             },
           });
         }
@@ -126,6 +158,9 @@ export const tableRouter = createTRPCRouter({
         tableId: z.string(),
       })
     )
+    .output(
+      FullTableObjectValidator
+    )
     .query(async ({ ctx, input }) => {
       const table = await ctx.prisma.table.findUnique({
         where: {
@@ -136,10 +171,15 @@ export const tableRouter = createTRPCRouter({
           forms: true,
         },
       });
-      if (!table) {
-        return null;
+
+      if (!table || table == null) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "table not found",
+        });
       }
-      return { table };
+
+      return table;
     }),
 
   editTable: protectedProcedure

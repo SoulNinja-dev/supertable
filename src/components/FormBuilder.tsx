@@ -145,7 +145,6 @@ const getListStyle = (isDraggingOver: boolean, isColumn2: boolean) => ({
 
 const FormBuilder: React.FC = () => {
   const [table] = useTableStore((state) => [state.table]);
-  console.log(table)
 
   const [data, setData] = React.useState(initialData);
 

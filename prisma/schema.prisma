@@ -103,7 +103,7 @@ model Form {
   updatedAt DateTime @updatedAt
 
   tableId        String
-  fields         Field[]
+  fields         FieldsOnForms[]
   title          String?
   description    String?
   slug           String?
@@ -119,107 +119,43 @@ model Form {
 }
 
 model Field {
-  id        String   @id @default(cuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id String @id
 
   tableId     String
-  formId      String?
   type        FieldTypeEnum
   name        String
   description String?
-  options     Options[]
+  options     Json?
 
-  table Table @relation(fields: [tableId], references: [id])
-  form  Form? @relation(fields: [formId], references: [id])
+  forms FieldsOnForms[]
+
+  table Table  @relation(fields: [tableId], references: [id])
 }
 
-model Options {
-  id      String @id
+model FieldsOnForms {
   fieldId String
-
-  choices     Choice[]
-  precision   PrecisionEnum?
-  dateFormat  FormatEnum?
-  resultType  ResultTypeEnum?
-  maxValue    Float?
-  minValue    Float?
-  maxLength   Int?
-  phoneFormat PhoneFormatEnum?
-  isReversed  Boolean?
-
+  formId String
+  index Int
+  form Form @relation(fields: [formId], references: [id])
   field Field @relation(fields: [fieldId], references: [id])
-}
 
-model Choice {
-  id        String   @id @default(cuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  optionsId String
-  name      String
-  color     String?
-
-  options Options @relation(fields: [optionsId], references: [id])
+  @@id([fieldId, formId])
 }
 
 enum FieldTypeEnum {
-  singleLineText
-  email
+  checkbox
+  currency
+  multipleAttachments
+  duration
   url
   multilineText
-  number
-  percent
-  currency
-  singleSelect
-  multipleSelects
-  singleCollaborator
-  multipleCollaborators
-  multipleRecordLinks
-  date
-  dateTime
+  singleLineText
   phoneNumber
-  multipleAttachments
-  checkbox
-  formula
-  createdTime
-  rollup
-  count
-  lookup
-  multipleLookupValues
-  autoNumber
-  barcode
-  rating
-  richText
-  duration
-  lastModifiedTime
-  button
-  createdBy
-  lastModifiedBy
-  externalSyncSource
-  attachment
-}
-
-enum PrecisionEnum {
-  second
-  minute
-  hour
-}
-
-enum FormatEnum {
-  friendly
-  iso
-  isoWithTime
-}
-
-enum ResultTypeEnum {
-  number
-  text
   percent
-  duration
-}
-
-enum PhoneFormatEnum {
-  V1
-  V2
+  number
+  multipleSelects
+  date
+  rating
+  email
+  singleSelect
 }
