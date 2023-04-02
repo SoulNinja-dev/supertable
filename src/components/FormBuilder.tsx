@@ -12,6 +12,7 @@ import { FullFormObject } from "~/models/form";
 import { useFormStore } from "~/stores/formStore";
 import { useTableStore } from "~/stores/tableStore";
 import { api } from "~/utils/api";
+import CoverImage from "./CoverImage";
 import TableField from "./TableField";
 
 resetServerContext();
@@ -97,12 +98,7 @@ export const FormFieldsColumn: React.FC = () => {
   return (
     <div className="flex flex-1 flex-col items-center gap-y-3 ">
       {/* Cover Image */}
-      <div className="flex h-[200px] w-full cursor-pointer items-center justify-center bg-gray-200 transition-colors duration-200 ease-out hover:bg-gray-300">
-        <div className="-mt-[50px] flex items-center gap-x-2 rounded-full bg-white px-4 py-2 text-sm text-gray-500 shadow-black drop-shadow-md">
-          <Image src="/sparkles.svg" width={20} height={20} alt="sparkles" />
-          Add a cover image
-        </div>
-      </div>
+      <CoverImage />
       {/* Form SEO/MetaData and Logo */}
       <div className="relative -top-20 -mb-20 min-h-[300px] w-full max-w-xl rounded-md bg-white px-6 pt-10 pb-5">
         <div className="flex max-w-[200px] cursor-pointer justify-center gap-x-2 rounded-xl border-2 border-dashed border-gray-300 px-3 py-6 text-gray-400 transition-colors duration-[50ms] ease-out hover:bg-gray-100">

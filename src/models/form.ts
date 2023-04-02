@@ -16,6 +16,7 @@ export const FormObjectValidator = z.object({
   theme: z.string().nullable(),
   submitMsg: z.string().nullable(),
   contraints: z.string().nullable(),
+  coverImage: z.string().nullable(),
 })
 
 export type FormObject = z.infer<typeof FormObjectValidator>;

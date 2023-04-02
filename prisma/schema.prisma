@@ -110,10 +110,11 @@ model Form {
   seoDescription String?
   seoImage       String?
   headerImage    String?
-  connectWallet  Boolean @default(false)
+  connectWallet  Boolean         @default(false)
   theme          String?
   submitMsg      String?
   contraints     String?
+  coverImage     String?
 
   table Table @relation(fields: [tableId], references: [id])
 }
@@ -129,15 +130,15 @@ model Field {
 
   forms FieldsOnForms[]
 
-  table Table  @relation(fields: [tableId], references: [id])
+  table Table @relation(fields: [tableId], references: [id])
 }
 
 model FieldsOnForms {
   fieldId String
-  formId String
-  index Int
-  form Form @relation(fields: [formId], references: [id])
-  field Field @relation(fields: [fieldId], references: [id])
+  formId  String
+  index   Int
+  form    Form   @relation(fields: [formId], references: [id])
+  field   Field  @relation(fields: [fieldId], references: [id])
 
   @@id([fieldId, formId])
 }

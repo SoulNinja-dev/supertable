@@ -90,6 +90,7 @@ export const formRouter = createTRPCRouter({
         connectWallet: z.boolean().optional(),
         submitMsg: z.string().optional(),
         contraints: z.string().optional(),
+        coverImage: z.string().optional(),
       })
     )
     .output(
@@ -130,6 +131,7 @@ export const formRouter = createTRPCRouter({
           connectWallet: input.connectWallet,
           submitMsg: input.submitMsg,
           contraints: input.contraints,
+          coverImage: input.coverImage,
         },
       });
       console.log("CREATED FORM: ", form);
@@ -150,6 +152,7 @@ export const formRouter = createTRPCRouter({
         connectWallet: z.boolean().optional(),
         submitMsg: z.string().optional(),
         contraints: z.string().optional(),
+        coverImage: z.string().optional(),
       })
     )
     .mutation(async ({ ctx, input }) => {
@@ -168,6 +171,7 @@ export const formRouter = createTRPCRouter({
             connectWallet: input.connectWallet,
             submitMsg: input.submitMsg,
             contraints: input.contraints,
+            coverImage: input.coverImage,
           },
         });
         

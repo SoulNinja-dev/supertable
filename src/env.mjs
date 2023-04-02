@@ -20,6 +20,9 @@ const server = z.object({
   ),
   AIRTABLE_CLIENT_ID: z.string().min(1),
   AIRTABLE_SECRET: z.string().min(1),
+  AWS_ACCESS_KEY: z.string().min(1),
+  AWS_SECRET_ACCESS_KEY: z.string().min(1),
+
   // Add `.min(1) on ID and SECRET if you want to make sure they're not empty
 });
 
@@ -44,6 +47,8 @@ const processEnv = {
   NEXTAUTH_URL: process.env.NEXTAUTH_URL,
   AIRTABLE_CLIENT_ID: process.env.AIRTABLE_CLIENT_ID,
   AIRTABLE_SECRET: process.env.AIRTABLE_SECRET,
+  AWS_ACCESS_KEY: process.env.AWS_ACCESS_KEY,
+  AWS_SECRET_ACCESS_KEY: process.env.AWS_SECRET_ACCESS_KEY,
   // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
 };
 

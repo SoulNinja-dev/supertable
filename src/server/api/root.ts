@@ -1,12 +1,11 @@
 import { createTRPCRouter } from "~/server/api/trpc";
-import { baseRouter } from "~/server/api/routers";
-import { tableRouter } from "~/server/api/routers";
-import { formRouter } from "~/server/api/routers";
+import { baseRouter, s3Router, tableRouter, formRouter } from "~/server/api/routers";
 
 export const appRouter = createTRPCRouter({
   base: baseRouter,
   table: tableRouter,
   form: formRouter,
+  s3: s3Router,
 });
 
 // export type definition of API
