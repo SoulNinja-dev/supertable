@@ -8,6 +8,7 @@ import {
 } from "react-beautiful-dnd";
 import ContentEditable from "react-contenteditable";
 import { useDebounceCallback } from "~/hooks/useDelayedRequest";
+import { FullFormObject } from "~/models/form";
 import { useFormStore } from "~/stores/formStore";
 import { useTableStore } from "~/stores/tableStore";
 import { api } from "~/utils/api";
@@ -87,6 +88,7 @@ export const FormFieldsColumn: React.FC = () => {
   const debounceFormDescriptionSet = useDebounceCallback(500);
   const { data: newCurrentForm, mutateAsync } = api.form.editForm.useMutation();
   const [updateTableForm] = useTableStore((state) => [state.updateTableForm]);
+  const [table] = useTableStore((state) => [state.table]);
 
   useEffect(() => {
     setwinReady(true);
@@ -133,7 +135,7 @@ export const FormFieldsColumn: React.FC = () => {
           onChange={(e) => {
             if (e.currentTarget.innerText === currentForm.description) return;
             if (currentForm.id)
-              debounceFormTitleSet(async () => {
+              debounceFormDescriptionSet(async () => {
                 mutateAsync({
                   formId: currentForm.id,
                   description: e.currentTarget.innerText,
@@ -159,33 +161,35 @@ export const FormFieldsColumn: React.FC = () => {
               {...provided.droppableProps}
               className="flex flex-col space-y-4"
             >
-              {/* {items.map((item, index) => {
-                      if (!item) return null;
+              {currentForm.fields.map(({ fieldId, index }) => {
+                const field = table.fields.find(({ id }) => id === fieldId);
 
+                if (!field) return null;
+
+                return (
+                  <Draggable
+                    key={field.id}
+                    draggableId={field.id}
+                    index={index}
+                  >
+                    {(provided, snapshot) => {
                       return (
-                        <Draggable
-                          key={item.id}
-                          draggableId={item.id}
-                          index={index}
+                        <div
+                          ref={provided.innerRef}
+                          {...provided.draggableProps}
+                          {...provided.dragHandleProps}
+                          style={getFormFieldStyle(
+                            snapshot.isDragging,
+                            provided.draggableProps.style
+                          )}
                         >
-                          {(provided, snapshot) => {
-                            return (
-                              <div
-                                ref={provided.innerRef}
-                                {...provided.draggableProps}
-                                {...provided.dragHandleProps}
-                                style={getFormFieldStyle(
-                                  snapshot.isDragging,
-                                  provided.draggableProps.style
-                                )}
-                              >
-                                {item.content}
-                              </div>
-                            );
-                          }}
-                        </Draggable>
+                          {field.name}
+                        </div>
                       );
-                    })} */}
+                    }}
+                  </Draggable>
+                );
+              })}
 
               {provided.placeholder}
             </div>
@@ -194,43 +198,6 @@ export const FormFieldsColumn: React.FC = () => {
       )}
     </div>
   );
-};
-
-type ItemType = {
-  id: string;
-  content: string;
-};
-
-type ColumnType = {
-  id: string;
-  title: string;
-  itemIds: string[];
-};
-
-const initialData: {
-  items: Record<string, ItemType>;
-  columns: Record<string, ColumnType>;
-  columnOrder: string[];
-} = {
-  items: {
-    "item-1": { id: "item-1", content: "Item 1" },
-    "item-2": { id: "item-2", content: "Item 2" },
-    "item-3": { id: "item-3", content: "Item 3" },
-    "item-4": { id: "item-4", content: "Item 4" },
-  },
-  columns: {
-    tableFields: {
-      id: "tableFields",
-      title: "Column 1",
-      itemIds: ["item-1", "item-2"],
-    },
-    formFields: {
-      id: "formFields",
-      title: "Column 2",
-      itemIds: ["item-3", "item-4"],
-    },
-  },
-  columnOrder: ["tableFields", "formFields"],
 };
 
 const getTableFieldStyle = (isDragging: boolean, draggableStyle: any) => ({
@@ -266,10 +233,13 @@ const getListStyle = (isDraggingOver: boolean, isColumn2: boolean) => ({
 
 const FormBuilder: React.FC = () => {
   const [table] = useTableStore((state) => [state.table]);
+  const [form, setFormFields] = useFormStore((state) => [
+    state.form,
+    state.setFormFields,
+  ]);
+  const { mutateAsync: editFormFields } = api.form.editFormFields.useMutation();
 
-  const [data, setData] = React.useState(initialData);
-
-  const onDragEnd = (result: any) => {
+  const onDragEnd = async (result: any) => {
     const { destination, source, draggableId } = result;
 
     if (!destination) {
@@ -283,58 +253,50 @@ const FormBuilder: React.FC = () => {
       return;
     }
 
-    const start = data.columns[source.droppableId];
-    const finish = data.columns[destination.droppableId];
-
-    if (!start || !finish) return;
-
-    if (start === finish) {
-      const newItemIds = Array.from(start.itemIds);
-      newItemIds.splice(source.index, 1);
-      newItemIds.splice(destination.index, 0, draggableId);
-
-      const newColumn = {
-        ...start,
-        itemIds: newItemIds,
-      };
-
-      const newState = {
-        ...data,
-        columns: {
-          ...data.columns,
-          [newColumn.id]: newColumn,
-        },
-      };
-
-      setData(newState);
+    // No rearranging inside tableFields column
+    if (
+      destination.droppableId === "tableFields" &&
+      destination.droppableId === source.droppableId
+    ) {
       return;
     }
 
-    // Moving items between different columns
-    const startItemIds = Array.from(start.itemIds);
-    startItemIds.splice(source.index, 1);
-    const newStart = {
-      ...start,
-      itemIds: startItemIds,
-    };
-
-    const finishItemIds = Array.from(finish.itemIds);
-    finishItemIds.splice(destination.index, 0, draggableId);
-    const newFinish = {
-      ...finish,
-      itemIds: finishItemIds,
-    };
-
-    const newState = {
-      ...data,
-      columns: {
-        ...data.columns,
-        [newStart.id]: newStart,
-        [newFinish.id]: newFinish,
-      },
-    };
-
-    setData(newState);
+    // Table fields column --> Form fields column
+    if (destination.droppableId === "formFields") {
+      if (source.droppableId === "formFields") {
+        const newFormFields: FullFormObject["fields"] = [...form.fields];
+        const [removed] = newFormFields.splice(source.index, 1);
+        newFormFields.splice(
+          destination.index,
+          0,
+          removed as FullFormObject["fields"][0]
+        );
+        setFormFields(newFormFields);
+        await editFormFields({
+          formId: form.id,
+          fields: newFormFields.map((field) => field.fieldId),
+        });
+      } else {
+        const newFormFields: FullFormObject["fields"] = [...form.fields];
+        newFormFields.splice(destination.index, 0, {
+          fieldId: draggableId,
+          index: destination.index,
+        });
+        setFormFields(newFormFields);
+        await editFormFields({
+          formId: form.id,
+          fields: newFormFields.map((field) => field.fieldId),
+        });
+      }
+    } else if (destination.droppableId === "tableFields") {
+      const newFormFields: FullFormObject["fields"] = [...form.fields];
+      const [removed] = newFormFields.splice(source.index, 1);
+      setFormFields(newFormFields);
+      await editFormFields({
+        formId: form.id,
+        fields: newFormFields.map((field) => field.fieldId),
+      });
+    }
   };
 
   return (

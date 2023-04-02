@@ -62,6 +62,7 @@ export const formRouter = createTRPCRouter({
           fields: {
             select: {
               fieldId: true,
+              index: true
             }
           },
         }
@@ -180,6 +181,34 @@ export const formRouter = createTRPCRouter({
         });
       }
     }),
+
+  editFormFields: protectedProcedure.input(z.object({
+    formId: z.string(),
+    fields: z.array(z.string())
+  })).mutation(async ({ ctx, input }) => {
+    try {
+      console.log(input)
+      await ctx.prisma.fieldsOnForms.deleteMany({
+        where: {
+          formId: input.formId
+        }
+      })
+      await ctx.prisma.fieldsOnForms.createMany({
+        data: input.fields.map((fieldId, index) => ({
+          fieldId,
+          formId: input.formId,
+          index
+        }))
+      })
+      return { success: true }
+    } catch (e) {
+      console.log("EDIT FORM FIELDS ERROR: ", e);
+      throw new TRPCError({
+        code: "INTERNAL_SERVER_ERROR",
+        message: "Error editing form fields",
+      });
+    }
+  }),
 
   deleteForm: protectedProcedure
     .input(

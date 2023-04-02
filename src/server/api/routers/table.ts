@@ -50,13 +50,13 @@ export const tableRouter = createTRPCRouter({
         });
 
       const data = await getBaseSchema({ accessToken, baseId: airtable });
-      console.log(data)
+      console.log(data);
       // cleaning airtable output
       const tables = data.map(({ id, name, description, fields }) => ({
         id,
         name,
         description,
-        fields
+        fields,
       }));
 
       // get current tables stored in db under the base
@@ -85,31 +85,32 @@ export const tableRouter = createTRPCRouter({
         name: table.name,
         description: table.description,
         baseId,
-        fields: table.fields
+        fields: table.fields,
       }));
 
-      
       await prisma.table.createMany({
-        data: tableCreates.map(({baseId, airtable, name, fields, description}) => ({
-          baseId,
-          airtable,
-          name,
-          description: description || "",
-        })),
+        data: tableCreates.map(
+          ({ baseId, airtable, name, fields, description }) => ({
+            baseId,
+            airtable,
+            name,
+            description: description || "",
+          })
+        ),
       });
 
       // update properties
       for (const table of existingTables) {
         const airtableTable = tables.find((t) => t.id === table.airtable);
         if (airtableTable) {
-          console.log("Update Table", airtableTable)
-     
+
           await prisma.table.update({
             where: {
               id: table.id,
             },
             data: {
               name: airtableTable.name,
+              description: airtableTable.description || "",
               fields: {
                 upsert: airtableTable.fields.map(({id, name, type, description, options}) => ({
                   create: {
@@ -117,7 +118,7 @@ export const tableRouter = createTRPCRouter({
                     name,
                     type: type as FieldTypeEnum,
                     description: description || "",
-                    options,
+                    options: options || undefined,
                   },
                   where: {
                     id
@@ -126,12 +127,43 @@ export const tableRouter = createTRPCRouter({
                     name,
                     type: type as FieldTypeEnum,
                     description,
-                    options: options,
+                    options: options || undefined,
                   }
                 })),
               }
             },
           });
+
+          // await prisma.field.createMany({
+          //   data: airtableTable.fields.map(({id, name, type, description, options}) => ({
+          //     id,
+          //     name,
+          //     type: type as FieldTypeEnum,
+          //     description: description || "",
+          //     options: options || undefined,
+          //     tableId: airtableTable.id,
+          //   })),
+          //   skipDuplicates: true,
+          // });
+
+          // await prisma.field.deleteMany({
+          //   where: {
+          //     tableId: airtableTable.id,
+          //     AND: {
+          //       NOT: {
+          //         id: {
+          //           in: airtableTable.fields.map((field) => field.id),
+          //         },
+          //       },
+          //     }
+          //   },
+          // });
+
+          // await prisma.field.updateMany({
+          //   where: {
+          //     tableId: airtableTable.id,
+          //   }
+          // })
         }
       }
 
@@ -158,9 +190,7 @@ export const tableRouter = createTRPCRouter({
         tableId: z.string(),
       })
     )
-    .output(
-      FullTableObjectValidator
-    )
+    .output(FullTableObjectValidator)
     .query(async ({ ctx, input }) => {
       const table = await ctx.prisma.table.findUnique({
         where: {

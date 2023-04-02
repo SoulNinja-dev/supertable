@@ -1,11 +1,12 @@
 import { create } from "zustand";
-import { FullFormObject } from "~/models/form";
+import { type FullFormObject } from "~/models/form";
 
 interface FormStore {
   loading: boolean;
   setLoading: (loading: boolean) => void;
   form: FullFormObject;
   setForm: (form: FullFormObject) => void;
+  setFormFields: (fields: FullFormObject["fields"]) => void;
 }
 
 export const useFormStore = create<FormStore>()((set) => ({
@@ -27,6 +28,7 @@ export const useFormStore = create<FormStore>()((set) => ({
     slug: "",
   },
   setForm: (form) => set({ form }),
+  setFormFields: (fields) => set(state => ({ form: { ...state.form, fields } })),
   loading: true,
   setLoading: (loading) => set({ loading }),
 }));

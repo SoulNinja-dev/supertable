@@ -41,9 +41,9 @@ const TablePage: NextPage<{ baseId: string; tableId: string }> = ({
       <Head>
         <title>Supertable | Dashboard</title>
       </Head>
-      <div className="flex h-screen bg-white font-inter text-black">
+      <div className="flex h-screen bg-white font-inter text-black overflow-y-hidden">
         <Sidebar refetchTable={refetch} />
-        <main className="flex-1">
+        <main className="flex-1 overflow-y-scroll">
           {/* Topbar */}
           <div className="w-full-bg-white h-14 border-b-2 border-gray-300">
             {currentForm && (
@@ -79,6 +79,7 @@ const Sidebar: React.FC<{refetchTable: () => Promise<any>}> = ({ refetchTable })
       description: "No description",
     });
     await refetchTable();
+    handleSelectForm(res.id);
   };
 
   const handleSelectForm = async (formId: string) => {
@@ -135,7 +136,9 @@ const Sidebar: React.FC<{refetchTable: () => Promise<any>}> = ({ refetchTable })
           </button>
           {table && table.forms?.map((form) => (
             <button
-              className="flex w-full items-center gap-x-2 rounded-lg py-2 px-4 transition-colors duration-100 ease-in-out hover:bg-gray-100"
+              className={`flex w-full items-center gap-x-2 rounded-lg py-2 px-4 transition-colors duration-100 ease-in-out hover:bg-gray-100
+                ${currentForm?.id === form.id ? "bg-gray-100" : ""}
+              `}
               key={form.id}
               onClick={() => handleSelectForm(form.id)}
             >

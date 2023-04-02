@@ -23,6 +23,7 @@ export type FormObject = z.infer<typeof FormObjectValidator>;
 export const FullFormObjectValidator = FormObjectValidator.and(z.object({
   fields: z.array(z.object({
     fieldId: z.string(),
+    index: z.number(),
   }))
 }))
 
