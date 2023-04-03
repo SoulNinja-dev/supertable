@@ -72,7 +72,9 @@ const CoverImage = () => {
         />
         <div className="-mt-[50px] flex items-center gap-x-2 rounded-full bg-white px-4 py-2 text-sm text-gray-500 shadow-black drop-shadow-md">
           <Image src="/sparkles.svg" width={20} height={20} alt="sparkles" />
-          Add a cover image
+          {
+            form.coverImage ? "Change Cover Image" : "Add Cover Image"
+          }
         </div>
       </div>
     </>

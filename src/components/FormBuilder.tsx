@@ -1,3 +1,4 @@
+import classNames from "classnames";
 import Image from "next/image";
 import React, { HTMLProps, useEffect, useMemo, useState } from "react";
 import {
@@ -42,9 +43,15 @@ export const TableFieldsColumn: React.FC = () => {
           {(provided, snapshot) => (
             <div
               ref={provided.innerRef}
-              style={getListStyle(snapshot.isDraggingOver, false)}
+              // style={getListStyle(snapshot.isDraggingOver, false)}
               {...provided.droppableProps}
-              className="relative flex flex-col space-y-4"
+              className={
+                classNames({
+                  "relative flex flex-col space-y-4 py-2 px-4 w-[300px]": true,
+                  "bg-[#ededed]": snapshot.isDraggingOver,
+                  "bg-[#f5f5f5]": !snapshot.isDraggingOver,
+                })
+              }
             >
               {table.fields
                 .filter(({ id }) => !formFields.includes(id))
@@ -61,6 +68,10 @@ export const TableFieldsColumn: React.FC = () => {
                               snapshot.isDragging,
                               provided.draggableProps.style
                             )}
+                            className={classNames({
+                              "border-2 border-dashed border-gray-800 bg-[#f3f2f2]":
+                              snapshot.isDragging,
+                            })}
                             type={type}
                             name={name}
                           />
@@ -100,7 +111,7 @@ export const FormFieldsColumn: React.FC = () => {
       {/* Cover Image */}
       <CoverImage />
       {/* Form SEO/MetaData and Logo */}
-      <div className="relative -top-20 -mb-20 min-h-[300px] w-full max-w-xl rounded-md bg-white px-6 pt-10 pb-5">
+      <div className="relative -top-20 -mb-20 min-h-[300px] w-full max-w-lg rounded-md bg-white px-6 pt-10 pb-5">
         <div className="flex max-w-[200px] cursor-pointer justify-center gap-x-2 rounded-xl border-2 border-dashed border-gray-300 px-3 py-6 text-gray-400 transition-colors duration-[50ms] ease-out hover:bg-gray-100">
           <Image src="/sparkles.svg" width={20} height={20} alt="sparkles" />
           Add a Logo
@@ -149,48 +160,91 @@ export const FormFieldsColumn: React.FC = () => {
 
       {/* {winReady && children} */}
       {winReady && (
-        <Droppable droppableId={"formFields"}>
-          {(provided, snapshot) => (
-            <div
-              ref={provided.innerRef}
-              style={getListStyle(snapshot.isDraggingOver, true)}
-              {...provided.droppableProps}
-              className="flex flex-col space-y-4"
-            >
-              {currentForm.fields.map(({ fieldId, index }) => {
-                const field = table.fields.find(({ id }) => id === fieldId);
-
-                if (!field) return null;
-
-                return (
-                  <Draggable
-                    key={field.id}
-                    draggableId={field.id}
-                    index={index}
-                  >
-                    {(provided, snapshot) => {
-                      return (
-                        <div
-                          ref={provided.innerRef}
-                          {...provided.draggableProps}
-                          {...provided.dragHandleProps}
-                          style={getFormFieldStyle(
-                            snapshot.isDragging,
-                            provided.draggableProps.style
-                          )}
-                        >
-                          {field.name}
-                        </div>
+        <div className="min-h-[150px] w-full px-4">
+          <Droppable droppableId={"formFields"}>
+            {(provided, snapshot) => (
+              <div
+                ref={provided.innerRef}
+                // style={{
+                //   ...getListStyle(
+                //     snapshot.isDraggingOver,
+                //     true,
+                //     currentForm?.fields?.length === 0
+                //   ),
+                //   // height: "200",
+                // }}
+                id="cat"
+                {...provided.droppableProps}
+                className={
+                  classNames({
+                    "w-full flex-1 relative flex h-full flex-col space-y-4 rounded-md border-2 border-dashed p-2 items-center justify-center": true,
+                    
+                    "bg-[#ededed]": snapshot.isDraggingOver,
+                    "bg-[#f5f5f5]": !snapshot.isDraggingOver,
+                    "border-[#aeaeae]": snapshot.isDraggingOver || currentForm.fields.length === 0,
+                    "border-transparent": !snapshot.isDraggingOver && currentForm.fields.length !== 0,
+                   
+                  })
+                }
+            
+              >
+                {currentForm.fields.length
+                  ? currentForm.fields.map(({ fieldId, index }) => {
+                      const field = table.fields.find(
+                        ({ id }) => id === fieldId
                       );
-                    }}
-                  </Draggable>
-                );
-              })}
 
-              {provided.placeholder}
-            </div>
-          )}
-        </Droppable>
+                      if (!field) return null;
+
+                      return (
+                        <Draggable
+                          key={field.id}
+                          draggableId={field.id}
+                          index={index}
+                        >
+                          {(provided, snapshot) => {
+                            return (
+                              <div
+                                ref={provided.innerRef}
+                                {...provided.draggableProps}
+                                {...provided.dragHandleProps}
+                                style={getFormFieldStyle(
+                                  snapshot.isDragging,
+                                  provided.draggableProps.style
+                                )}
+                                className={classNames({
+                                  "flex w-full max-w-lg items-center justify-center hover:bg-[#ededed]":
+                                    true,
+                                  "border border-gray-400 bg-[#f3f2f2]":
+                                    snapshot.isDragging,
+                                })}
+                              >
+                                <div className="flex w-full flex-col gap-y-5 p-4">
+                                  <label className="text-xl">
+                                    {field.name}
+                                  </label>
+                                  <input
+                                    type="text"
+                                    className="w-ful h rounded border-2 border-gray-300 px-4 py-3 transition-all duration-200 ease-in hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                                  />
+                                </div>
+                              </div>
+                            );
+                          }}
+                        </Draggable>
+                      );
+                    })
+                  : !snapshot.isDraggingOver && (
+                      <div className="text-xl text-gray-400">
+                        Drop Fields Here
+                      </div>
+                    )}
+
+                {provided.placeholder}
+              </div>
+            )}
+          </Droppable>
+        </div>
       )}
     </div>
   );
@@ -200,32 +254,19 @@ const getTableFieldStyle = (isDragging: boolean, draggableStyle: any) => ({
   ...draggableStyle,
   height: "40px",
   background: "#fff",
-  borderRadius: "5px",
+  borderRadius: "2px",
   padding: "8px",
   marginBottom: "0px",
-  boxShadow: isDragging ? "0 0 1.5rem rgba(0, 0, 0, 0.3)" : "none",
+  border: isDragging ? "1px solid #ccc" : "none",
 });
 
 const getFormFieldStyle = (isDragging: boolean, draggableStyle: any) => ({
   ...draggableStyle,
-  height: "250px",
-  background: "#fff",
   borderRadius: "5px",
   padding: "8px",
   marginBottom: "8px",
-  boxShadow: isDragging ? "0 0 1.5rem rgba(0, 0, 0, 0.3)" : "none",
 });
 
-const getListStyle = (isDraggingOver: boolean, isColumn2: boolean) => ({
-  background: isDraggingOver ? "#dcdcdc" : "#F5F5F5",
-  padding: "8px",
-  width: isColumn2 ? "100%" : "300px",
-  flex: isColumn2 ? "1" : "0",
-  minHeight: "400px",
-  borderRadius: "5px",
-  border: "2px dashed transparent",
-  borderColor: isDraggingOver ? "gray" : "transparent",
-});
 
 const FormBuilder: React.FC = () => {
   const [table] = useTableStore((state) => [state.table]);
