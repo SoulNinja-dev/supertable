@@ -91,6 +91,7 @@ export const formRouter = createTRPCRouter({
         submitMsg: z.string().optional(),
         contraints: z.string().optional(),
         coverImage: z.string().optional(),
+        
       })
     )
     .output(
@@ -153,6 +154,8 @@ export const formRouter = createTRPCRouter({
         submitMsg: z.string().optional(),
         contraints: z.string().optional(),
         coverImage: z.string().optional(),
+        theme: z.enum(["classic", "dark", "monochromatic"]).optional(),
+        themeColor: z.string().optional(),
       })
     )
     .mutation(async ({ ctx, input }) => {
@@ -172,6 +175,8 @@ export const formRouter = createTRPCRouter({
             submitMsg: input.submitMsg,
             contraints: input.contraints,
             coverImage: input.coverImage,
+            theme: input.theme,
+            themeColor: input.themeColor,
           },
         });
         

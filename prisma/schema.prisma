@@ -111,7 +111,8 @@ model Form {
   seoImage       String?
   headerImage    String?
   connectWallet  Boolean         @default(false)
-  theme          String?
+  theme          Theme           @default(classic)
+  themeColor     String?
   submitMsg      String?
   contraints     String?
   coverImage     String?
@@ -159,4 +160,10 @@ enum FieldTypeEnum {
   rating
   email
   singleSelect
+}
+
+enum Theme {
+  classic
+  dark
+  monochromatic
 }

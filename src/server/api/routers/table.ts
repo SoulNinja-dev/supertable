@@ -198,7 +198,12 @@ export const tableRouter = createTRPCRouter({
         },
         include: {
           fields: true,
-          forms: true,
+          forms: {
+            select: {
+              id: true,
+              title: true,
+            }
+          },
         },
       });
 

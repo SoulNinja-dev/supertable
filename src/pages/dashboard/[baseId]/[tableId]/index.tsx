@@ -43,9 +43,9 @@ const TablePage: NextPage<{ baseId: string; tableId: string }> = ({
       </Head>
       <div className="flex h-screen bg-white font-inter text-black overflow-y-hidden">
         <Sidebar refetchTable={refetch} />
-        <main className="flex-1 overflow-y-scroll">
+        <main className="flex-1 relative h-screen">
           {/* Topbar */}
-          <div className="w-full-bg-white h-14 border-b-2 border-gray-300">
+          <div className="w-full-bg-white h-14 border-b-2 border-gray-300 sticky top-0">
             {currentForm && (
               <div className="flex h-full items-center justify-between px-4 font-bold">
                 {currentForm.title}
@@ -54,6 +54,7 @@ const TablePage: NextPage<{ baseId: string; tableId: string }> = ({
           </div>
 
           <FormBuilder />
+          
         </main>
       </div>
     </div>

@@ -83,7 +83,10 @@ export const FullTableObjectValidator = z.object({
   seoImage: z.string().nullable(),
 
   fields: z.array(FieldValidator),
-  forms: z.array(FormObjectValidator),
+  forms: z.array(z.object({
+    id: z.string(),
+    title: z.string().nullable(),
+  })),
 });
 
 export type FullTableObject = z.infer<typeof FullTableObjectValidator>;

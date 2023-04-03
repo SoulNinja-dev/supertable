@@ -14,6 +14,7 @@ import { useFormStore } from "~/stores/formStore";
 import { useTableStore } from "~/stores/tableStore";
 import { api } from "~/utils/api";
 import CoverImage from "./CoverImage";
+import FormSettings from "./FormSettings";
 import TableField from "./TableField";
 
 resetServerContext();
@@ -45,13 +46,11 @@ export const TableFieldsColumn: React.FC = () => {
               ref={provided.innerRef}
               // style={getListStyle(snapshot.isDraggingOver, false)}
               {...provided.droppableProps}
-              className={
-                classNames({
-                  "relative flex flex-col space-y-4 py-2 px-4 w-[300px]": true,
-                  "bg-[#ededed]": snapshot.isDraggingOver,
-                  "bg-[#f5f5f5]": !snapshot.isDraggingOver,
-                })
-              }
+              className={classNames({
+                "relative flex w-[300px] flex-col space-y-4 py-2 px-4": true,
+                "bg-[#ededed]": snapshot.isDraggingOver,
+                "bg-[#f5f5f5]": !snapshot.isDraggingOver,
+              })}
             >
               {table.fields
                 .filter(({ id }) => !formFields.includes(id))
@@ -70,7 +69,7 @@ export const TableFieldsColumn: React.FC = () => {
                             )}
                             className={classNames({
                               "border-2 border-dashed border-gray-800 bg-[#f3f2f2]":
-                              snapshot.isDragging,
+                                snapshot.isDragging,
                             })}
                             type={type}
                             name={name}
@@ -107,145 +106,149 @@ export const FormFieldsColumn: React.FC = () => {
   }, []);
 
   return (
-    <div className="flex flex-1 flex-col items-center gap-y-3 ">
-      {/* Cover Image */}
-      <CoverImage />
-      {/* Form SEO/MetaData and Logo */}
-      <div className="relative -top-20 -mb-20 min-h-[300px] w-full max-w-lg rounded-md bg-white px-6 pt-10 pb-5">
-        <div className="flex max-w-[200px] cursor-pointer justify-center gap-x-2 rounded-xl border-2 border-dashed border-gray-300 px-3 py-6 text-gray-400 transition-colors duration-[50ms] ease-out hover:bg-gray-100">
-          <Image src="/sparkles.svg" width={20} height={20} alt="sparkles" />
-          Add a Logo
+    <div className="h-full w-full overflow-y-auto pb-16 bg-[#fff]/40">
+      <div className="flex flex-1 flex-col items-center gap-y-3">
+        {/* Cover Image */}
+        <CoverImage />
+        {/* Form SEO/MetaData and Logo */}
+        <div className="relative -top-20 -mb-20 min-h-[300px] w-full max-w-lg rounded-md bg-white px-6 pt-10 pb-5">
+          <div className="flex max-w-[200px] cursor-pointer justify-center gap-x-2 rounded-xl border-2 border-dashed border-gray-300 px-3 py-6 text-gray-400 transition-colors duration-[50ms] ease-out hover:bg-gray-100">
+            <Image src="/sparkles.svg" width={20} height={20} alt="sparkles" />
+            Add a Logo
+          </div>
+          <ContentEditable
+            onChange={(e) => {
+              if (e.currentTarget.innerText === currentForm.title) return;
+              if (currentForm.id)
+                debounceFormTitleSet(async () => {
+                  mutateAsync({
+                    formId: currentForm.id,
+                    title: e.currentTarget.innerText,
+                  });
+                  setForm({
+                    ...currentForm,
+                    title: e.currentTarget.innerText,
+                  });
+                  updateTableForm({
+                    id: currentForm.id,
+                    title: e.currentTarget.innerText,
+                  });
+                });
+            }}
+            className="mt-4 w-full px-4 py-2 text-3xl font-semibold text-gray-500 transition-colors duration-200 ease-out hover:bg-gray-200/80 focus:bg-gray-200/60 focus:outline-gray-400/50"
+            html={currentForm.title || ""}
+          />
+          <ContentEditable
+            onChange={(e) => {
+              if (e.currentTarget.innerText === currentForm.description) return;
+              if (currentForm.id)
+                debounceFormDescriptionSet(async () => {
+                  mutateAsync({
+                    formId: currentForm.id,
+                    description: e.currentTarget.innerText,
+                  });
+                  setForm({
+                    ...currentForm,
+                    description: e.currentTarget.innerText,
+                  });
+                });
+            }}
+            className="mt-1 w-full px-4 py-2 text-sm font-medium text-gray-500 transition-colors duration-200 ease-out hover:bg-gray-200/80 focus:bg-gray-200/60 focus:outline-gray-400/50"
+            html={currentForm.description || ""}
+          />
         </div>
-        <ContentEditable
-          onChange={(e) => {
-            if (e.currentTarget.innerText === currentForm.title) return;
-            if (currentForm.id)
-              debounceFormTitleSet(async () => {
-                mutateAsync({
-                  formId: currentForm.id,
-                  title: e.currentTarget.innerText,
-                });
-                setForm({
-                  ...currentForm,
-                  title: e.currentTarget.innerText,
-                });
-                updateTableForm({
-                  id: currentForm.id,
-                  title: e.currentTarget.innerText,
-                });
-              });
-          }}
-          className="mt-4 w-full px-4 py-2 text-3xl font-semibold text-gray-500 transition-colors duration-200 ease-out hover:bg-gray-200/80 focus:bg-gray-200/60 focus:outline-gray-400/50"
-          html={currentForm.title || ""}
-        />
-        <ContentEditable
-          onChange={(e) => {
-            if (e.currentTarget.innerText === currentForm.description) return;
-            if (currentForm.id)
-              debounceFormDescriptionSet(async () => {
-                mutateAsync({
-                  formId: currentForm.id,
-                  description: e.currentTarget.innerText,
-                });
-                setForm({
-                  ...currentForm,
-                  description: e.currentTarget.innerText,
-                });
-              });
-          }}
-          className="mt-1 w-full px-4 py-2 text-sm font-medium text-gray-500 transition-colors duration-200 ease-out hover:bg-gray-200/80 focus:bg-gray-200/60 focus:outline-gray-400/50"
-          html={currentForm.description || ""}
-        />
-      </div>
 
-      {/* {winReady && children} */}
-      {winReady && (
-        <div className="min-h-[150px] w-full px-4">
-          <Droppable droppableId={"formFields"}>
-            {(provided, snapshot) => (
-              <div
-                ref={provided.innerRef}
-                // style={{
-                //   ...getListStyle(
-                //     snapshot.isDraggingOver,
-                //     true,
-                //     currentForm?.fields?.length === 0
-                //   ),
-                //   // height: "200",
-                // }}
-                id="cat"
-                {...provided.droppableProps}
-                className={
-                  classNames({
-                    "w-full flex-1 relative flex h-full flex-col space-y-4 rounded-md border-2 border-dashed p-2 items-center justify-center": true,
-                    
+        {/* {winReady && children} */}
+        {winReady && (
+          <div className="min-h-[150px] w-full px-4">
+            <Droppable droppableId={"formFields"}>
+              {(provided, snapshot) => (
+                <div
+                  ref={provided.innerRef}
+                  // style={{
+                  //   ...getListStyle(
+                  //     snapshot.isDraggingOver,
+                  //     true,
+                  //     currentForm?.fields?.length === 0
+                  //   ),
+                  //   // height: "200",
+                  // }}
+                  id="cat"
+                  {...provided.droppableProps}
+                  className={classNames({
+                    "relative flex h-full w-full flex-1 flex-col items-center justify-center space-y-4 rounded-md border-2 border-dashed p-2":
+                      true,
+
                     "bg-[#ededed]": snapshot.isDraggingOver,
-                    "bg-[#f5f5f5]": !snapshot.isDraggingOver,
-                    "border-[#aeaeae]": snapshot.isDraggingOver || currentForm.fields.length === 0,
-                    "border-transparent": !snapshot.isDraggingOver && currentForm.fields.length !== 0,
-                   
-                  })
-                }
-            
-              >
-                {currentForm.fields.length
-                  ? currentForm.fields.map(({ fieldId, index }) => {
-                      const field = table.fields.find(
-                        ({ id }) => id === fieldId
-                      );
+                    // "bg-[#fff]/50": !snapshot.isDraggingOver,
+                    "border-[#aeaeae]":
+                      snapshot.isDraggingOver ||
+                      currentForm.fields.length === 0,
+                    "border-transparent":
+                      !snapshot.isDraggingOver &&
+                      currentForm.fields.length !== 0,
+                  })}
+                >
+                  {currentForm.fields.length
+                    ? currentForm.fields.map(({ fieldId, index }) => {
+                        const field = table.fields.find(
+                          ({ id }) => id === fieldId
+                        );
 
-                      if (!field) return null;
+                        if (!field) return null;
 
-                      return (
-                        <Draggable
-                          key={field.id}
-                          draggableId={field.id}
-                          index={index}
-                        >
-                          {(provided, snapshot) => {
-                            return (
-                              <div
-                                ref={provided.innerRef}
-                                {...provided.draggableProps}
-                                {...provided.dragHandleProps}
-                                style={getFormFieldStyle(
-                                  snapshot.isDragging,
-                                  provided.draggableProps.style
-                                )}
-                                className={classNames({
-                                  "flex w-full max-w-lg items-center justify-center hover:bg-[#ededed]":
-                                    true,
-                                  "border border-gray-400 bg-[#f3f2f2]":
+                        return (
+                          <Draggable
+                            key={field.id}
+                            draggableId={field.id}
+                            index={index}
+                          >
+                            {(provided, snapshot) => {
+                              return (
+                                <div
+                                  ref={provided.innerRef}
+                                  {...provided.draggableProps}
+                                  {...provided.dragHandleProps}
+                                  style={getFormFieldStyle(
                                     snapshot.isDragging,
-                                })}
-                              >
-                                <div className="flex w-full flex-col gap-y-5 p-4">
-                                  <label className="text-xl">
-                                    {field.name}
-                                  </label>
-                                  <input
-                                    type="text"
-                                    className="w-ful h rounded border-2 border-gray-300 px-4 py-3 transition-all duration-200 ease-in hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-400"
-                                  />
+                                    provided.draggableProps.style
+                                  )}
+                                  className={classNames({
+                                    "flex w-full max-w-lg items-center justify-center hover:bg-[#ededed]":
+                                      true,
+                                    "border border-gray-400 bg-[#f3f2f2]":
+                                      snapshot.isDragging,
+                                  })}
+                                >
+                                  <div className="flex w-full flex-col gap-y-5 p-4">
+                                    <label className="text-xl">
+                                      {field.name}
+                                    </label>
+                                    <input
+                                      type="text"
+                                      className="w-ful h rounded border-2 border-gray-300 px-4 py-3 transition-all duration-200 ease-in hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                                    />
+                                  </div>
                                 </div>
-                              </div>
-                            );
-                          }}
-                        </Draggable>
-                      );
-                    })
-                  : !snapshot.isDraggingOver && (
-                      <div className="text-xl text-gray-400">
-                        Drop Fields Here
-                      </div>
-                    )}
+                              );
+                            }}
+                          </Draggable>
+                        );
+                      })
+                    : !snapshot.isDraggingOver && (
+                        <div className="text-xl text-gray-400">
+                          Drop Fields Here
+                        </div>
+                      )}
 
-                {provided.placeholder}
-              </div>
-            )}
-          </Droppable>
-        </div>
-      )}
+                  {provided.placeholder}
+                </div>
+              )}
+            </Droppable>
+          </div>
+        )}
+      </div>
+      <FormSettings />
     </div>
   );
 };
@@ -266,7 +269,6 @@ const getFormFieldStyle = (isDragging: boolean, draggableStyle: any) => ({
   padding: "8px",
   marginBottom: "8px",
 });
-
 
 const FormBuilder: React.FC = () => {
   const [table] = useTableStore((state) => [state.table]);
