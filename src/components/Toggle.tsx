@@ -21,7 +21,8 @@ const ToggleButton: React.FC<ToggleProps> = ({ onValueChange, value, ...rest }) 
         />
         <div className={
           classNames({
-            "block h-8 w-14 rounded-full bg-[#d3d4d8]" : true,
+            "block h-8 w-14 rounded-full" : true,
+            "bg-[#d3d4d8]": !value,
             "bg-[#478af7]": value
           })
         }></div>
