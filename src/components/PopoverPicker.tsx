@@ -5,15 +5,26 @@ import {
   useCallback,
   useRef,
   useState,
+  useEffect,
 } from "react";
 import { HexColorPicker } from "react-colorful";
 import OutsideClickHandler from "react-outside-click-handler";
 
-const PopoverPicker = ({ color, onChange }: Props) => {
+const PopoverPicker = ({ color: defaultColor, onChange }: Props) => {
+  const [color, setColor] = useState<string>("");
   const popover = useRef<HTMLDivElement>(null);
   const [isOpen, toggle] = useState(false);
 
-  const close = useCallback(() => toggle(false), []);
+  const close = useCallback(() => {
+    toggle(false);
+    onChange(color);
+  }, []);
+
+  useEffect(() => {
+    if (!color) {
+      setColor(defaultColor);
+    }
+  }, [color]);
 
   return (
     <div className="relative">
@@ -35,7 +46,10 @@ const PopoverPicker = ({ color, onChange }: Props) => {
                 className="absolute top-[calc(100%+2px)] left-0 rounded-[0.5625rem] shadow-2xl"
                 ref={popover}
               >
-                <HexColorPicker color={color} onChange={onChange} />
+                <HexColorPicker
+                  color={color}
+                  onChange={(color) => setColor(color)}
+                />
               </div>
             </motion.div>
           </OutsideClickHandler>

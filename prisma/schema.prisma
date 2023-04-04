@@ -116,6 +116,7 @@ model Form {
   submitMsg      String?
   contraints     String?
   coverImage     String?
+  logo           String?
 
   table Table @relation(fields: [tableId], references: [id])
 }

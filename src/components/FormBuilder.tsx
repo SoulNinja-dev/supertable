@@ -1,6 +1,6 @@
 import classNames from "classnames";
 import Image from "next/image";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
   DragDropContext,
   Droppable,
@@ -8,12 +8,14 @@ import {
   resetServerContext,
 } from "react-beautiful-dnd";
 import ContentEditable from "react-contenteditable";
+import useClickOutside from "use-click-outside";
 import { useDebounceCallback } from "~/hooks/useDelayedRequest";
 import { FullFormObject } from "~/models/form";
 import { useFormStore } from "~/stores/formStore";
 import { useTableStore } from "~/stores/tableStore";
 import { api } from "~/utils/api";
 import CoverImage from "./CoverImage";
+import FormField from "./FormField";
 import FormSettings from "./FormSettings";
 import TableField from "./TableField";
 
@@ -37,7 +39,7 @@ export const TableFieldsColumn: React.FC = () => {
   }, []);
 
   return (
-    <div className="flex flex-col items-start gap-3 py-10 px-10">
+    <div className="flex flex-col items-start gap-3 py-10 px-10 h-full">
       <div className="text-lg font-semibold">Available Fields</div>
       {winReady && !loading && !!table.id && (
         <Droppable droppableId={"tableFields"}>
@@ -47,7 +49,7 @@ export const TableFieldsColumn: React.FC = () => {
               // style={getListStyle(snapshot.isDraggingOver, false)}
               {...provided.droppableProps}
               className={classNames({
-                "relative flex w-[300px] flex-col": true,
+                "relative flex w-[300px] flex-col min-h-[100%]": true,
                 "bg-gray-100": snapshot.isDraggingOver,
                 "bg-white": !snapshot.isDraggingOver,
               })}
@@ -210,7 +212,7 @@ export const FormFieldsColumn: React.FC = () => {
                           >
                             {(provided, snapshot) => {
                               return (
-                                <div
+                                <FormField
                                   ref={provided.innerRef}
                                   {...provided.draggableProps}
                                   {...provided.dragHandleProps}
