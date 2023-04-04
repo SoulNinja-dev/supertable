@@ -31,12 +31,12 @@ const TableField = React.forwardRef<HTMLDivElement, TableFieldProps>(
     const icon = icons[props.type];
 
     return (
-      <div {...props} ref={ref} className=" flex items-center gap-x-2">
+      <div {...props} ref={ref} className="flex items-center gap-2 font-medium">
         <span>
           <Image
             src={icon}
-            width={24}
-            height={24}
+            width={18}
+            height={18}
             alt="Check square icon"
           />
         </span>
