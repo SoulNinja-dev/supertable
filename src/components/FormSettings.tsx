@@ -16,7 +16,7 @@ const FormSettings = () => {
   // const debounceUpdateFormDescription = useDebounceCallback(500);
 
   return (
-    <div className="flex w-full justify-center bg-sidebar pt-6 pb-60 px-10">
+    <div className="flex w-full justify-center bg-sidebar py-6 px-10 mt-8">
       <div className="w-full max-w-2xl">
         <div className="flex flex-col gap-8 p-6 text-black">
           <div className="text-3xl font-semibold">Form Settings</div>

@@ -75,14 +75,14 @@ const FormField = React.forwardRef<HTMLDivElement, FormFieldProps>(
           )}
           <div className="flex w-full flex-col gap-y-5 p-4">
             <div className="flex items-center justify-between">
-              <label className="text-xl h-5">{field.name}</label>
+              <label className="h-5 text-xl">{field.name}</label>
               {formField.required && (
-                <span className="text-red-500 text-3xl h-5">*</span>
+                <span className="h-5 text-3xl text-red-500">*</span>
               )}
             </div>
             <input
               type="text"
-              className="w-ful h rounded border-2 border-gray-300 px-4 py-3 transition-all duration-200 ease-in hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-400"
+              className="w-ful h rounded bg-sidebar px-4 py-3 ring-2 ring-gray-300 transition-all duration-200 ease-in hover:ring-gray-400 focus:outline-none focus:ring-black"
             />
           </div>
         </div>
