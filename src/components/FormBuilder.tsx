@@ -1,6 +1,6 @@
 import classNames from "classnames";
 import Image from "next/image";
-import React, { HTMLProps, useEffect, useMemo, useState } from "react";
+import React, { HTMLProps, useEffect, useMemo, useRef, useState } from "react";
 import {
   DragDropContext,
   Droppable,
@@ -8,12 +8,14 @@ import {
   resetServerContext,
 } from "react-beautiful-dnd";
 import ContentEditable from "react-contenteditable";
+import useClickOutside from "use-click-outside";
 import { useDebounceCallback } from "~/hooks/useDelayedRequest";
 import { FullFormObject } from "~/models/form";
 import { useFormStore } from "~/stores/formStore";
 import { useTableStore } from "~/stores/tableStore";
 import { api } from "~/utils/api";
 import CoverImage from "./CoverImage";
+import FormField from "./FormField";
 import FormSettings from "./FormSettings";
 import TableField from "./TableField";
 
@@ -106,7 +108,7 @@ export const FormFieldsColumn: React.FC = () => {
   }, []);
 
   return (
-    <div className="h-full w-full overflow-y-auto pb-16 bg-[#fff]/40">
+    <div className="h-full w-full overflow-y-auto bg-[#fff]/40 pb-16">
       <div className="flex flex-1 flex-col items-center gap-y-3">
         {/* Cover Image */}
         <CoverImage />
@@ -205,7 +207,7 @@ export const FormFieldsColumn: React.FC = () => {
                           >
                             {(provided, snapshot) => {
                               return (
-                                <div
+                                <FormField
                                   ref={provided.innerRef}
                                   {...provided.draggableProps}
                                   {...provided.dragHandleProps}
@@ -213,23 +215,10 @@ export const FormFieldsColumn: React.FC = () => {
                                     snapshot.isDragging,
                                     provided.draggableProps.style
                                   )}
-                                  className={classNames({
-                                    "flex w-full max-w-lg items-center justify-center hover:bg-[#ededed]":
-                                      true,
-                                    "border border-gray-400 bg-[#f3f2f2]":
-                                      snapshot.isDragging,
-                                  })}
-                                >
-                                  <div className="flex w-full flex-col gap-y-5 p-4">
-                                    <label className="text-xl">
-                                      {field.name}
-                                    </label>
-                                    <input
-                                      type="text"
-                                      className="w-ful h rounded border-2 border-gray-300 px-4 py-3 transition-all duration-200 ease-in hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-400"
-                                    />
-                                  </div>
-                                </div>
+                                  field={field}
+                                  isDragging={snapshot.isDragging}
+                                  key={field.id}
+                                />
                               );
                             }}
                           </Draggable>
