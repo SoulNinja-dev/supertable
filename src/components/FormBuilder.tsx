@@ -74,6 +74,7 @@ export const TableFieldsColumn: React.FC = () => {
                               className={classNames({
                                 "border-2 border-dashed border-gray-800 bg-[#f3f2f2]":
                                   snapshot.isDragging,
+                                  "bg-transparent": !snapshot.isDragging,
                               })}
                               type={type}
                               name={name}
@@ -251,7 +252,7 @@ export const FormFieldsColumn: React.FC = () => {
 const getTableFieldStyle = (isDragging: boolean, draggableStyle: any) => ({
   ...draggableStyle,
   height: "40px",
-  background: "#fff",
+  background: isDragging ? "#fff" : "transparent",
   borderRadius: "2px",
   padding: "8px",
   marginBottom: "0px",

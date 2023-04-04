@@ -7,7 +7,7 @@ export const s3Router = createTRPCRouter({
   generatePresignedUrl: protectedProcedure.input(
     z.object({
       fileName: z.string(),
-      type: z.enum(["cover", "logo"]),
+      type: z.enum(["cover", "logo", "ogImage"]),
     })
   ).output(z.string()).mutation(async ({ input }) => {
     return await generatePresignedUrl(input.fileName, input.type);

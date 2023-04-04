@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { useDebounceCallback } from "~/hooks/useDelayedRequest";
 import { useFormStore } from "~/stores/formStore";
 import { api } from "~/utils/api";
@@ -8,15 +8,55 @@ import { Theme } from "@prisma/client";
 import { themes } from "~/utils/themes";
 import PopoverPicker from "./PopoverPicker";
 
+import axios from "axios";
+import classNames from "classnames";
+
 const FormSettings = () => {
-  const [form] = useFormStore((state) => [state.form]);
-  const [setForm] = useFormStore((state) => [state.setForm]);
+  const [form, setForm] = useFormStore((state) => [state.form, state.setForm]);
   const { mutateAsync: editForm } = api.form.editForm.useMutation();
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const { mutateAsync: generatePresignedUrl } =
+    api.s3.generatePresignedUrl.useMutation();
   // const debounceUpdateFormTitle = useDebounceCallback(500);
   // const debounceUpdateFormDescription = useDebounceCallback(500);
 
+  const handleSubmit = async (file: File | null) => {
+    if (!file) return;
+    if (!form.id) return;
+
+    try {
+      const presignedUrl = await generatePresignedUrl({
+        fileName: file.name,
+        type: "ogImage",
+      });
+
+      await axios.put(presignedUrl, file, {
+        headers: {
+          // Content type image explicit
+          "Content-Type": "image/*",
+        },
+      });
+
+      // Extract the actual S3 URL from the presigned URL
+      const uploadedImageUrl =
+        new URL(presignedUrl).origin + new URL(presignedUrl).pathname;
+
+      const response = await editForm({
+        formId: form.id,
+        coverImage: uploadedImageUrl,
+      });
+
+      setForm({
+        ...form,
+        seoImage: uploadedImageUrl,
+      });
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   return (
-    <div className="flex w-full justify-center bg-sidebar py-6 px-10 mt-8">
+    <div className="mt-8 flex w-full justify-center bg-sidebar px-10 pt-6 pb-60">
       <div className="w-full max-w-2xl">
         <div className="flex flex-col gap-8 p-6 text-black">
           <div className="text-3xl font-semibold">Form Settings</div>
@@ -76,6 +116,46 @@ const FormSettings = () => {
               </div>
               
             </div> */}
+            <div className="flex flex-col">
+              <div className="flex w-80 flex-col font-semibold">
+                Upload SEO Image
+                <div className="text-xs font-semibold text-gray-400">
+                  The default SEO image(used by Discord in embeds)
+                </div>
+              </div>
+              <div
+                className={classNames({
+                  "mt-4 flex h-[250px] w-[500px] cursor-pointer items-center justify-center rounded-lg border-2 border-gray-400/60 bg-gray-200 pb-10 text-gray-500 transition duration-100 ease-in-out hover:bg-gray-300/70":
+                    true,
+                })}
+                onClick={() =>
+                  fileInputRef.current && fileInputRef.current.click()
+                }
+                style={{
+                  backgroundImage: form.seoImage
+                    ? `url(${form.seoImage})`
+                    : "none",
+                  backgroundSize: "cover",
+                  backgroundPosition: "center",
+                  backgroundRepeat: "no-repeat",
+                }}
+              >
+                <div className="rounded-lg bg-white px-3 py-2">
+                  {form.seoImage ? "Change Image" : "Upload Image"}
+                </div>
+              </div>
+              <input
+                type="file"
+                ref={fileInputRef}
+                style={{ display: "none" }}
+                accept="image/*"
+                onChange={(e) =>
+                  handleSubmit(
+                    e.target.files ? (e.target.files[0] as File) : null
+                  )
+                }
+              />
+            </div>
           </div>
         </div>
       </div>
@@ -115,7 +195,7 @@ const SelectTheme = () => {
 
   return (
     <div className="relative">
-      <div className="flex gap-x-4 items-center">
+      <div className="flex items-center gap-x-4">
         {form.theme === "monochromatic" && (
           <PopoverPicker
             color={form.themeColor || "#3F51B5"}
