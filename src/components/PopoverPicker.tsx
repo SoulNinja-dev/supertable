@@ -18,10 +18,10 @@ const PopoverPicker = ({ color: defaultColor, onChange }: Props) => {
   const close = useCallback(() => {
     toggle(false);
     onChange(color);
-  }, []);
+  }, [color]);
 
   useEffect(() => {
-    if (!color) {
+    if (!color && defaultColor) {
       setColor(defaultColor);
     }
   }, [color]);
