@@ -71,6 +71,8 @@ export const FieldValidator = z.object({
   // ]),
 });
 
+export type Field = z.infer<typeof FieldValidator>;
+
 export const FullTableObjectValidator = z.object({
   id: z.string(),
   name: z.string(),

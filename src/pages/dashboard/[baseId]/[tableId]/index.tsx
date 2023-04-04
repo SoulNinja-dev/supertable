@@ -26,7 +26,11 @@ const TablePage: NextPage<{ baseId: string; tableId: string }> = ({
     state.setLoading,
   ]);
 
-  const { data: tableRes, refetch } = api.table.getTable.useQuery({ tableId });
+  const {
+    data: tableRes,
+    refetch,
+    isInitialLoading,
+  } = api.table.getTable.useQuery({ tableId });
   const [currentForm] = useFormStore((state) => [state.form]);
 
   useEffect(() => {
@@ -41,11 +45,11 @@ const TablePage: NextPage<{ baseId: string; tableId: string }> = ({
       <Head>
         <title>Supertable | Dashboard</title>
       </Head>
-      <div className="flex h-screen bg-white font-inter text-black overflow-y-hidden">
+      <div className="flex h-screen overflow-y-hidden bg-white font-inter text-black">
         <Sidebar refetchTable={refetch} />
-        <main className="flex-1 relative h-screen">
+        <main className="relative h-screen flex-1">
           {/* Topbar */}
-          <div className="w-full-bg-white h-14 border-b-2 border-gray-300 sticky top-0">
+          <div className="w-full-bg-white sticky top-0 h-14 border-b-2 border-gray-300">
             {currentForm && (
               <div className="flex h-full items-center justify-between px-4 font-bold">
                 {currentForm.title}
@@ -53,15 +57,26 @@ const TablePage: NextPage<{ baseId: string; tableId: string }> = ({
             )}
           </div>
 
-          <FormBuilder />
-          
+          {currentForm.id && <FormBuilder />}
+          {!currentForm.id && !isInitialLoading && (
+            <div className="flex h-2/3 w-full items-center justify-center">
+              {"No forms available :("}
+            </div>
+          )}
+          {isInitialLoading && (
+            <div className="flex h-2/3 w-full items-center justify-center">
+              {"Loading..."}
+            </div>
+          )}
         </main>
       </div>
     </div>
   );
 };
 
-const Sidebar: React.FC<{refetchTable: () => Promise<any>}> = ({ refetchTable }) => {
+const Sidebar: React.FC<{ refetchTable: () => Promise<any> }> = ({
+  refetchTable,
+}) => {
   const router = useRouter();
   const [table] = useTableStore((state) => [state.table]);
   const [setForm] = useFormStore((state) => [state.setForm]);
@@ -99,10 +114,11 @@ const Sidebar: React.FC<{refetchTable: () => Promise<any>}> = ({ refetchTable })
       if (router.query.formId) {
         handleSelectForm(router.query.formId as string);
       } else if (table.forms && table.forms[0]) {
+        console.log(table);
         handleSelectForm(table.forms[0].id);
       }
     }
-  }, [router.query]);
+  }, [router.query, table]);
 
   return (
     <div className="flex h-full w-64 flex-col items-center justify-between border-r-2 border-gray-300 bg-white">
@@ -135,31 +151,32 @@ const Sidebar: React.FC<{refetchTable: () => Promise<any>}> = ({ refetchTable })
             <Image src="/plus.svg" width={20} height={20} alt="Adding" />
             Create Form
           </button>
-          {table && table.forms?.map((form) => (
-            <button
-              className={`flex w-full items-center gap-x-2 rounded-lg py-2 px-4 transition-colors duration-100 ease-in-out hover:bg-gray-100
+          {table &&
+            table.forms?.map((form) => (
+              <button
+                className={`flex w-full items-center gap-x-2 rounded-lg py-2 px-4 transition-colors duration-100 ease-in-out hover:bg-gray-100
                 ${currentForm?.id === form.id ? "bg-gray-100" : ""}
               `}
-              key={form.id}
-              onClick={() => handleSelectForm(form.id)}
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                fill="none"
-                stroke="currentColor"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                className="feather feather-table"
-                viewBox="0 0 24 24"
+                key={form.id}
+                onClick={() => handleSelectForm(form.id)}
               >
-                <path d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v18m0 0h10a2 2 0 002-2V9M9 21H5a2 2 0 01-2-2V9m0 0h18"></path>
-              </svg>
-              {form.title}
-            </button>
-          ))}
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  className="feather feather-table"
+                  viewBox="0 0 24 24"
+                >
+                  <path d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v18m0 0h10a2 2 0 002-2V9M9 21H5a2 2 0 01-2-2V9m0 0h18"></path>
+                </svg>
+                {form.title}
+              </button>
+            ))}
         </div>
       </div>
     </div>

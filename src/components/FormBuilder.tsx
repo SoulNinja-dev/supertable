@@ -190,7 +190,7 @@ export const FormFieldsColumn: React.FC = () => {
                   })}
                 >
                   {currentForm.fields.length
-                    ? currentForm.fields.map(({ fieldId, index }) => {
+                    ? currentForm.fields.map(({ fieldId }, index) => {
                         const field = table.fields.find(
                           ({ id }) => id === fieldId
                         );
@@ -302,6 +302,7 @@ const FormBuilder: React.FC = () => {
 
     // Table fields column --> Form fields column
     if (destination.droppableId === "formFields") {
+      // Rearranging form fields
       if (source.droppableId === "formFields") {
         const newFormFields: FullFormObject["fields"] = [...form.fields];
         const [removed] = newFormFields.splice(source.index, 1);

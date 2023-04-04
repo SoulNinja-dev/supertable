@@ -63,6 +63,9 @@ export const formRouter = createTRPCRouter({
             select: {
               fieldId: true,
               index: true
+            },
+            orderBy: {
+              index: "asc"
             }
           },
         }

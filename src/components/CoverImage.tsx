@@ -54,7 +54,7 @@ const CoverImage = () => {
       <div
         className="flex h-[200px] w-full cursor-pointer items-center justify-center bg-gray-200 transition-colors duration-200 ease-out hover:bg-gray-300"
         style={{
-          background: form.coverImage ? `url(${form.coverImage})` : "none",
+          backgroundImage: form.coverImage ? `url(${form.coverImage})` : "none",
           backgroundSize: "cover",
           backgroundPosition: "center",
           backgroundRepeat: "no-repeat",
