@@ -39,7 +39,7 @@ export const TableFieldsColumn: React.FC = () => {
   }, []);
 
   return (
-    <div className="flex flex-col items-start gap-y-3">
+    <div className="flex flex-col items-start gap-y-3 h-full">
       {" "}
       {winReady && !loading && !!table.id && (
         <Droppable droppableId={"tableFields"}>
@@ -49,7 +49,7 @@ export const TableFieldsColumn: React.FC = () => {
               // style={getListStyle(snapshot.isDraggingOver, false)}
               {...provided.droppableProps}
               className={classNames({
-                "relative flex w-[300px] flex-col space-y-4 py-2 px-4": true,
+                "relative flex w-[300px] flex-col space-y-4 py-2 px-4 min-h-[100%]": true,
                 "bg-[#ededed]": snapshot.isDraggingOver,
                 "bg-[#f5f5f5]": !snapshot.isDraggingOver,
               })}
