@@ -139,6 +139,8 @@ model FieldsOnForms {
   fieldId String
   formId  String
   index   Int
+  required Boolean @default(false)
+  helpText String?
   form    Form   @relation(fields: [formId], references: [id])
   field   Field  @relation(fields: [fieldId], references: [id])
 

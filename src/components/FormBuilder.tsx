@@ -192,9 +192,9 @@ export const FormFieldsColumn: React.FC = () => {
                   })}
                 >
                   {currentForm.fields.length
-                    ? currentForm.fields.map(({ fieldId }, index) => {
+                    ? currentForm.fields.map((formField, index) => {
                         const field = table.fields.find(
-                          ({ id }) => id === fieldId
+                          ({ id }) => id === formField.fieldId
                         );
 
                         if (!field) return null;
@@ -216,6 +216,7 @@ export const FormFieldsColumn: React.FC = () => {
                                     provided.draggableProps.style
                                   )}
                                   field={field}
+                                  formField={formField}
                                   isDragging={snapshot.isDragging}
                                   key={field.id}
                                 />
@@ -265,7 +266,7 @@ const FormBuilder: React.FC = () => {
     state.form,
     state.setFormFields,
   ]);
-  const { mutateAsync: editFormFields } = api.form.editFormFields.useMutation();
+  const { mutateAsync: editFormFields } = api.form.editFormFieldsOrder.useMutation();
 
   const onDragEnd = async (result: any) => {
     const { destination, source, draggableId } = result;
@@ -291,8 +292,8 @@ const FormBuilder: React.FC = () => {
 
     // Table fields column --> Form fields column
     if (destination.droppableId === "formFields") {
-      // Rearranging form fields
       if (source.droppableId === "formFields") {
+        // Rearranging form fields
         const newFormFields: FullFormObject["fields"] = [...form.fields];
         const [removed] = newFormFields.splice(source.index, 1);
         newFormFields.splice(
@@ -306,10 +307,13 @@ const FormBuilder: React.FC = () => {
           fields: newFormFields.map((field) => field.fieldId),
         });
       } else {
+        // Adding form field
         const newFormFields: FullFormObject["fields"] = [...form.fields];
         newFormFields.splice(destination.index, 0, {
           fieldId: draggableId,
           index: destination.index,
+          required: false,
+          helpText: "",
         });
         setFormFields(newFormFields);
         await editFormFields({
@@ -318,6 +322,7 @@ const FormBuilder: React.FC = () => {
         });
       }
     } else if (destination.droppableId === "tableFields") {
+      // Remove from form fields
       const newFormFields: FullFormObject["fields"] = [...form.fields];
       const [removed] = newFormFields.splice(source.index, 1);
       setFormFields(newFormFields);

@@ -27,6 +27,8 @@ export const FullFormObjectValidator = FormObjectValidator.and(z.object({
   fields: z.array(z.object({
     fieldId: z.string(),
     index: z.number(),
+    required: z.boolean(),
+    helpText: z.string().nullable(),
   }))
 }))
 

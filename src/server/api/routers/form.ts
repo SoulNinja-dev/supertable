@@ -38,7 +38,7 @@ export const formRouter = createTRPCRouter({
           description: true,
         },
       });
-      
+
       return forms;
     }),
 
@@ -48,9 +48,7 @@ export const formRouter = createTRPCRouter({
         formId: z.string(),
       })
     )
-    .output(
-      FullFormObjectValidator
-    )
+    .output(FullFormObjectValidator)
     .mutation(async ({ ctx, input }) => {
       const formId = input.formId;
 
@@ -62,13 +60,15 @@ export const formRouter = createTRPCRouter({
           fields: {
             select: {
               fieldId: true,
-              index: true
+              index: true,
+              required: true,
+              helpText: true,
             },
             orderBy: {
-              index: "asc"
-            }
+              index: "asc",
+            },
           },
-        }
+        },
       });
       if (!form) {
         return new TRPCError({
@@ -97,9 +97,7 @@ export const formRouter = createTRPCRouter({
         logo: z.string().optional(),
       })
     )
-    .output(
-      FormObjectValidator
-    )
+    .output(FormObjectValidator)
     .mutation(async ({ ctx, input }) => {
       const userId = await ctx.prisma.base.findUnique({
         where: {
@@ -185,8 +183,7 @@ export const formRouter = createTRPCRouter({
             logo: input.logo,
           },
         });
-        
-        
+
         return { success: true };
       } catch (e) {
         console.log("EDIT FORM ERROR: ", e);
@@ -197,33 +194,88 @@ export const formRouter = createTRPCRouter({
       }
     }),
 
-  editFormFields: protectedProcedure.input(z.object({
-    formId: z.string(),
-    fields: z.array(z.string())
-  })).mutation(async ({ ctx, input }) => {
-    try {
-      console.log(input)
-      await ctx.prisma.fieldsOnForms.deleteMany({
-        where: {
-          formId: input.formId
-        }
+  editFormFieldsOrder: protectedProcedure
+    .input(
+      z.object({
+        formId: z.string(),
+        fields: z.array(z.string()),
       })
-      await ctx.prisma.fieldsOnForms.createMany({
-        data: input.fields.map((fieldId, index) => ({
-          fieldId,
-          formId: input.formId,
-          index
-        }))
+    )
+    .mutation(async ({ ctx, input }) => {
+      try {
+        console.log(input);
+        await ctx.prisma.fieldsOnForms.deleteMany({
+          where: {
+            formId: input.formId,
+            fieldId: {
+              notIn: input.fields,
+            },
+          },
+        });
+        await ctx.prisma.$transaction(
+          input.fields.map((fieldId, index) => {
+            return ctx.prisma.fieldsOnForms.upsert({
+              where: {
+                fieldId_formId: {
+                  formId: input.formId,
+                  fieldId,
+                },
+              },
+              update: {
+                index,
+              },
+              create: {
+                formId: input.formId,
+                fieldId,
+                index,
+              },
+            });
+          })
+        );
+        return { success: true };
+      } catch (e) {
+        console.log("EDIT FORM FIELDS ERROR: ", e);
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Error editing form fields",
+        });
+      }
+    }),
+
+  editFormField: protectedProcedure
+    .input(
+      z.object({
+        fieldId: z.string(),
+        formId: z.string(),
+        required: z.boolean().optional(),
+        helpText: z.string().optional(),
       })
-      return { success: true }
-    } catch (e) {
-      console.log("EDIT FORM FIELDS ERROR: ", e);
-      throw new TRPCError({
-        code: "INTERNAL_SERVER_ERROR",
-        message: "Error editing form fields",
-      });
-    }
-  }),
+    )
+    .mutation(async ({ ctx, input }) => {
+
+      try {
+        const field = await ctx.prisma.fieldsOnForms.update({
+          where: {
+            fieldId_formId: {
+              formId: input.formId,
+              fieldId: input.fieldId,
+            }
+          },
+          data: {
+            required: input.required,
+            helpText: input.helpText,
+          },
+        });
+
+        return { success: true };
+      } catch (e) {
+        console.log("EDIT FORM FIELD ERROR: ", e);
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Error editing form field",
+        });
+      }
+    }),
 
   deleteForm: protectedProcedure
     .input(

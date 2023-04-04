@@ -7,6 +7,7 @@ interface FormStore {
   form: FullFormObject;
   setForm: (form: FullFormObject) => void;
   setFormFields: (fields: FullFormObject["fields"]) => void;
+  setFormField: (field: FullFormObject["fields"][0]) => void;
 }
 
 export const useFormStore = create<FormStore>()((set) => ({
@@ -28,9 +29,18 @@ export const useFormStore = create<FormStore>()((set) => ({
     submitMsg: "",
     slug: "",
     coverImage: "",
+    logo: "",
   },
+  setFormField: (field) =>
+    set((state) => ({
+      form: {
+        ...state.form,
+        fields: state.form.fields.map((f) => (f.fieldId === field.fieldId ? field : f)),
+      },
+    })),
   setForm: (form) => set({ form }),
-  setFormFields: (fields) => set(state => ({ form: { ...state.form, fields } })),
+  setFormFields: (fields) =>
+    set((state) => ({ form: { ...state.form, fields } })),
   loading: true,
   setLoading: (loading) => set({ loading }),
 }));
