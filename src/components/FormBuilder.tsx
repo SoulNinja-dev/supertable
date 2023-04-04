@@ -1,6 +1,6 @@
 import classNames from "classnames";
 import Image from "next/image";
-import React, { HTMLProps, useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   DragDropContext,
   Droppable,
@@ -37,8 +37,8 @@ export const TableFieldsColumn: React.FC = () => {
   }, []);
 
   return (
-    <div className="flex flex-col items-start gap-y-3">
-      {" "}
+    <div className="flex flex-col items-start gap-3 py-10 px-10">
+      <div className="text-lg font-semibold">Available Fields</div>
       {winReady && !loading && !!table.id && (
         <Droppable droppableId={"tableFields"}>
           {(provided, snapshot) => (
@@ -47,38 +47,43 @@ export const TableFieldsColumn: React.FC = () => {
               // style={getListStyle(snapshot.isDraggingOver, false)}
               {...provided.droppableProps}
               className={classNames({
-                "relative flex w-[300px] flex-col space-y-4 py-2 px-4": true,
-                "bg-[#ededed]": snapshot.isDraggingOver,
-                "bg-[#f5f5f5]": !snapshot.isDraggingOver,
+                "relative flex w-[300px] flex-col": true,
+                "bg-gray-100": snapshot.isDraggingOver,
+                "bg-white": !snapshot.isDraggingOver,
               })}
             >
-              {table.fields
-                .filter(({ id }) => !formFields.includes(id))
-                .map(({ id, name, type, options }, index) => {
-                  return (
-                    <Draggable key={id} draggableId={id} index={index}>
-                      {(provided, snapshot) => {
-                        return (
-                          <TableField
-                            ref={provided.innerRef}
-                            {...provided.draggableProps}
-                            {...provided.dragHandleProps}
-                            style={getTableFieldStyle(
-                              snapshot.isDragging,
-                              provided.draggableProps.style
-                            )}
-                            className={classNames({
-                              "border-2 border-dashed border-gray-800 bg-[#f3f2f2]":
+              {table.fields.filter(({ id }) => !formFields.includes(id))
+                .length > 0 ? (
+                table.fields
+                  .filter(({ id }) => !formFields.includes(id))
+                  .map(({ id, name, type, options }, index) => {
+                    return (
+                      <Draggable key={id} draggableId={id} index={index}>
+                        {(provided, snapshot) => {
+                          return (
+                            <TableField
+                              ref={provided.innerRef}
+                              {...provided.draggableProps}
+                              {...provided.dragHandleProps}
+                              style={getTableFieldStyle(
                                 snapshot.isDragging,
-                            })}
-                            type={type}
-                            name={name}
-                          />
-                        );
-                      }}
-                    </Draggable>
-                  );
-                })}
+                                provided.draggableProps.style
+                              )}
+                              className={classNames({
+                                "border-2 border-dashed border-gray-800 bg-[#f3f2f2]":
+                                  snapshot.isDragging,
+                              })}
+                              type={type}
+                              name={name}
+                            />
+                          );
+                        }}
+                      </Draggable>
+                    );
+                  })
+              ) : (
+                <div className="text-sm font-medium">No form fields available</div>
+              )}
 
               {provided.placeholder}
             </div>
@@ -106,12 +111,12 @@ export const FormFieldsColumn: React.FC = () => {
   }, []);
 
   return (
-    <div className="h-full w-full overflow-y-auto pb-16 bg-[#fff]/40">
+    <div className="h-full w-full overflow-y-auto bg-[#fff]/40">
       <div className="flex flex-1 flex-col items-center gap-y-3">
         {/* Cover Image */}
         <CoverImage />
         {/* Form SEO/MetaData and Logo */}
-        <div className="relative -top-20 -mb-20 min-h-[300px] w-full max-w-lg rounded-md bg-white px-6 pt-10 pb-5">
+        <div className="relative -top-20 -mb-20 min-h-[300px] w-full max-w-lg rounded-md border bg-white px-6 pt-10 pb-5">
           <div className="flex max-w-[200px] cursor-pointer justify-center gap-x-2 rounded-xl border-2 border-dashed border-gray-300 px-3 py-6 text-gray-400 transition-colors duration-[50ms] ease-out hover:bg-gray-100">
             <Image src="/sparkles.svg" width={20} height={20} alt="sparkles" />
             Add a Logo
@@ -160,7 +165,7 @@ export const FormFieldsColumn: React.FC = () => {
 
         {/* {winReady && children} */}
         {winReady && (
-          <div className="min-h-[150px] w-full px-4">
+          <div className="min-h-[150px] w-full px-24 pt-10">
             <Droppable droppableId={"formFields"}>
               {(provided, snapshot) => (
                 <div
@@ -220,13 +225,13 @@ export const FormFieldsColumn: React.FC = () => {
                                       snapshot.isDragging,
                                   })}
                                 >
-                                  <div className="flex w-full flex-col gap-y-5 p-4">
-                                    <label className="text-xl">
+                                  <div className="flex w-full flex-col gap-y-2 p-4">
+                                    <label className="font-medium">
                                       {field.name}
                                     </label>
                                     <input
                                       type="text"
-                                      className="w-ful h rounded border-2 border-gray-300 px-4 py-3 transition-all duration-200 ease-in hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                                      className="w-ful h rounded bg-sidebar px-4 py-3 ring-2 ring-gray-300 transition-all duration-200 ease-in hover:ring-gray-400 focus:outline-none focus:ring-black"
                                     />
                                   </div>
                                 </div>
@@ -341,9 +346,8 @@ const FormBuilder: React.FC = () => {
 
   return (
     <DragDropContext onDragEnd={onDragEnd}>
-      <div className="flex h-full bg-sidebar">
+      <div className="flex h-full divide-x bg-white">
         <TableFieldsColumn />
-
         <FormFieldsColumn />
       </div>
     </DragDropContext>
