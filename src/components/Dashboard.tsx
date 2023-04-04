@@ -47,7 +47,7 @@ const DashboardComponent = () => {
               cy="12"
               r="10"
               stroke="currentColor"
-              stroke-width="4"
+              strokeWidth="4"
             ></circle>
             <path
               className="opacity-50"
@@ -93,7 +93,7 @@ const BaseSection: React.FC<BaseObject> = ({ id: baseId, name }) => {
               cy="12"
               r="10"
               stroke="currentColor"
-              stroke-width="4"
+              strokeWidth="4"
             ></circle>
             <path
               className="opacity-50"

@@ -1,12 +1,11 @@
 import Image from "next/image";
-import { useRef, useState } from "react";
+import { useRef } from "react";
 import axios from "axios";
 import { useFormStore } from "~/stores/formStore";
 import { api } from "~/utils/api";
 
 const CoverImage = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [file, setFile] = useState<File | null>(null);
   const { mutateAsync: generatePresignedUrl } =
     api.s3.generatePresignedUrl.useMutation();
   const { mutateAsync: editForm } = api.form.editForm.useMutation();

@@ -17,6 +17,7 @@ import { api } from "~/utils/api";
 import CoverImage from "./CoverImage";
 import FormField from "./FormField";
 import FormSettings from "./FormSettings";
+import LogoImage from "./LogoImage";
 import TableField from "./TableField";
 
 resetServerContext();
@@ -39,7 +40,7 @@ export const TableFieldsColumn: React.FC = () => {
   }, []);
 
   return (
-    <div className="flex flex-col items-start gap-3 py-10 px-10 h-full">
+    <div className="flex h-full flex-col items-start gap-3 py-10 px-10">
       <div className="text-lg font-semibold">Available Fields</div>
       {winReady && !loading && !!table.id && (
         <Droppable droppableId={"tableFields"}>
@@ -49,7 +50,7 @@ export const TableFieldsColumn: React.FC = () => {
               // style={getListStyle(snapshot.isDraggingOver, false)}
               {...provided.droppableProps}
               className={classNames({
-                "relative flex w-[300px] flex-col min-h-[100%]": true,
+                "relative flex min-h-[100%] w-[300px] flex-col": true,
                 "bg-gray-100": snapshot.isDraggingOver,
                 "bg-white": !snapshot.isDraggingOver,
               })}
@@ -74,7 +75,7 @@ export const TableFieldsColumn: React.FC = () => {
                               className={classNames({
                                 "border-2 border-dashed border-gray-800 bg-[#f3f2f2]":
                                   snapshot.isDragging,
-                                  "bg-transparent": !snapshot.isDragging,
+                                "bg-transparent": !snapshot.isDragging,
                               })}
                               type={type}
                               name={name}
@@ -85,7 +86,9 @@ export const TableFieldsColumn: React.FC = () => {
                     );
                   })
               ) : (
-                <div className="text-sm font-medium">No form fields available</div>
+                <div className="text-sm font-medium">
+                  No form fields available
+                </div>
               )}
 
               {provided.placeholder}
@@ -120,10 +123,7 @@ export const FormFieldsColumn: React.FC = () => {
         <CoverImage />
         {/* Form SEO/MetaData and Logo */}
         <div className="relative -top-20 -mb-20 min-h-[300px] w-full max-w-lg rounded-md border bg-white px-6 pt-10 pb-5">
-          <div className="flex max-w-[200px] cursor-pointer justify-center gap-x-2 rounded-xl border-2 border-dashed border-gray-300 px-3 py-6 text-gray-400 transition-colors duration-[50ms] ease-out hover:bg-gray-100">
-            <Image src="/sparkles.svg" width={20} height={20} alt="sparkles" />
-            Add a Logo
-          </div>
+          <LogoImage />
           <ContentEditable
             onChange={(e) => {
               if (e.currentTarget.innerText === currentForm.title) return;
@@ -272,7 +272,8 @@ const FormBuilder: React.FC = () => {
     state.form,
     state.setFormFields,
   ]);
-  const { mutateAsync: editFormFields } = api.form.editFormFieldsOrder.useMutation();
+  const { mutateAsync: editFormFields } =
+    api.form.editFormFieldsOrder.useMutation();
 
   const onDragEnd = async (result: any) => {
     const { destination, source, draggableId } = result;
