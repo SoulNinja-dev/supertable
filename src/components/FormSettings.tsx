@@ -43,7 +43,7 @@ const FormSettings = () => {
 
       const response = await editForm({
         formId: form.id,
-        coverImage: uploadedImageUrl,
+        seoImage: uploadedImageUrl,
       });
 
       setForm({
