@@ -43,19 +43,19 @@ const TablePage: NextPage<{ baseId: string; tableId: string }> = ({
   return (
     <div className="h-screen">
       <Head>
-        <title>Supertable | Dashboard</title>
+        <title>Supertable | Form</title>
       </Head>
       <div className="flex h-screen overflow-y-hidden bg-white font-inter text-black">
         <Sidebar refetchTable={refetch} />
         <main className="relative h-screen flex-1">
           {/* Topbar */}
-          <div className="w-full-bg-white sticky top-0 h-14 border-b-2 border-gray-300">
+          {/* <div className="w-full-bg-white sticky top-0 h-14 border-b-2 border-gray-300">
             {currentForm && (
               <div className="flex h-full items-center justify-between px-4 font-bold">
                 {currentForm.title}
               </div>
             )}
-          </div>
+          </div> */}
 
           {currentForm.id && <FormBuilder />}
           {!currentForm.id && !isInitialLoading && (
@@ -65,7 +65,26 @@ const TablePage: NextPage<{ baseId: string; tableId: string }> = ({
           )}
           {isInitialLoading && (
             <div className="flex h-2/3 w-full items-center justify-center">
-              {"Loading..."}
+              <svg
+                className="-ml-1 mr-3 h-6 w-6 animate-spin text-[#a09c9b]"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <circle
+                  className="opacity-100"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  stroke-width="4"
+                ></circle>
+                <path
+                  className="opacity-50"
+                  fill="#000"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                ></path>
+              </svg>
             </div>
           )}
         </main>
@@ -121,10 +140,10 @@ const Sidebar: React.FC<{ refetchTable: () => Promise<any> }> = ({
   }, [router.query, table]);
 
   return (
-    <div className="flex h-full w-64 flex-col items-center justify-between border-r-2 border-gray-300 bg-white">
-      <div className="flex h-20 w-full flex-col justify-start px-4 pt-20">
+    <div className="flex h-full w-64 flex-col items-center justify-between bg-sidebar">
+      <div className="flex h-20 w-full flex-col justify-start px-4 pt-10">
         <Link
-          className="flex cursor-pointer items-center text-lg"
+          className="flex cursor-pointer items-center text-lg font-semibold"
           href="/dashboard"
         >
           <svg
@@ -145,17 +164,17 @@ const Sidebar: React.FC<{ refetchTable: () => Promise<any> }> = ({
         </Link>
         <div className="mt-10 flex flex-col items-start gap-y-5">
           <button
-            className="flex w-full items-center gap-x-2 rounded-lg border-[2px] border-black px-4 py-2"
-            onClick={handleCreateForm}
+            className="flex w-full flex-row items-center justify-center gap-2 rounded bg-black py-2 px-4 font-semibold text-white outline-none transition duration-200 ease-in-out hover:bg-black/60 focus:bg-black/60"
+            onClick={() => console.log("hii")}
           >
-            <Image src="/plus.svg" width={20} height={20} alt="Adding" />
+            <Image src="/plus.svg" height={20} width={20} alt="plus sign" className="invert" />
             Create Form
           </button>
           {table &&
             table.forms?.map((form) => (
               <button
-                className={`flex w-full items-center gap-x-2 rounded-lg py-2 px-4 transition-colors duration-100 ease-in-out hover:bg-gray-100
-                ${currentForm?.id === form.id ? "bg-gray-100" : ""}
+                className={`flex w-full items-center gap-x-2 rounded-lg py-2 px-4 transition-colors duration-100 ease-in-out hover:bg-black/10 font-medium
+                ${currentForm?.id === form.id ? "bg-black/10" : ""}
               `}
                 key={form.id}
                 onClick={() => handleSelectForm(form.id)}
