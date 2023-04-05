@@ -38,6 +38,11 @@ export const authOptions: NextAuthOptions = {
       return session;
     },
   },
+  pages: {
+    signIn: "/",
+    error: "/",
+    signOut: "/?signout=true"
+  },
   adapter: PrismaAdapter(prisma),
   providers: [
     {
