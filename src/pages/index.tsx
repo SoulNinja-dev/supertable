@@ -9,7 +9,7 @@ import { motion } from "framer-motion";
 import { signIn, signOut, useSession } from "next-auth/react";
 import { getServerSession } from "next-auth";
 import { authOptions } from "~/server/auth";
-import toast, { Toaster } from "react-hot-toast";
+import toast from "react-hot-toast";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 
@@ -26,7 +26,7 @@ const Home: NextPage<
 
   return (
     <>
-      <Toaster />
+      
       <Head>
         <title>Supertable | Login</title>
         <meta name="description" content="Welcome to Supertable" />

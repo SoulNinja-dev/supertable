@@ -10,8 +10,12 @@ import PopoverPicker from "./PopoverPicker";
 
 import axios from "axios";
 import classNames from "classnames";
+import ToggleButton from "./Toggle";
+import { useTableStore } from "~/stores/tableStore";
+import { toast } from "react-hot-toast";
 
 const FormSettings = () => {
+  const [table] = useTableStore((state) => [state.table]);
   const [form, setForm] = useFormStore((state) => [state.form, state.setForm]);
   const { mutateAsync: editForm } = api.form.editForm.useMutation();
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -55,6 +59,25 @@ const FormSettings = () => {
     }
   };
 
+  const handleConnectWalletChange = async (value: boolean) => {
+    const solanaAddrField = table.fields.find((field) => field.name === "solana-addr")
+    console.log(solanaAddrField)
+    if (!solanaAddrField) {
+      console.log("You need to have a field called 'solana-addr' in your table to enable wallet connect")
+      toast.error("You need to have a field called 'solana-addr' in your table to enable wallet connect")
+      return
+    }
+    setForm({
+      ...form,
+      connectWallet: value,
+    });
+
+    await editForm({
+      formId: form.id,
+      connectWallet: value,
+    });
+  };
+
   return (
     <div className="mt-8 flex w-full justify-center bg-sidebar px-10 pt-6 pb-60">
       <div className="w-full max-w-2xl">
@@ -74,6 +97,23 @@ const FormSettings = () => {
               </div>
             </div>
           </div>
+
+          {/* Wallet */}
+          <div className="flex gap-20">
+            <div className="flex flex-col text-xl font-semibold max-w-sm">
+              Wallet
+              <div className="text-sm font-semibold text-gray-400">
+                Solana Wallet Connect. (Have a field called <br/> "solana-addr" in your table)
+              </div>
+            </div>
+            <div className="scale-[.8]">
+              <ToggleButton
+                value={form.connectWallet}
+                onValueChange={handleConnectWalletChange}
+              />
+            </div>
+          </div>
+
           <div className="flex flex-col gap-6">
             {/* <div className="flex flex-col text-xl font-semibold">
               SEO

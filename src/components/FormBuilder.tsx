@@ -58,7 +58,10 @@ export const TableFieldsColumn: React.FC = () => {
               {table.fields.filter(({ id }) => !formFields.includes(id))
                 .length > 0 ? (
                 table.fields
-                  .filter(({ id }) => !formFields.includes(id))
+                  .filter(
+                    ({ id, name }) =>
+                      !formFields.includes(id) && name !== "solana-addr"
+                  )
                   .map(({ id, name, type, options }, index) => {
                     return (
                       <Draggable key={id} draggableId={id} index={index}>
