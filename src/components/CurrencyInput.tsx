@@ -23,7 +23,9 @@ const CurrencyInput = ({
 
   return (
     <div
-      className={`${className as string} flex w-max flex-row items-center gap-1.5 rounded-lg px-3 py-1.5 ring-2 ${
+      className={`${
+        className as string
+      } flex flex-row items-center gap-1.5 rounded-lg px-3 py-1.5 ring-2 ${
         focused ? "ring-[#1a1a1a]" : "ring-[#d0d0d0]"
       }`}
     >
@@ -42,7 +44,7 @@ const CurrencyInput = ({
         />
       </svg>
       <input
-        className="appearance-none bg-white font-semibold outline-none"
+        className="w-full appearance-none bg-white font-semibold outline-none"
         onFocus={() => setFocused(true)}
         onBlur={() => setFocused(false)}
         type={type ? "number" : "number"}
