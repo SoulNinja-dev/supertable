@@ -2,7 +2,7 @@ import { z } from "zod";
 
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 import { TRPCError } from "@trpc/server";
-import { FormObjectValidator, FullFormObjectValidator } from "~/models/form";
+import { FormObjectValidator, FormPageObjectValidator, FullFormObjectValidator } from "~/models/form";
 
 export const formRouter = createTRPCRouter({
   getForms: protectedProcedure
@@ -78,6 +78,48 @@ export const formRouter = createTRPCRouter({
       }
       return form;
     }),
+
+  getFormPage: protectedProcedure.input(z.object({
+    slug: z.string(),
+    domain: z.string()
+  })).output(FormPageObjectValidator).query(async ({ ctx, input }) => {
+    const form = await ctx.prisma.form.findFirst({
+      where: {
+        slug: input.slug,
+        table:{
+          base: {
+            domain: input.domain
+          }
+        }
+      },
+      include: {
+        fields: {
+          select: {
+            fieldId: true,
+            index: true,
+            required: true,
+            helpText: true,
+          },
+          orderBy: {
+            index: "asc",
+          },
+          include: {
+            field: true
+          }
+        },
+      },
+    })
+
+    if (!form) {
+      throw new TRPCError({
+        code: "NOT_FOUND",
+        message: "Form not found",
+      });
+    }
+    return form;
+  }),
+
+  
 
   createForm: protectedProcedure
     .input(

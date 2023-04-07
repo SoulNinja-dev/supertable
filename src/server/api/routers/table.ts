@@ -74,6 +74,22 @@ export const tableRouter = createTRPCRouter({
 
       const existingTableIds = existingTables.map((table) => table.airtable);
 
+      const tableIds = tables.map((table) => table.id);
+      const removedTableIds = existingTableIds.filter(
+        (id) => !tableIds.includes(id)
+      );
+
+      // delete removed tables
+      await prisma.table.deleteMany({
+        where: {
+          baseId,
+          airtable: {
+            in: removedTableIds,
+          },
+        },
+      });
+        
+
       // filter existing table ids out of tables
       const newTables = tables.filter((table) => {
         return !existingTableIds.includes(table.id);
@@ -103,6 +119,19 @@ export const tableRouter = createTRPCRouter({
       for (const table of existingTables) {
         const airtableTable = tables.find((t) => t.id === table.airtable);
         if (airtableTable) {
+
+          await prisma.field.deleteMany({
+            where: {
+              tableId: table.id,
+              AND: {
+                NOT: {
+                  id: {
+                    in: airtableTable.fields.map((field) => field.id),
+                  },
+                },
+              }
+            },
+          });
 
           await prisma.table.update({
             where: {

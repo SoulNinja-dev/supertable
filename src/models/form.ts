@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { FieldValidator } from "./table"
 
 export const FormObjectValidator = z.object({
   id: z.string(),
@@ -33,3 +34,15 @@ export const FullFormObjectValidator = FormObjectValidator.and(z.object({
 }))
 
 export type FullFormObject = z.infer<typeof FullFormObjectValidator>;
+
+export const FormPageObjectValidator = FormObjectValidator.and(z.object({
+  fields: z.array(z.object({
+    fieldId: z.string(),
+    index: z.number(),
+    required: z.boolean(),
+    helpText: z.string().nullable(),
+    field: FieldValidator,
+  }))
+}))
+
+export type FormPageObject = z.infer<typeof FormPageObjectValidator>;
