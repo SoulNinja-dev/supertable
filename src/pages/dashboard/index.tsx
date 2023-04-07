@@ -4,15 +4,13 @@ import type {
   NextPage,
 } from "next";
 import Head from "next/head";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Settings from "~/components/Settings";
 import DashboardComponent from "~/components/Dashboard";
 import Sidebar from "~/components/Sidebar";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "~/server/auth";
-import { api } from "~/utils/api";
 import { useSession } from "next-auth/react";
-import { BaseObject } from "~/server/api/routers/base";
 
 const Dashboard: NextPage<
   InferGetServerSidePropsType<typeof getServerSideProps>
