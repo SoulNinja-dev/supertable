@@ -13,6 +13,7 @@ import classNames from "classnames";
 import ToggleButton from "./Toggle";
 import { useTableStore } from "~/stores/tableStore";
 import { toast } from "react-hot-toast";
+import { isProperSlug } from "~/utils/misc";
 
 const FormSettings = () => {
   const [table] = useTableStore((state) => [state.table]);
@@ -21,7 +22,7 @@ const FormSettings = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { mutateAsync: generatePresignedUrl } =
     api.s3.generatePresignedUrl.useMutation();
-  // const debounceUpdateFormTitle = useDebounceCallback(500);
+  const debounceUpdateSlug = useDebounceCallback(500);
   // const debounceUpdateFormDescription = useDebounceCallback(500);
 
   const handleSubmit = async (file: File | null) => {
@@ -60,12 +61,18 @@ const FormSettings = () => {
   };
 
   const handleConnectWalletChange = async (value: boolean) => {
-    const solanaAddrField = table.fields.find((field) => field.name === "solana-addr")
-    console.log(solanaAddrField)
+    const solanaAddrField = table.fields.find(
+      (field) => field.name === "solana-addr"
+    );
+    console.log(solanaAddrField);
     if (!solanaAddrField) {
-      console.log("You need to have a field called 'solana-addr' in your table to enable wallet connect")
-      toast.error("You need to have a field called 'solana-addr' in your table to enable wallet connect")
-      return
+      console.log(
+        "You need to have a field called 'solana-addr' in your table to enable wallet connect"
+      );
+      toast.error(
+        "You need to have a field called 'solana-addr' in your table to enable wallet connect"
+      );
+      return;
     }
     setForm({
       ...form,
@@ -75,6 +82,18 @@ const FormSettings = () => {
     await editForm({
       formId: form.id,
       connectWallet: value,
+    });
+  };
+
+  const handleSlugChange = async (value: string) => {
+    const slugError = isProperSlug(value);
+    if (slugError) {
+      toast.error("Slug can only contain lowercase letters, numbers and dashes");
+      return;
+    }
+    await editForm({
+      formId: form.id,
+      slug: value,
     });
   };
 
@@ -100,10 +119,11 @@ const FormSettings = () => {
 
           {/* Wallet */}
           <div className="flex gap-20">
-            <div className="flex flex-col text-xl font-semibold max-w-sm">
+            <div className="flex max-w-sm flex-col text-xl font-semibold">
               Wallet
               <div className="text-sm font-semibold text-gray-400">
-                Solana Wallet Connect. (Have a field called <br/> "solana-addr" in your table)
+                Solana Wallet Connect. (Have a field called <br /> "solana-addr"
+                in your table)
               </div>
             </div>
             <div className="scale-[.8]">
@@ -115,25 +135,34 @@ const FormSettings = () => {
           </div>
 
           <div className="flex flex-col gap-6">
-            {/* <div className="flex flex-col text-xl font-semibold">
+            <div className="flex flex-col text-xl font-semibold">
               SEO
               <div className="text-sm font-semibold text-gray-400">
                 Change the default SEO data for your forms
               </div>
-            </div> */}
-            {/* <div className="flex flex-col gap-y-5">
+            </div>
+            <div className="flex flex-col gap-y-5">
               <div className="flex w-80 flex-col font-semibold">
-                Title
+                Slug
                 <div className="text-xs font-semibold text-gray-400">
-                  The default SEO title
+                  URL slug for your form
                 </div>
               </div>
               <input
-                value={form.title || ""}
-                className="rounded-md bg-white px-3 py-1.5 font-semibold outline-none ring-2 ring-gray-300"
+                value={form.slug || ""}
+                className="rounded-md bg-white px-3 py-1.5 font-semibold outline-none ring-2 ring-gray-300 w-1/2"
                 placeholder="Form by Superteam"
+                onChange={(e) => {
+                  setForm({
+                    ...form,
+                    slug: e.target.value,
+                  });
+                  debounceUpdateSlug(() => handleSlugChange(e.target.value));
+                  
+                }}
               />
             </div>
+            {/*
             <div className="flex flex-col gap-y-5">
               <div className="flex w-80 flex-col font-semibold">
                 Description
