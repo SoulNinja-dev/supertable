@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth/next";
 import { NextSeo } from "next-seo";
 import Head from "next/head";
 import { useState } from "react";
+import { useForm } from "react-hook-form";
 import Checkbox from "~/components/Checkbox";
 import CurrencyInput from "~/components/CurrencyInput";
 import DateInput from "~/components/DateInput";
@@ -29,10 +30,6 @@ const FormDesign = ({
   coverImage,
   logo,
   fields,
-  // id,
-  // createdAt,
-  // updatedAt,
-  // tableId,
   slug,
   seoDescription,
   seoImage,
@@ -46,7 +43,14 @@ InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const [checked, setChecked] = useState(false);
   const [rating, setRating] = useState(0);
   const [value, setValue] = useState(0);
-  const [selected, setSelected] = useState();
+  const [selected, setSelected] = useState<number>();
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors },
+  } = useForm();
+  const onSubmit = (data) => console.log(data);
 
   return (
     <>
@@ -130,7 +134,10 @@ InferGetServerSidePropsType<typeof getServerSideProps>) => {
               </h1>
             </div>
           </div>
-          <div className="flex h-full flex-col items-center gap-8 py-20 px-96">
+          <form
+            className="flex h-full flex-col items-center gap-8 py-20 px-96"
+            onSubmit={handleSubmit(onSubmit)}
+          >
             {fields.map((field) => (
               <div className="flex w-full max-w-lg flex-col gap-2">
                 <label className="flex flex-row items-center gap-2 text-lg font-medium">
@@ -140,24 +147,68 @@ InferGetServerSidePropsType<typeof getServerSideProps>) => {
                   ) : null}
                 </label>
                 {field.field.type === "singleLineText" ? (
-                  <ShortText placeholder={field.helpText || ""} />
+                  <ShortText
+                    placeholder={field.helpText || ""}
+                    maxLength={field.field?.options?.maxLength || undefined}
+                    register={register}
+                    registerDataA={field.field.name}
+                    registerDataB={field.required}
+                  />
                 ) : field.field.type === "multilineText" ? (
-                  <LongText placeholder={field.helpText || ""} />
+                  <LongText
+                    placeholder={field.helpText || ""}
+                    maxLength={field.field?.options?.maxLength || undefined}
+                    register={register}
+                    registerDataA={field.field.name}
+                    registerDataB={field.required}
+                  />
                 ) : field.field.type === "checkbox" ? (
-                  <Checkbox checked={checked} setChecked={setChecked} />
+                  <Checkbox
+                    checked={checked}
+                    setChecked={setChecked}
+                    label={field.helpText}
+                    register={register}
+                    registerDataA={field.field.name}
+                    registerDataB={field.required}
+                  />
                 ) : field.field.type === "number" ? (
                   <NumberInput
+                    value={value}
                     setValue={setValue}
                     placeholder={field.helpText || ""}
+                    maxLength={field.field?.options?.maxLength || undefined}
+                    register={register}
+                    registerDataA={field.field.name}
+                    registerDataB={field.required}
                   />
                 ) : field.field.type === "date" ? (
-                  <DateInput />
+                  <DateInput
+                    register={register}
+                    registerDataA={field.field.name}
+                    registerDataB={field.required}
+                  />
                 ) : field.field.type === "currency" ? (
-                  <CurrencyInput placeholder={field.helpText || ""} />
+                  <CurrencyInput
+                    placeholder={field.helpText || ""}
+                    maxLength={field.field?.options?.maxLength || undefined}
+                    register={register}
+                    registerDataA={field.field.name}
+                    registerDataB={field.required}
+                  />
                 ) : field.field.type === "duration" ? (
-                  <DurationInput />
+                  <DurationInput
+                    register={register}
+                    registerDataA={field.field.name}
+                    registerDataB={field.required}
+                  />
                 ) : field.field.type === "email" ? (
-                  <EmailInput placeholder={field.helpText || ""} />
+                  <EmailInput
+                    placeholder={field.helpText || ""}
+                    maxLength={field.field?.options?.maxLength || undefined}
+                    register={register}
+                    registerDataA={field.field.name}
+                    registerDataB={field.required}
+                  />
                 ) : field.field.type === "multipleSelects" ? (
                   <MultiSelect
                     options={field.field.options.choices.map(
@@ -165,13 +216,34 @@ InferGetServerSidePropsType<typeof getServerSideProps>) => {
                         choice.name
                     )}
                     placeholder={field.helpText || "No options selected"}
+                    register={register}
+                    registerDataA={field.field.name}
+                    registerDataB={field.required}
                   />
                 ) : field.field.type === "percent" ? (
-                  <PercentInput placeholder={field.helpText || ""} />
+                  <PercentInput
+                    placeholder={field.helpText || ""}
+                    maxLength={field.field?.options?.maxLength || undefined}
+                    register={register}
+                    registerDataA={field.field.name}
+                    registerDataB={field.required}
+                  />
                 ) : field.field.type === "phoneNumber" ? (
-                  <PhoneInput placeholder={field.helpText || ""} />
+                  <PhoneInput
+                    placeholder={field.helpText || ""}
+                    register={register}
+                    registerDataA={field.field.name}
+                    registerDataB={field.required}
+                  />
                 ) : field.field.type === "rating" ? (
-                  <RatingInput rating={rating} setRating={setRating} />
+                  <RatingInput
+                    rating={rating}
+                    setRating={setRating}
+                    maxRating={field.field.options.max}
+                    register={register}
+                    registerDataA={field.field.name}
+                    registerDataB={field.required}
+                  />
                 ) : field.field.type === "singleSelect" ? (
                   <SingleSelect
                     options={field.field.options.choices.map(
@@ -181,27 +253,36 @@ InferGetServerSidePropsType<typeof getServerSideProps>) => {
                     selected={selected}
                     setSelected={setSelected}
                     placeholder={field.helpText || "No options selected"}
+                    register={register}
+                    registerDataA={field.field.name}
+                    registerDataB={field.required}
                   />
                 ) : field.field.type === "url" ? (
-                  <LinkInput placeholder={field.helpText || ""} />
+                  <LinkInput
+                    placeholder={field.helpText || ""}
+                    maxLength={field.field?.options?.maxLength || undefined}
+                    register={register}
+                    registerDataA={field.field.name}
+                    registerDataB={field.required}
+                  />
                 ) : (
-                  <FileInput />
+                  <FileInput
+                    register={register}
+                    registerDataA={field.field.name}
+                    registerDataB={field.required}
+                  />
                 )}
               </div>
             ))}
-            {/* <div className="flex w-full max-w-lg flex-col gap-2">
-              <label className="text-lg font-medium">yet another field</label>
-              <CurrencyInput
-                placeholder="put some moni in here"
-                className="w-full max-w-lg"
-              />
-            </div> */}
             <div className="flex w-full max-w-lg flex-col items-end">
-              <button className="rounded-lg bg-black py-2 px-4 font-semibold text-white outline-none transition duration-200 ease-in-out hover:bg-black/60 focus:bg-black/60">
+              <button
+                type="submit"
+                className="rounded-lg bg-black py-2 px-4 font-semibold text-white outline-none transition duration-200 ease-in-out hover:bg-black/60 focus:bg-black/60"
+              >
                 Submit
               </button>
             </div>
-          </div>
+          </form>
         </div>
       </main>
     </>
@@ -217,7 +298,7 @@ export const getServerSideProps: GetServerSideProps<
   });
 
   const res = await caller.getFormPage({
-    domain: "fun.superteam.com",
+    domain: "test.com",
     slug: context.params?.id as string,
   });
 
