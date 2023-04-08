@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { RHFProps } from "~/utils/misc";
 
 const curs = [
   "USD",
@@ -16,8 +17,11 @@ const curs = [
 const CurrencyInput = ({
   className,
   type,
+  register,
+  registerDataA,
+  registerDataB,
   ...props
-}: React.InputHTMLAttributes<HTMLInputElement>) => {
+}: React.InputHTMLAttributes<HTMLInputElement> & RHFProps) => {
   const [cur, setCur] = useState(0);
   const [focused, setFocused] = useState(false);
 
@@ -46,9 +50,10 @@ const CurrencyInput = ({
       <input
         className="w-full appearance-none bg-white font-semibold outline-none"
         onFocus={() => setFocused(true)}
-        onBlur={() => setFocused(false)}
         type={type ? "number" : "number"}
         {...props}
+        {...register(registerDataA, { required: registerDataB })}
+        onBlur={() => setFocused(false)}
       />
       <div
         className="cursor-pointer font-semibold text-[#1a1a1a]"

@@ -1,9 +1,16 @@
-const FileInput = () => {
+import { RHFProps } from "~/utils/misc";
+
+const FileInput = ({ register, registerDataA, registerDataB }: RHFProps) => {
   return (
-    <div className="flex w-72 flex-row items-center justify-between rounded-lg font-semibold text-[#d0d0d0] ring-2 ring-[#d0d0d0]">
-      <input type="file" id="test" className="hidden" />
+    <div className="flex flex-row items-center justify-between rounded-lg font-semibold text-[#d0d0d0] ring-2 ring-[#d0d0d0]">
+      <input
+        type="file"
+        id="test"
+        className="hidden"
+        {...register(registerDataA, { required: registerDataB })}
+      />
       <div
-        className="flex cursor-pointer flex-row items-center gap-1.5 px-3 py-1.5"
+        className="flex w-full cursor-pointer flex-row items-center gap-1.5 px-3 py-1.5"
         onClick={() => document.getElementById("test")?.click()}
       >
         <svg

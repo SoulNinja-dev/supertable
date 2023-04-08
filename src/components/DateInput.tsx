@@ -2,6 +2,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import OutsideClickHandler from "react-outside-click-handler";
 import SingleSelect from "./SingleSelect";
+import { RHFProps } from "~/utils/misc";
 
 const months = [
   "January",
@@ -23,7 +24,7 @@ const years = [
   2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023,
 ];
 
-const DateInput = ({ className }: Props) => {
+const DateInput = ({ className, register, registerDataA, registerDataB }: Props & RHFProps) => {
   const [open, setOpen] = useState(false);
   const [month, setMonth] = useState<number>();
   const [day, setDay] = useState<number>();

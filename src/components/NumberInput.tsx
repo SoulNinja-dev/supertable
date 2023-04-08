@@ -1,25 +1,32 @@
 import { type Dispatch, type SetStateAction, useState } from "react";
+import { RHFProps } from "~/utils/misc";
 
 const NumberInput = ({
   className,
   setValue,
   value,
   type,
+  register,
+  registerDataA,
+  registerDataB,
   ...props
-}: Props & React.InputHTMLAttributes<HTMLInputElement>) => {
+}: Props & React.InputHTMLAttributes<HTMLInputElement> & RHFProps) => {
   const [focused, setFocused] = useState(false);
 
   return (
     <div
-      className={`flex w-max flex-row items-center gap-1.5 rounded-lg px-3 py-1.5 ring-2 ${
+      className={`flex flex-row items-center gap-1.5 rounded-lg px-3 py-1.5 ring-2 ${
         focused ? "ring-[#1a1a1a]" : "ring-[#d0d0d0]"
       }`}
     >
       <input
-        className={`${className as string} bg-white font-semibold outline-none appearance-none`}
+        className={`${className as string} bg-white w-full font-semibold outline-none appearance-none`}
         onFocus={() => setFocused(true)}
+        {...register(registerDataA, { required: registerDataB })}
         onBlur={() => setFocused(false)}
         type={type ? "number" : "number"}
+        value={value}
+        onChange={(e) => setValue(Number(e.target.value))}
         {...props}
       />
       <div className="flex flex-col items-center">

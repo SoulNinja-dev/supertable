@@ -2,6 +2,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import OutsideClickHandler from "react-outside-click-handler";
 import SingleSelect from "./SingleSelect";
+import { RHFProps } from "~/utils/misc";
 
 const hours = [
   0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21,
@@ -14,7 +15,7 @@ const minutes = [
   41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59,
 ];
 
-const DurationInput = ({ className }: Props) => {
+const DurationInput = ({ className, register, registerDataA, registerDataB }: Props & RHFProps) => {
   const [open, setOpen] = useState(false);
   const [minute, setMinute] = useState<number>();
   const [hour, setHour] = useState<number>();
