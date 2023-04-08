@@ -1,3 +1,5 @@
+import { UseFormRegister, FieldValues } from "react-hook-form";
+
 export const isProperSlug = (slug: string): string => {
   if (slug.length === 0) {
     return "Error: Slug cannot be empty.";
@@ -20,3 +22,9 @@ export const isProperSlug = (slug: string): string => {
 
   return ""; // No error messages, the slug is valid.
 };
+
+export interface RHFProps {
+  register: UseFormRegister<FieldValues>;
+  registerDataA: string;
+  registerDataB: boolean;
+}
