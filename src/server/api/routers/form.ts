@@ -87,9 +87,7 @@ export const formRouter = createTRPCRouter({
       where: {
         slug: input.slug,
         table:{
-          base: {
-            domain: input.domain
-          }
+          customDomain: input.domain
         }
       },
       include: {
