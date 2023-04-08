@@ -1,8 +1,9 @@
 import { signOut } from "next-auth/react";
 import Image from "next/image";
+import Link from "next/link";
 import type { Dispatch, SetStateAction } from "react";
 
-const Sidebar = ({ page, setPage }: Props) => {
+const Sidebar = ({ page }: Props) => {
   return (
     <aside className="col-span-1 flex h-screen flex-col gap-36 bg-sidebar px-10 py-10 text-black">
       <div className="flex flex-row items-center gap-2 text-2xl font-semibold text-black">
@@ -11,11 +12,11 @@ const Sidebar = ({ page, setPage }: Props) => {
       </div>
       <div className="flex h-full flex-col justify-between">
         <div className="flex w-full flex-col gap-4">
-          <div
+          <Link
             className={`flex cursor-pointer flex-row items-center gap-2 font-semibold ${
               page === "dashboard" ? "text-black" : "text-[#a09c9b]"
             }`}
-            onClick={() => setPage("dashboard")}
+            href="/dashboard"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -32,12 +33,12 @@ const Sidebar = ({ page, setPage }: Props) => {
               />
             </svg>
             Dashboard
-          </div>
-          <div
+          </Link>
+          <Link
             className={`flex cursor-pointer flex-row items-center gap-2 font-semibold ${
               page === "settings" ? "text-black" : "text-[#a09c9b]"
             }`}
-            onClick={() => setPage("settings")}
+            href={"/dashboard/settings"}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -59,7 +60,7 @@ const Sidebar = ({ page, setPage }: Props) => {
               />
             </svg>
             Settings
-          </div>
+          </Link>
         </div>
         <button
           className="mt-auto flex cursor-pointer flex-row items-center gap-2 font-semibold"
@@ -82,9 +83,7 @@ const Sidebar = ({ page, setPage }: Props) => {
 
 interface Props {
   page: string;
-  setPage: (
-    arg0: "dashboard" | "settings" | "form"
-  ) => void | Dispatch<SetStateAction<"dashboard" | "settings" | "form">>;
+  
   
 }
 

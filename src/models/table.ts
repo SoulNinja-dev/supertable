@@ -89,6 +89,7 @@ export const FullTableObjectValidator = z.object({
     id: z.string(),
     title: z.string().nullable(),
   })),
+  customDomain: z.string().nullable(),
 });
 
 export type FullTableObject = z.infer<typeof FullTableObjectValidator>;

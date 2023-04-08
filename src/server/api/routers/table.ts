@@ -88,7 +88,6 @@ export const tableRouter = createTRPCRouter({
           },
         },
       });
-        
 
       // filter existing table ids out of tables
       const newTables = tables.filter((table) => {
@@ -119,7 +118,6 @@ export const tableRouter = createTRPCRouter({
       for (const table of existingTables) {
         const airtableTable = tables.find((t) => t.id === table.airtable);
         if (airtableTable) {
-
           await prisma.field.deleteMany({
             where: {
               tableId: table.id,
@@ -129,7 +127,7 @@ export const tableRouter = createTRPCRouter({
                     in: airtableTable.fields.map((field) => field.id),
                   },
                 },
-              }
+              },
             },
           });
 
@@ -141,25 +139,27 @@ export const tableRouter = createTRPCRouter({
               name: airtableTable.name,
               description: airtableTable.description || "",
               fields: {
-                upsert: airtableTable.fields.map(({id, name, type, description, options}) => ({
-                  create: {
-                    id,
-                    name,
-                    type: type as FieldTypeEnum,
-                    description: description || "",
-                    options: options || undefined,
-                  },
-                  where: {
-                    id
-                  },
-                  update: {
-                    name,
-                    type: type as FieldTypeEnum,
-                    description,
-                    options: options || undefined,
-                  }
-                })),
-              }
+                upsert: airtableTable.fields.map(
+                  ({ id, name, type, description, options }) => ({
+                    create: {
+                      id,
+                      name,
+                      type: type as FieldTypeEnum,
+                      description: description || "",
+                      options: options || undefined,
+                    },
+                    where: {
+                      id,
+                    },
+                    update: {
+                      name,
+                      type: type as FieldTypeEnum,
+                      description,
+                      options: options || undefined,
+                    },
+                  })
+                ),
+              },
             },
           });
 
@@ -213,6 +213,31 @@ export const tableRouter = createTRPCRouter({
       return { tables: filtered };
     }),
 
+  getAllTableInfos: protectedProcedure
+    .output(
+      z.array(
+        z.object({
+          id: z.string(),
+          name: z.string(),
+        })
+      )
+    )
+    .query(async ({ ctx }) => {
+      const tables = await ctx.prisma.table.findMany({
+        where: {
+          base: {
+            userId: ctx.session.user.id,
+          },
+        },
+        select: {
+          id: true,
+          name: true,
+        },
+      });
+
+      return tables;
+    }),
+
   getTable: protectedProcedure
     .input(
       z.object({
@@ -231,7 +256,7 @@ export const tableRouter = createTRPCRouter({
             select: {
               id: true,
               title: true,
-            }
+            },
           },
         },
       });
@@ -253,6 +278,7 @@ export const tableRouter = createTRPCRouter({
         theme: z.string().optional(),
         seoDescription: z.string().optional(),
         seoImage: z.string().optional(),
+        customDomain: z.string().optional(),
       })
     )
     .output(
@@ -260,7 +286,7 @@ export const tableRouter = createTRPCRouter({
         success: z.boolean(),
       })
     )
-    .query(async ({ ctx, input }) => {
+    .mutation(async ({ ctx, input }) => {
       const prisma = ctx.prisma;
       const id = input.id;
 
@@ -273,6 +299,8 @@ export const tableRouter = createTRPCRouter({
           seoDescription:
             input.seoDescription != null ? input.seoDescription : undefined,
           seoImage: input.seoImage != null ? input.seoImage : undefined,
+          customDomain:
+            input.customDomain != null ? input.customDomain : undefined,
         },
       });
       return { success: true };

@@ -43,10 +43,10 @@ const SingleSelect = ({
         <AnimatePresence>
           {open ? (
             <motion.div
-              initial={{ opacity: 0, y: 20, scale: 0.8 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: 20, scale: 0.6 }}
-              transition={{ duration: 0.3, ease: "easeIn" }}
+              initial={{ opacity: 0, y: -10, scaleY: 0.8 }}
+              animate={{ opacity: 1, y: 0, scaleY: 1 }}
+              exit={{ opacity: 0, y: -20, scaleY: 0.6 }}
+              transition={{ duration: 0.1, ease: "easeIn" }}
             >
               <div className="absolute z-[9999] mt-2 w-full rounded-lg bg-white shadow-xl ring-2 ring-[#d0d0d0]">
                 {options?.map((option, ind) => (

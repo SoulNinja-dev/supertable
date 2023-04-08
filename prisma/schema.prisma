@@ -69,10 +69,9 @@ model Base {
   airtable       String  @unique
   userId         String
   name           String
-  domain         String?
-  theme          String?
-  seoDescription String?
-  seoImage       String?
+  // theme          String?
+  // seoDescription String?
+  // seoImage       String?
   tables         Table[]
 
   user User @relation(fields: [userId], references: [id])
@@ -90,6 +89,7 @@ model Table {
   theme          String?
   seoDescription String?
   seoImage       String?
+  customDomain         String?
 
   forms  Form[]
   fields Field[]

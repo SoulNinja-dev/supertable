@@ -1,3 +1,4 @@
+import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
@@ -46,7 +47,7 @@ export const baseRouter = createTRPCRouter({
       console.log("bases from db: ", existingBases);
 
       const existingBaseIds = existingBases.map((base) => base.airtable);
-      
+
       // filter existing base ids out of bases
       const newBases = bases.filter((base) => {
         return !existingBaseIds.includes(base.id);
@@ -92,6 +93,54 @@ export const baseRouter = createTRPCRouter({
 
       console.log("updated and filtered bases: ", data);
       return { bases: data };
+    }),
+
+  listBases: protectedProcedure
+    .output(
+      z.object({
+        bases: z.array(
+          z.object({
+            id: z.string(),
+            name: z.string(),
+          })
+        ),
+      })
+    )
+    .query(async ({ ctx }) => {
+      const prisma = ctx.prisma;
+      const userId = ctx.session?.user.id;
+
+      const data = await prisma.base.findMany({
+        where: {
+          userId,
+        },
+        select: {
+          id: true,
+          name: true,
+        },
+      });
+
+      return { bases: data };
+    }),
+
+  getBase: protectedProcedure
+    .input(z.string())
+    .output(BaseObjectValidator)
+    .query(async ({ ctx, input }) => {
+      const prisma = ctx.prisma;
+      const userId = ctx.session?.user.id;
+
+      const data = await prisma.base.findUnique({
+        where: {
+          id: input,
+        },
+      });
+
+      if (data?.userId !== userId) {
+        throw new TRPCError({ message: "Cannot find base", code: "NOT_FOUND" });
+      }
+
+      return data;
     }),
 
   editBase: protectedProcedure

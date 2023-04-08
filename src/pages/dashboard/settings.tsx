@@ -14,7 +14,7 @@ import { api } from "~/utils/api";
 import { useSession } from "next-auth/react";
 import { BaseObject } from "~/server/api/routers/base";
 
-const Dashboard: NextPage<
+const SettingsPage: NextPage<
   InferGetServerSidePropsType<typeof getServerSideProps>
 > = () => {
 
@@ -26,9 +26,9 @@ const Dashboard: NextPage<
       </Head>
       <div className="h-screen bg-white font-inter text-white">
         <div className="grid grid-cols-5 gap-4">
-          <Sidebar page={"dashboard"}/>
+          <Sidebar page={"settings"}/>
           <main className="col-span-4 h-screen overflow-y-scroll">
-            <DashboardComponent />
+            <Settings />
           </main>
         </div>
       </div>
@@ -36,7 +36,7 @@ const Dashboard: NextPage<
   );
 };
 
-export default Dashboard;
+export default SettingsPage;
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const session = await getServerSession(context.req, context.res, authOptions);
