@@ -25,6 +25,7 @@ const PhoneInput = ({
         onFocus={() => setFocused(true)}
         {...register(registerDataA, {
           required: registerDataB,
+          valueAsNumber: true,
           pattern: {
             value: /^\d{10}$/,
             message: "Invalid phone number",

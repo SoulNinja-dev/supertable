@@ -22,7 +22,7 @@ const NumberInput = ({
       <input
         className={`${className as string} bg-white w-full font-semibold outline-none appearance-none`}
         onFocus={() => setFocused(true)}
-        {...register(registerDataA, { required: registerDataB })}
+        {...register(registerDataA, { required: registerDataB, valueAsNumber: true })}
         onBlur={() => setFocused(false)}
         type={type ? "number" : "number"}
         value={value}

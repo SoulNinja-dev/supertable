@@ -52,7 +52,7 @@ const CurrencyInput = ({
         onFocus={() => setFocused(true)}
         type={type ? "number" : "number"}
         {...props}
-        {...register(registerDataA, { required: registerDataB })}
+        {...register(registerDataA, { required: registerDataB, valueAsNumber: true })}
         onBlur={() => setFocused(false)}
       />
       <div
