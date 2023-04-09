@@ -1,17 +1,21 @@
 import { AnimatePresence, motion } from "framer-motion";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import OutsideClickHandler from "react-outside-click-handler";
 import Checkbox from "./Checkbox";
 
-const MultiSelect = ({ options, placeholder }: Props) => {
+const MultiSelect = ({ options, placeholder, onChange, ..._ }: Props) => {
   const [open, setOpen] = useState(false);
   const [selected, setSelected] = useState<number[]>([]);
+
+  useEffect(() => {
+    onChange(selected);
+  }, [selected]);
 
   return (
     <OutsideClickHandler onOutsideClick={() => setOpen(false)}>
       <div className="relative flex flex-col">
         <div
-          className={`gap-8 cursor-pointer flex flex-row items-center justify-between rounded-lg bg-white px-4 py-1.5 font-semibold  ${
+          className={`flex cursor-pointer flex-row items-center justify-between gap-8 rounded-lg bg-white px-4 py-1.5 font-semibold  ${
             selected.length >= 1 ? "text-[#1a1a1a]" : "text-[#d0d0d0]"
           } outline-none ring-2 ring-[#d0d0d0]`}
           onClick={() => setOpen(!open)}
@@ -71,6 +75,9 @@ const MultiSelect = ({ options, placeholder }: Props) => {
                           setSelected(selected?.concat(ind));
                         }
                       }}
+                      register={(a, b) => {
+                        return;
+                      }}
                     />
                     {option}
                   </div>
@@ -87,6 +94,11 @@ const MultiSelect = ({ options, placeholder }: Props) => {
 interface Props {
   options: (string | number)[];
   placeholder: string;
+  name: string;
+  value?: any;
+  onChange: (...event: any[]) => void;
+  onBlur: () => void;
+  ref: any;
 }
 
 export default MultiSelect;
