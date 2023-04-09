@@ -3,7 +3,7 @@ import { getServerSession } from "next-auth/next";
 import { NextSeo } from "next-seo";
 import Head from "next/head";
 import { useEffect, useState } from "react";
-import { SubmitHandler, useForm } from "react-hook-form";
+import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import Checkbox from "~/components/Checkbox";
 import CurrencyInput from "~/components/CurrencyInput";
 import DateInput from "~/components/DateInput";
@@ -47,6 +47,7 @@ InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const {
     register,
     handleSubmit,
+    control,
     watch,
     formState: { errors },
   } = useForm();
@@ -213,13 +214,8 @@ InferGetServerSidePropsType<typeof getServerSideProps>) => {
                     registerDataA={field.field.name}
                     registerDataB={field.required}
                   />
-                ) : field.field.type === "multipleSelects" ? (
-                  <MultiSelect
-                    options={field.field.options.choices.map(
-                      (choice: { id: string; color: string; name: string }) =>
-                        choice.name
-                    )}
-                    placeholder={field.helpText || "No options selected"}
+                ) : field.field.type === "multipleAttachments" ? (
+                  <FileInput
                     register={register}
                     registerDataA={field.field.name}
                     registerDataB={field.required}
@@ -270,10 +266,22 @@ InferGetServerSidePropsType<typeof getServerSideProps>) => {
                     registerDataB={field.required}
                   />
                 ) : (
-                  <FileInput
-                    register={register}
-                    registerDataA={field.field.name}
-                    registerDataB={field.required}
+                  <Controller
+                    name={field.field.name}
+                    control={control}
+                    render={({ field: field_ }) => (
+                      <MultiSelect
+                        options={field.field.options.choices.map(
+                          (choice: {
+                            id: string;
+                            color: string;
+                            name: string;
+                          }) => choice.name
+                        )}
+                        {...field_}
+                        placeholder={field.helpText || "No options selected"}
+                      />
+                    )}
                   />
                 )}
                 {errors[field.field.name] ? (
