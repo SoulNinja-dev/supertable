@@ -2,8 +2,8 @@ import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 import { getServerSession } from "next-auth/next";
 import { NextSeo } from "next-seo";
 import Head from "next/head";
-import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { useEffect, useState } from "react";
+import { SubmitHandler, useForm } from "react-hook-form";
 import Checkbox from "~/components/Checkbox";
 import CurrencyInput from "~/components/CurrencyInput";
 import DateInput from "~/components/DateInput";
@@ -50,7 +50,11 @@ InferGetServerSidePropsType<typeof getServerSideProps>) => {
     watch,
     formState: { errors },
   } = useForm();
-  const onSubmit = (data) => console.log(data);
+  const onSubmit: SubmitHandler<{
+    [key: string]: string | number | boolean | FileList;
+  }> = (data) => console.log(data);
+
+  // useEffect(() => console.log(errors))
 
   return (
     <>
@@ -166,7 +170,7 @@ InferGetServerSidePropsType<typeof getServerSideProps>) => {
                   <Checkbox
                     checked={checked}
                     setChecked={setChecked}
-                    label={field.helpText}
+                    label={field.helpText || undefined}
                     register={register}
                     registerDataA={field.field.name}
                     registerDataB={field.required}
@@ -272,6 +276,13 @@ InferGetServerSidePropsType<typeof getServerSideProps>) => {
                     registerDataB={field.required}
                   />
                 )}
+                {errors[field.field.name] ? (
+                  <div className="text-sm font-medium text-red-400">
+                    {(errors[field.field.name]?.type as string) === "required"
+                      ? "This field is required"
+                      : (errors[field.field.name]?.type as string)}
+                  </div>
+                ) : null}
               </div>
             ))}
             <div className="flex w-full max-w-lg flex-col items-end">
