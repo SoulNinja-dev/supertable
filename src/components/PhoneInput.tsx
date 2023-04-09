@@ -17,13 +17,19 @@ const PhoneInput = ({
         focused ? "ring-[#1a1a1a]" : "ring-[#d0d0d0]"
       }`}
     >
-      <div className="py-1.5 pl-3 pr-1.5 font-semibold w-20">US +1</div>
+      <div className="w-20 py-1.5 pl-3 pr-1.5 font-semibold">US +1</div>
       <input
         className={`${
           className as string
-        }  appearance-none rounded-lg bg-white py-1.5 pr-4 w-full font-semibold text-[#1a1a1a] placeholder-[#d0d0d0] outline-none`}
+        }  w-full appearance-none rounded-lg bg-white py-1.5 pr-4 font-semibold text-[#1a1a1a] placeholder-[#d0d0d0] outline-none`}
         onFocus={() => setFocused(true)}
-        {...register(registerDataA, { required: registerDataB })}
+        {...register(registerDataA, {
+          required: registerDataB,
+          pattern: {
+            value: /^\d{10}$/,
+            message: "Invalid phone number",
+          },
+        })}
         onBlur={() => setFocused(false)}
         type={type ? "number" : "number"}
         {...props}
