@@ -57,7 +57,7 @@ interface Props {
   className?: string;
   checked: boolean;
   setChecked: (arg0: boolean) => void | Dispatch<SetStateAction<boolean>>;
-  label: string;
+  label?: string;
 }
 
 export default Checkbox;
