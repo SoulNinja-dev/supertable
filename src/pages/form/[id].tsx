@@ -2,7 +2,7 @@ import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 import { getServerSession } from "next-auth/next";
 import { NextSeo } from "next-seo";
 import Head from "next/head";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import Checkbox from "~/components/Checkbox";
 import CurrencyInput from "~/components/CurrencyInput";
@@ -48,14 +48,11 @@ InferGetServerSidePropsType<typeof getServerSideProps>) => {
     register,
     handleSubmit,
     control,
-    watch,
     formState: { errors },
   } = useForm();
   const onSubmit: SubmitHandler<{
-    [key: string]: string | number | boolean | FileList;
+    [key: string]: string | number | boolean | FileList | number[];
   }> = (data) => console.log(data);
-
-  // useEffect(() => console.log(errors))
 
   return (
     <>
@@ -288,7 +285,7 @@ InferGetServerSidePropsType<typeof getServerSideProps>) => {
                   <div className="text-sm font-medium text-red-400">
                     {(errors[field.field.name]?.type as string) === "required"
                       ? "This field is required"
-                      : (errors[field.field.name]?.type as string)}
+                      : (errors[field.field.name]?.type as string) === "pattern" ? (errors[field.field.name]?.message as string) : (errors[field.field.name]?.type as string)}
                   </div>
                 ) : null}
               </div>
