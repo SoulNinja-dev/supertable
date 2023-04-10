@@ -23,7 +23,7 @@ const PercentInput = ({
     >
       <input
         onFocus={() => setFocus(true)}
-        {...register(registerDataA, { required: registerDataB })}
+        {...register(registerDataA, { required: registerDataB, valueAsNumber: true })}
         onBlur={() => setFocus(false)}
         className={`${
           className as string

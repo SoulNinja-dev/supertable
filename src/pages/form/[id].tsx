@@ -2,8 +2,8 @@ import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 import { getServerSession } from "next-auth/next";
 import { NextSeo } from "next-seo";
 import Head from "next/head";
-import { useEffect, useState } from "react";
-import { SubmitHandler, useForm } from "react-hook-form";
+import { useState } from "react";
+import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import Checkbox from "~/components/Checkbox";
 import CurrencyInput from "~/components/CurrencyInput";
 import DateInput from "~/components/DateInput";
@@ -50,11 +50,11 @@ InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const {
     register,
     handleSubmit,
-    watch,
+    control,
     formState: { errors },
   } = useForm();
   const onSubmit: SubmitHandler<{
-    [key: string]: string | number | boolean | FileList;
+    [key: string]: string | number | boolean | FileList | number[];
   }> = (data) => console.log(data);
 
   console.log("Theme", themeData)
@@ -231,13 +231,8 @@ InferGetServerSidePropsType<typeof getServerSideProps>) => {
                     registerDataB={field.required}
                     themeData={themeData}
                   />
-                ) : field.field.type === "multipleSelects" ? (
-                  <MultiSelect
-                    options={field.field.options.choices.map(
-                      (choice: { id: string; color: string; name: string }) =>
-                        choice.name
-                    )}
-                    placeholder={field.helpText || "No options selected"}
+                ) : field.field.type === "multipleAttachments" ? (
+                  <FileInput
                     register={register}
                     registerDataA={field.field.name}
                     registerDataB={field.required}
@@ -294,18 +289,30 @@ InferGetServerSidePropsType<typeof getServerSideProps>) => {
                     themeData={themeData}
                   />
                 ) : (
-                  <FileInput
-                    register={register}
-                    registerDataA={field.field.name}
-                    registerDataB={field.required}
-                    themeData={themeData}
+                  <Controller
+                    name={field.field.name}
+                    control={control}
+                    render={({ field: field_ }) => (
+                      <MultiSelect
+                        themeData={themeData}
+                        options={field.field.options.choices.map(
+                          (choice: {
+                            id: string;
+                            color: string;
+                            name: string;
+                          }) => choice.name
+                        )}
+                        {...field_}
+                        placeholder={field.helpText || "No options selected"}
+                      />
+                    )}
                   />
                 )}
                 {errors[field.field.name] ? (
                   <div className="text-sm font-medium text-red-400">
                     {(errors[field.field.name]?.type as string) === "required"
                       ? "This field is required"
-                      : (errors[field.field.name]?.type as string)}
+                      : (errors[field.field.name]?.type as string) === "pattern" ? (errors[field.field.name]?.message as string) : (errors[field.field.name]?.type as string)}
                   </div>
                 ) : null}
               </div>

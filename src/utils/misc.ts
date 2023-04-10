@@ -25,7 +25,7 @@ export const isProperSlug = (slug: string): string => {
 };
 
 export interface RHFProps {
-  register: UseFormRegister<FieldValues>;
+  register: UseFormRegister<FieldValues> | ((arg0?:any, arg1?: any) => void);
   registerDataA: string;
   registerDataB: boolean;
   themeData: ThemeData;

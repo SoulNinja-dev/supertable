@@ -2,19 +2,34 @@ import { AnimatePresence, motion } from "framer-motion";
 import { type Dispatch, type SetStateAction, useState } from "react";
 import OutsideClickHandler from "react-outside-click-handler";
 import { ThemeData } from "~/utils/themes";
+import { RHFProps } from "~/utils/misc";
 
 const SingleSelect = ({
   options,
   placeholder,
   selected,
   setSelected,
+  register,
+  registerDataA,
+  registerDataB,
   themeData,
-}: Props) => {
+}: Props & RHFProps) => {
   const [open, setOpen] = useState(false);
   // const [selected, setSelected] = useState<number>();
 
   return (
     <OutsideClickHandler onOutsideClick={() => setOpen(false)}>
+      <select
+        className="bg-white hidden"
+        value={selected}
+        {...register(registerDataA, { required: registerDataB })}
+      >
+        {options.map((option, ind) => (
+          <option value={ind} key={ind}>
+            {option}
+          </option>
+        ))}
+      </select>
       <div className="relative flex flex-col">
         <div
           className={`flex cursor-pointer flex-row items-center justify-between gap-8 rounded-lg px-4 py-1.5 font-semibold  ${

@@ -21,6 +21,7 @@ const RatingInput = ({
           strokeWidth={1.5}
           stroke={rating < ind + 1 ? "currentColor" : "none"}
           className="h-6 w-6 cursor-pointer"
+          key={ind}
           onClick={() => setRating(ind + 1)}
         >
           <path

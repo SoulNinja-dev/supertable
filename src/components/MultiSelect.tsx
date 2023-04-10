@@ -1,12 +1,16 @@
 import { AnimatePresence, motion } from "framer-motion";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import OutsideClickHandler from "react-outside-click-handler";
 import { ThemeData } from "~/utils/themes";
 import Checkbox from "./Checkbox";
 
-const MultiSelect = ({ options, placeholder, themeData }: Props) => {
+const MultiSelect = ({ options, placeholder, onChange, themeData, ..._ }: Props) => {
   const [open, setOpen] = useState(false);
   const [selected, setSelected] = useState<number[]>([]);
+
+  useEffect(() => {
+    onChange(selected);
+  }, [selected]);
 
   return (
     <OutsideClickHandler onOutsideClick={() => setOpen(false)}>
@@ -74,6 +78,7 @@ const MultiSelect = ({ options, placeholder, themeData }: Props) => {
                     className="flex cursor-pointer flex-row items-center gap-2 border border-[#d0d0d0] py-1.5 px-2 font-semibold hover:bg-[#d0d0d0]/40 focus:bg-[#d0d0d0]/40"
                   >
                     <Checkbox
+                      themeData={themeData}
                       checked={selected?.includes(ind) || false}
                       setChecked={() => {
                         if (selected?.includes(ind)) {
@@ -81,6 +86,9 @@ const MultiSelect = ({ options, placeholder, themeData }: Props) => {
                         } else {
                           setSelected(selected?.concat(ind));
                         }
+                      }}
+                      register={(a, b) => {
+                        return;
                       }}
                     />
                     {option}
@@ -98,7 +106,12 @@ const MultiSelect = ({ options, placeholder, themeData }: Props) => {
 interface Props {
   options: (string | number)[];
   placeholder: string;
-  themeData: ThemeData
+  name: string;
+  value?: any;
+  onChange: (...event: any[]) => void;
+  onBlur: () => void;
+  ref: any;
+  themeData: ThemeData;
 }
 
 export default MultiSelect;

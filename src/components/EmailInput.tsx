@@ -15,7 +15,13 @@ const EmailInput = ({
         className as string
       }  rounded-lg px-4 py-1.5 font-semibold outline-none ring-2 ring-gray-50/0 focus:ring-[#aeaeae]/40`}
       {...props}
-      {...register(registerDataA, { required: registerDataB })}
+      {...register(registerDataA, {
+        required: registerDataB,
+        pattern: {
+          value: /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}$/,
+          message: "Invalid email",
+        },
+      })}
       style={{
         backgroundColor: themeData.bgColor,
         color: themeData.textColor,
