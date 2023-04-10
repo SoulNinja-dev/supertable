@@ -7,15 +7,18 @@ const PhoneInput = ({
   register,
   registerDataA,
   registerDataB,
+  themeData,
   ...props
 }: React.InputHTMLAttributes<HTMLInputElement> & RHFProps) => {
   const [focused, setFocused] = useState(false);
 
   return (
     <div
-      className={`flex flex-row items-center rounded-lg ring-2 ${
-        focused ? "ring-[#1a1a1a]" : "ring-[#d0d0d0]"
-      }`}
+      className={`flex flex-row items-center rounded-lg`}
+      style={{
+        backgroundColor: themeData.inputBgColor,
+        border: focused ? `2.5px solid ${themeData.borderFocusedColor}` : `2.5px solid ${themeData.borderColor}`
+      }}
     >
       <div className="w-20 py-1.5 pl-3 pr-1.5 font-semibold">US +1</div>
       <input
@@ -31,6 +34,9 @@ const PhoneInput = ({
             message: "Invalid phone number",
           },
         })}
+        style={{
+          backgroundColor: themeData.inputBgColor,
+        }}
         onBlur={() => setFocused(false)}
         type={type ? "number" : "number"}
         {...props}

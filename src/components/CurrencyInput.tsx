@@ -32,9 +32,9 @@ const CurrencyInput = ({
         className as string
       } flex flex-row items-center gap-1.5 rounded-lg px-3 py-1.5 ring-2 ring-gray-50/0`}
       style={{
-        backgroundColor: themeData.bgColor,
+        backgroundColor: themeData.inputBgColor,
         color: themeData.textColor,
-        border: `2px solid ${themeData.borderColor}`,
+        border: focused ? `2.5px solid ${themeData.borderFocusedColor}` : `2.5px solid ${themeData.borderColor}`,
       }}
     >
       <svg
@@ -62,7 +62,7 @@ const CurrencyInput = ({
         {...register(registerDataA, { required: registerDataB, valueAsNumber: true })}
         onBlur={() => setFocused(false)}
         style={{
-          backgroundColor: themeData.bgColor,
+          backgroundColor: themeData.inputBgColor,
           color: themeData.textColor,
           // border: `2px solid ${themeData.borderColor}`,
         }}
@@ -71,7 +71,7 @@ const CurrencyInput = ({
         className="cursor-pointer font-semibold"
         onClick={() => setCur(cur + 1 >= curs.length ? 0 : cur + 1)}
         style={{
-          backgroundColor: themeData.bgColor,
+          backgroundColor: themeData.inputBgColor,
           color: themeData.textColor,
           
         }}

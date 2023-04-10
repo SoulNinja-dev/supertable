@@ -25,11 +25,11 @@ const Checkbox = ({
           onClick={() => setChecked(!checked)}
           className={`${
             className as string
-          }  flex h-6 w-6 cursor-pointer items-center justify-center rounded bg-[#1a1a1a] outline-none ring-2 ring-[#aeaeae]/40`}
+          }  flex h-6 w-6 cursor-pointer items-center justify-center rounded bg-[#1a1a1a] outline-none`}
           style={{
-            backgroundColor: themeData.bgColor,
+            backgroundColor: themeData.borderFocusedColor,
             color: themeData.textColor,
-            border: `2px solid ${themeData.borderColor}`,
+            border: checked ? `2.5px solid ${themeData.borderFocusedColor}` : `2.5px solid ${themeData.borderColor}`,
           }}
         >
           <svg
@@ -40,7 +40,7 @@ const Checkbox = ({
             stroke="currentColor"
             className="h-4 w-4"
             style={{
-              stroke: themeData.textColor,
+              stroke: themeData.bgColor,
             }}
           >
             <path
@@ -57,9 +57,9 @@ const Checkbox = ({
             className as string
           }  h-6 w-6 cursor-pointer rounded`}
           style={{
-            backgroundColor: themeData.bgColor,
+            backgroundColor: themeData.inputBgColor,
             color: themeData.textColor,
-            border: `2px solid ${themeData.borderColor}`,
+            border: checked ? `2.5px solid ${themeData.borderFocusedColor}` : `2.5px solid ${themeData.borderColor}`,
           }}
         ></div>
       )}

@@ -20,7 +20,7 @@ const SingleSelect = ({
   return (
     <OutsideClickHandler onOutsideClick={() => setOpen(false)}>
       <select
-        className="bg-white hidden"
+        className="hidden bg-white"
         value={selected}
         {...register(registerDataA, { required: registerDataB })}
       >
@@ -39,9 +39,9 @@ const SingleSelect = ({
           onFocus={() => setOpen(true)}
           onBlur={() => setOpen(false)}
           style={{
-            backgroundColor: themeData.bgColor,
+            backgroundColor: themeData.inputBgColor,
             color: themeData.textColor,
-            border: `2px solid ${themeData.borderColor}`,
+            border: open ? `2.5px solid ${themeData.borderFocusedColor}` : `2.5px solid ${themeData.borderColor}`,
           }}
         >
           {selected !== undefined ? options[selected] : placeholder}
@@ -71,11 +71,11 @@ const SingleSelect = ({
               transition={{ duration: 0.1, ease: "easeIn" }}
             >
               <div
-                className="absolute z-[9999] mt-2 w-full rounded-xl shadow-xl overflow-hidden"
+                className="absolute z-[9999] mt-2 w-full overflow-hidden rounded-xl shadow-xl"
                 style={{
-                  backgroundColor: themeData.bgColor,
+                  backgroundColor: themeData.inputBgColor,
                   color: themeData.textColor,
-                  border: `2px solid ${themeData.borderColor}`,
+                  border: open ? `2.5px solid ${themeData.borderFocusedColor}` : `2.5px solid ${themeData.borderColor}`,
                 }}
               >
                 {options?.map((option, ind) => (
@@ -85,7 +85,14 @@ const SingleSelect = ({
                       setSelected(ind);
                       setOpen(false);
                     }}
-                    className="cursor-pointer border py-1.5 px-2 font-semibold hover:bg-[#d0d0d0]/40 focus:bg-[#d0d0d0]/40"
+                    className="cursor-pointer py-1.5 px-2 font-semibold hover:bg-[#d0d0d0]/40 focus:bg-[#d0d0d0]/40"
+                    style={
+                      ind !== options?.length - 1
+                        ? {
+                            borderBottom: open ? `2.5px solid ${themeData.borderFocusedColor}` : `2px solid ${themeData.borderColor}`,
+                          }
+                        : {}
+                    }
                   >
                     {option}
                   </div>
@@ -104,7 +111,7 @@ interface Props {
   placeholder: string;
   selected: number | undefined;
   setSelected: (arg0: number) => void | Dispatch<SetStateAction<number>>;
-  themeData: ThemeData
+  themeData: ThemeData;
 }
 
 export default SingleSelect;

@@ -4,7 +4,13 @@ import OutsideClickHandler from "react-outside-click-handler";
 import { ThemeData } from "~/utils/themes";
 import Checkbox from "./Checkbox";
 
-const MultiSelect = ({ options, placeholder, onChange, themeData, ..._ }: Props) => {
+const MultiSelect = ({
+  options,
+  placeholder,
+  onChange,
+  themeData,
+  ..._
+}: Props) => {
   const [open, setOpen] = useState(false);
   const [selected, setSelected] = useState<number[]>([]);
 
@@ -16,15 +22,16 @@ const MultiSelect = ({ options, placeholder, onChange, themeData, ..._ }: Props)
     <OutsideClickHandler onOutsideClick={() => setOpen(false)}>
       <div className="relative flex flex-col">
         <div
-          className={`gap-8 cursor-pointer flex flex-row items-center justify-between rounded-lg px-4 py-1.5 font-semibold outline-none ring-2 ring-gray-50/0 focus:ring-[#aeaeae]/40`}
+          className={`flex cursor-pointer flex-row items-center justify-between gap-8 rounded-lg px-4 py-1.5 font-semibold outline-none ring-2 ring-gray-50/0 focus:ring-[#aeaeae]/40`}
           onClick={() => setOpen(!open)}
           onFocus={() => setOpen(true)}
           onBlur={() => setOpen(false)}
-          
           style={{
-            backgroundColor: themeData.bgColor,
+            backgroundColor: themeData.inputBgColor,
             color: themeData.textColor,
-            border: `2px solid ${themeData.borderColor}`,
+            border: open
+              ? `2.5px solid ${themeData.borderFocusedColor}`
+              : `2.5px solid ${themeData.borderColor}`,
           }}
         >
           {selected.length >= 1
@@ -57,12 +64,15 @@ const MultiSelect = ({ options, placeholder, onChange, themeData, ..._ }: Props)
               exit={{ opacity: 0, y: 20, scale: 0.6 }}
               transition={{ duration: 0.3, ease: "easeIn" }}
             >
-              <div className="absolute z-[9999] mt-2 w-full rounded-lg shadow-xl"
-                  style={{
-                    backgroundColor: themeData.bgColor,
-                    color: themeData.textColor,
-                    border: `2px solid ${themeData.borderColor}`,
-                  }}
+              <div
+                className="absolute z-[9999] mt-2 w-full rounded-lg shadow-xl"
+                style={{
+                  backgroundColor: themeData.inputBgColor,
+                  color: themeData.textColor,
+                  border: open
+                    ? `2.5px solid ${themeData.borderFocusedColor}`
+                    : `2.5px solid ${themeData.borderColor}`,
+                }}
               >
                 {options?.map((option, ind) => (
                   <div
@@ -75,7 +85,16 @@ const MultiSelect = ({ options, placeholder, onChange, themeData, ..._ }: Props)
                       }
                       setOpen(false);
                     }}
-                    className="flex cursor-pointer flex-row items-center gap-2 border border-[#d0d0d0] py-1.5 px-2 font-semibold hover:bg-[#d0d0d0]/40 focus:bg-[#d0d0d0]/40"
+                    className="flex cursor-pointer flex-row items-center gap-2 py-1.5 px-2 font-semibold hover:bg-[#d0d0d0]/40 focus:bg-[#d0d0d0]/40"
+                    style={
+                      ind !== options?.length - 1
+                        ? {
+                            borderBottom: open
+                              ? `2.5px solid ${themeData.borderFocusedColor}`
+                              : `2.5px solid ${themeData.borderColor}`,
+                          }
+                        : {}
+                    }
                   >
                     <Checkbox
                       themeData={themeData}
@@ -87,9 +106,11 @@ const MultiSelect = ({ options, placeholder, onChange, themeData, ..._ }: Props)
                           setSelected(selected?.concat(ind));
                         }
                       }}
-                      register={(a, b) => {
+                      register={(_: string, __: boolean) => {
                         return;
                       }}
+                      registerDataA=""
+                      registerDataB={false}
                     />
                     {option}
                   </div>

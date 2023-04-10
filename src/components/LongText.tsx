@@ -1,5 +1,6 @@
 import { RHFProps } from "~/utils/misc";
 import { HTMLMotionProps, motion } from "framer-motion";
+import { useState } from "react";
 
 const LongText = ({
   className,
@@ -9,17 +10,21 @@ const LongText = ({
   themeData,
   ...props
 }: HTMLMotionProps<"textarea"> & RHFProps) => {
+  const [focused, setFocused] = useState(false);
+  
   return (
     <motion.textarea
       className={`${
         className as string
-      }  resize-none rounded-lg px-4 py-1.5 font-semibold outline-none ring-2 ring-gray-50/0 focus:ring-[#aeaeae]/40`}
+      }  resize-none rounded-lg px-4 py-1.5 font-semibold outline-none`}
       {...props}
       {...register(registerDataA, { required: registerDataB })}
+      onFocus={() => setFocused(true)}
+      onBlur={() => setFocused(false)}
       style={{
-        backgroundColor: themeData.bgColor,
+        backgroundColor: themeData.inputBgColor,
         color: themeData.textColor,
-        border: `2px solid ${themeData.borderColor}`,
+        border: focused ? `2.5px solid ${themeData.borderFocusedColor}` : `2.5px solid ${themeData.borderColor}`,
         
       }}
     />

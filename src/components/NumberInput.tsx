@@ -9,24 +9,30 @@ const NumberInput = ({
   register,
   registerDataA,
   registerDataB,
+  themeData,
   ...props
 }: Props & React.InputHTMLAttributes<HTMLInputElement> & RHFProps) => {
   const [focused, setFocused] = useState(false);
 
   return (
     <div
-      className={`flex flex-row items-center gap-1.5 rounded-lg px-3 py-1.5 ring-2 ${
-        focused ? "ring-[#1a1a1a]" : "ring-[#d0d0d0]"
-      }`}
+      className={`flex flex-row items-center gap-1.5 rounded-lg px-3 py-1.5`}
+      style={{
+        backgroundColor: themeData.inputBgColor,
+        border: focused ? `2.5px solid ${themeData.borderFocusedColor}` : `2.5px solid ${themeData.borderColor}`
+      }}
     >
       <input
-        className={`${className as string} bg-white w-full font-semibold outline-none appearance-none`}
+        className={`${className as string} w-full font-semibold outline-none appearance-none`}
         onFocus={() => setFocused(true)}
         {...register(registerDataA, { required: registerDataB, valueAsNumber: true })}
         onBlur={() => setFocused(false)}
         type={type ? "number" : "number"}
         value={value}
         onChange={(e) => setValue(Number(e.target.value))}
+        style={{
+          backgroundColor: themeData.inputBgColor,
+        }}
         {...props}
       />
       <div className="flex flex-col items-center">

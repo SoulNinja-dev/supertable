@@ -57,8 +57,6 @@ InferGetServerSidePropsType<typeof getServerSideProps>) => {
     [key: string]: string | number | boolean | FileList | number[];
   }> = (data) => console.log(data);
 
-  console.log("Theme", themeData)
-
   return (
     <>
       <Head>

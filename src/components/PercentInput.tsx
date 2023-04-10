@@ -16,9 +16,9 @@ const PercentInput = ({
     <div
       className={`flex flex-row items-center appearance-none gap-1.5 rounded-lg px-3 py-1.5 ring-2 ring-gray-50/0`}
       style={{
-        backgroundColor: themeData.bgColor,
+        backgroundColor: themeData.inputBgColor,
         color: themeData.textColor,
-        border: `2px solid ${themeData.borderColor}`,
+        border: focus ? `2.5px solid ${themeData.borderFocusedColor}` : `2.5px solid ${themeData.borderColor}`,
       }}
     >
       <input
@@ -31,7 +31,7 @@ const PercentInput = ({
         type={type ? "number" : "number"}
         {...props}
         style={{
-          backgroundColor: themeData.bgColor,
+          backgroundColor: themeData.inputBgColor,
           color: themeData.textColor,
           // border: `2px solid ${themeData.borderColor}`,
         }}

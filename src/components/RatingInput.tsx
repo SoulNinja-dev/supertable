@@ -9,6 +9,7 @@ const RatingInput = ({
   registerDataA,
   registerDataB,
   maxRating,
+  themeData,
 }: Props & RHFProps) => {
   return (
     <div className={`${className as string} flex flex-row gap-0.5`}>
@@ -17,9 +18,9 @@ const RatingInput = ({
         <svg
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 24 24"
-          fill={rating >= ind + 1 ? "currentColor" : "none"}
+          fill={rating >= ind + 1 ? themeData.borderFocusedColor : "none"}
           strokeWidth={1.5}
-          stroke={rating < ind + 1 ? "currentColor" : "none"}
+          stroke={rating < ind + 1 ? themeData.borderFocusedColor : "none"}
           className="h-6 w-6 cursor-pointer"
           key={ind}
           onClick={() => setRating(ind + 1)}

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { RHFProps } from "~/utils/misc";
 
 const EmailInput = ({
@@ -9,11 +9,13 @@ const EmailInput = ({
   themeData,
   ...props
 }: React.InputHTMLAttributes<HTMLInputElement> & RHFProps) => {
+  const [focused, setFocused] = useState(false);
+  
   return (
     <input
       className={`${
         className as string
-      }  rounded-lg px-4 py-1.5 font-semibold outline-none ring-2 ring-gray-50/0 focus:ring-[#aeaeae]/40`}
+      }  rounded-lg px-4 py-1.5 font-semibold outline-none`}
       {...props}
       {...register(registerDataA, {
         required: registerDataB,
@@ -22,10 +24,12 @@ const EmailInput = ({
           message: "Invalid email",
         },
       })}
+      onFocus={() => setFocused(true)}
+      onBlur={() => setFocused(false)}
       style={{
-        backgroundColor: themeData.bgColor,
+        backgroundColor: themeData.inputBgColor,
         color: themeData.textColor,
-        border: `2px solid ${themeData.borderColor}`,
+        border: focused ? `2.5px solid ${themeData.borderFocusedColor}` : `2.5px solid ${themeData.borderColor}`,
       }}
     />
   );
