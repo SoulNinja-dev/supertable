@@ -7,15 +7,19 @@ const PercentInput = ({
   register,
   registerDataA,
   registerDataB,
+  themeData,
   ...props
 }: React.InputHTMLAttributes<HTMLInputElement> & RHFProps) => {
   const [focus, setFocus] = useState(false);
 
   return (
     <div
-      className={`flex flex-row items-center appearance-none gap-1.5 rounded-lg px-3 py-1.5 ring-2 ${
-        focus ? "ring-[#1a1a1a]" : "ring-[#d0d0d0]"
-      }`}
+      className={`flex flex-row items-center appearance-none gap-1.5 rounded-lg px-3 py-1.5 ring-2 ring-gray-50/0`}
+      style={{
+        backgroundColor: themeData.bgColor,
+        color: themeData.textColor,
+        border: `2px solid ${themeData.borderColor}`,
+      }}
     >
       <input
         onFocus={() => setFocus(true)}
@@ -23,9 +27,14 @@ const PercentInput = ({
         onBlur={() => setFocus(false)}
         className={`${
           className as string
-        }  appearance-none bg-white font-semibold outline-none w-full`}
+        }  appearance-none font-semibold outline-none w-full`}
         type={type ? "number" : "number"}
         {...props}
+        style={{
+          backgroundColor: themeData.bgColor,
+          color: themeData.textColor,
+          // border: `2px solid ${themeData.borderColor}`,
+        }}
       />
       <div className="font-bold">%</div>
     </div>

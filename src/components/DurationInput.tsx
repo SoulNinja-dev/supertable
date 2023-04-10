@@ -15,7 +15,13 @@ const minutes = [
   41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59,
 ];
 
-const DurationInput = ({ className, register, registerDataA, registerDataB }: Props & RHFProps) => {
+const DurationInput = ({
+  className,
+  register,
+  registerDataA,
+  registerDataB,
+  themeData,
+}: Props & RHFProps) => {
   const [open, setOpen] = useState(false);
   const [minute, setMinute] = useState<number>();
   const [hour, setHour] = useState<number>();
@@ -35,29 +41,41 @@ const DurationInput = ({ className, register, registerDataA, registerDataB }: Pr
         <div
           className={`${
             className as string
-          }  min-w-[14rem] cursor-pointer rounded-lg bg-white px-4 py-1.5 font-semibold ${
-            hour && minute ? "text-[#1a1a1a]" : "text-[#d0d0d0]"
-          } outline-none ring-2 ring-[#d0d0d0] focus:ring-[#1a1a1a]`}
+          }  min-w-[14rem] cursor-pointer rounded-lg px-4 py-1.5 font-semibold outline-none ring-2 ring-gray-50/0 focus:ring-[#aeaeae]/40`}
           onClick={() => setOpen(!open)}
+          style={{
+            backgroundColor: themeData.bgColor,
+            color: themeData.textColor,
+            border: `2px solid ${themeData.borderColor}`,
+          }}
         >
           {hour?.toString() && minute?.toString() ? time : "hh:mm"}
         </div>
         <AnimatePresence>
           {open ? (
             <motion.div
-              initial={{ opacity: 0, y: 20, scale: 0.8 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
+              initial={{ opacity: 0, y: -20, scaleY: 0.8 }}
+              animate={{ opacity: 1, y: 0, scaleY: 1 }}
               exit={{ opacity: 0, y: 20, scale: 0.6 }}
-              transition={{ duration: 0.3, ease: "easeIn" }}
+              transition={{ duration: 0.1, ease: "easeIn" }}
             >
-              <div className="absolute z-[9999] mt-2 flex w-full flex-col gap-2 rounded-lg bg-white py-2 px-4 shadow-xl ring-2 ring-[#d0d0d0]">
+              <div
+                className="absolute z-[9999] mt-2 flex w-full flex-col gap-2 rounded-lg py-2 px-4 shadow-xl ring-2 ring-gray-50/0"
+                style={{
+                  backgroundColor: themeData.bgColor,
+                  color: themeData.textColor,
+                  border: `2px solid ${themeData.borderColor}`,
+                }}
+              >
                 <SingleSelect
                   options={hours}
                   selected={hour}
                   setSelected={setHour}
                   placeholder="Hour"
+                  themeData={themeData}
                 />
                 <SingleSelect
+                  themeData={themeData}
                   selected={minute}
                   setSelected={setMinute}
                   options={minutes}

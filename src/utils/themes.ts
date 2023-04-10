@@ -1,47 +1,54 @@
 import { Theme } from "@prisma/client";
 import Color from "color";
 
-export const themes: Record<
-  Theme,
-  (color?: string) => { base: string; accent: string }
-> = {
+export interface ThemeData {
+  bgColor: string;
+  textColor: string;
+  buttonColor: string;
+  borderColor: string;
+}
+
+export const themes: Record<Theme, (color?: string) => ThemeData> = {
   classic: () => {
     return {
-      base: "#ffffff",
-      accent: "#000000",
+      bgColor: "#ffffff",
+      textColor: "#000000",
+      buttonColor: "#3F51B5",
+      borderColor: "#aeaeae",
     };
   },
   dark: () => {
     return {
-      base: "#000000",
-      accent: "#ffffff",
+      bgColor: "#232323",
+      textColor: "#ffffff",
+      buttonColor: "#fff",
+      borderColor: "#464646",
     };
   },
   monochromatic: (baseColor = "#3F51B5") => {
     if (!baseColor) throw new Error("Monochromatic theme requires a color");
-    const { lighter } = generateMonochromaticColors(baseColor);
-    return {
-      base: baseColor,
-      accent: lighter,
-    };
+    return generateMonochromaticColors(baseColor);
   },
 };
 
-interface MonochromaticColors {
-  base: string;
-  lighter: string;
-  darker: string;
-}
-
-function generateMonochromaticColors(baseColor: string): MonochromaticColors {
+function generateMonochromaticColors(baseColor: string): ThemeData {
   const color = Color(baseColor);
 
-  const lighter = color.lighten(0.3).hex();
-  const darker = color.darken(0.3).hex();
+  const bgColor = color.lighten(0.8).hex();
+  const darker = color.lighten(0.3).hex();
+
+  // Calculate contrast ratio
+  const contrastWithWhite = Color(bgColor).contrast(Color("#ffffff"));
+  const contrastWithBlack = Color(bgColor).contrast(Color("#000000"));
+
+  // Choose textColor based on the higher contrast ratio
+  const textColor =
+    contrastWithWhite >= contrastWithBlack ? "#ffffff" : "#000000";
 
   return {
-    base: baseColor,
-    lighter,
-    darker,
+    buttonColor: baseColor,
+    bgColor,
+    textColor,
+    borderColor: darker,
   };
 }

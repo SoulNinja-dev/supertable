@@ -20,6 +20,7 @@ const CurrencyInput = ({
   register,
   registerDataA,
   registerDataB,
+  themeData,
   ...props
 }: React.InputHTMLAttributes<HTMLInputElement> & RHFProps) => {
   const [cur, setCur] = useState(0);
@@ -29,9 +30,12 @@ const CurrencyInput = ({
     <div
       className={`${
         className as string
-      } flex flex-row items-center gap-1.5 rounded-lg px-3 py-1.5 ring-2 ${
-        focused ? "ring-[#1a1a1a]" : "ring-[#d0d0d0]"
-      }`}
+      } flex flex-row items-center gap-1.5 rounded-lg px-3 py-1.5 ring-2 ring-gray-50/0`}
+      style={{
+        backgroundColor: themeData.bgColor,
+        color: themeData.textColor,
+        border: `2px solid ${themeData.borderColor}`,
+      }}
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -39,7 +43,10 @@ const CurrencyInput = ({
         viewBox="0 0 24 24"
         strokeWidth={1.5}
         stroke="currentColor"
-        className="h-6 w-6 stroke-[#1a1a1a]"
+        className="h-6 w-6"
+        style={{
+          stroke: themeData.textColor
+        }}
       >
         <path
           strokeLinecap="round"
@@ -48,16 +55,26 @@ const CurrencyInput = ({
         />
       </svg>
       <input
-        className="w-full appearance-none bg-white font-semibold outline-none"
+        className="w-full appearance-none font-semibold outline-none"
         onFocus={() => setFocused(true)}
         type={type ? "number" : "number"}
         {...props}
         {...register(registerDataA, { required: registerDataB })}
         onBlur={() => setFocused(false)}
+        style={{
+          backgroundColor: themeData.bgColor,
+          color: themeData.textColor,
+          // border: `2px solid ${themeData.borderColor}`,
+        }}
       />
       <div
-        className="cursor-pointer font-semibold text-[#1a1a1a]"
+        className="cursor-pointer font-semibold"
         onClick={() => setCur(cur + 1 >= curs.length ? 0 : cur + 1)}
+        style={{
+          backgroundColor: themeData.bgColor,
+          color: themeData.textColor,
+          
+        }}
       >
         {curs[cur]}
       </div>

@@ -1,8 +1,14 @@
 import { RHFProps } from "~/utils/misc";
 
-const FileInput = ({ register, registerDataA, registerDataB }: RHFProps) => {
+const FileInput = ({ register, registerDataA, registerDataB, themeData }: RHFProps) => {
   return (
-    <div className="flex flex-row items-center justify-between rounded-lg font-semibold text-[#d0d0d0] ring-2 ring-[#d0d0d0]">
+    <div className="flex flex-row items-center justify-between rounded-lg font-semibold "
+    style={{
+      backgroundColor: themeData.bgColor,
+      color: themeData.textColor,
+      border: `2px solid ${themeData.borderColor}`,
+    }}
+    >
       <input
         type="file"
         id="test"
@@ -31,7 +37,12 @@ const FileInput = ({ register, registerDataA, registerDataB }: RHFProps) => {
       </div>
       <button
         onClick={() => document.getElementById("test")?.click()}
-        className="rounded-lg py-1.5 px-3 font-bold text-[#1a1a1a] ring-2 ring-[#d0d0d0]"
+        className="rounded-lg py-1.5 px-3 font-bold"
+        style={{
+          backgroundColor: themeData.bgColor,
+          color: themeData.textColor,
+          border: `2px solid ${themeData.borderColor}`,
+        }}
       >
         Browse
       </button>

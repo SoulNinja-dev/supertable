@@ -1,9 +1,10 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { useState } from "react";
 import OutsideClickHandler from "react-outside-click-handler";
+import { ThemeData } from "~/utils/themes";
 import Checkbox from "./Checkbox";
 
-const MultiSelect = ({ options, placeholder }: Props) => {
+const MultiSelect = ({ options, placeholder, themeData }: Props) => {
   const [open, setOpen] = useState(false);
   const [selected, setSelected] = useState<number[]>([]);
 
@@ -11,12 +12,16 @@ const MultiSelect = ({ options, placeholder }: Props) => {
     <OutsideClickHandler onOutsideClick={() => setOpen(false)}>
       <div className="relative flex flex-col">
         <div
-          className={`gap-8 cursor-pointer flex flex-row items-center justify-between rounded-lg bg-white px-4 py-1.5 font-semibold  ${
-            selected.length >= 1 ? "text-[#1a1a1a]" : "text-[#d0d0d0]"
-          } outline-none ring-2 ring-[#d0d0d0]`}
+          className={`gap-8 cursor-pointer flex flex-row items-center justify-between rounded-lg px-4 py-1.5 font-semibold outline-none ring-2 ring-gray-50/0 focus:ring-[#aeaeae]/40`}
           onClick={() => setOpen(!open)}
           onFocus={() => setOpen(true)}
           onBlur={() => setOpen(false)}
+          
+          style={{
+            backgroundColor: themeData.bgColor,
+            color: themeData.textColor,
+            border: `2px solid ${themeData.borderColor}`,
+          }}
         >
           {selected.length >= 1
             ? `${selected.length} ${
@@ -43,12 +48,18 @@ const MultiSelect = ({ options, placeholder }: Props) => {
         <AnimatePresence>
           {open ? (
             <motion.div
-              initial={{ opacity: 0, y: 20, scale: 0.8 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
+              initial={{ opacity: 0, y: -20, scaleY: 0.8 }}
+              animate={{ opacity: 1, y: 0, scaleY: 1 }}
               exit={{ opacity: 0, y: 20, scale: 0.6 }}
               transition={{ duration: 0.3, ease: "easeIn" }}
             >
-              <div className="absolute z-[9999] mt-2 w-full rounded-lg bg-white shadow-xl ring-2 ring-[#d0d0d0]">
+              <div className="absolute z-[9999] mt-2 w-full rounded-lg shadow-xl"
+                  style={{
+                    backgroundColor: themeData.bgColor,
+                    color: themeData.textColor,
+                    border: `2px solid ${themeData.borderColor}`,
+                  }}
+              >
                 {options?.map((option, ind) => (
                   <div
                     key={ind}
@@ -87,6 +98,7 @@ const MultiSelect = ({ options, placeholder }: Props) => {
 interface Props {
   options: (string | number)[];
   placeholder: string;
+  themeData: ThemeData
 }
 
 export default MultiSelect;

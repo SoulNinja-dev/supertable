@@ -6,15 +6,21 @@ const EmailInput = ({
   register,
   registerDataA,
   registerDataB,
+  themeData,
   ...props
 }: React.InputHTMLAttributes<HTMLInputElement> & RHFProps) => {
   return (
     <input
       className={`${
         className as string
-      }  rounded-lg bg-white px-4 py-1.5 font-semibold text-[#1a1a1a] placeholder-[#d0d0d0] outline-none ring-2 ring-[#d0d0d0] focus:ring-[#1a1a1a]`}
+      }  rounded-lg px-4 py-1.5 font-semibold outline-none ring-2 ring-gray-50/0 focus:ring-[#aeaeae]/40`}
       {...props}
       {...register(registerDataA, { required: registerDataB })}
+      style={{
+        backgroundColor: themeData.bgColor,
+        color: themeData.textColor,
+        border: `2px solid ${themeData.borderColor}`,
+      }}
     />
   );
 };

@@ -1,12 +1,14 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { type Dispatch, type SetStateAction, useState } from "react";
 import OutsideClickHandler from "react-outside-click-handler";
+import { ThemeData } from "~/utils/themes";
 
 const SingleSelect = ({
   options,
   placeholder,
   selected,
   setSelected,
+  themeData,
 }: Props) => {
   const [open, setOpen] = useState(false);
   // const [selected, setSelected] = useState<number>();
@@ -15,12 +17,17 @@ const SingleSelect = ({
     <OutsideClickHandler onOutsideClick={() => setOpen(false)}>
       <div className="relative flex flex-col">
         <div
-          className={`flex cursor-pointer flex-row items-center justify-between gap-8 rounded-lg bg-white px-4 py-1.5 font-semibold  ${
+          className={`flex cursor-pointer flex-row items-center justify-between gap-8 rounded-lg px-4 py-1.5 font-semibold  ${
             selected !== undefined ? "text-[#1a1a1a]" : "text-[#d0d0d0]"
-          } outline-none ring-2 ring-[#d0d0d0]`}
+          } outline-none`}
           onClick={() => setOpen(!open)}
           onFocus={() => setOpen(true)}
           onBlur={() => setOpen(false)}
+          style={{
+            backgroundColor: themeData.bgColor,
+            color: themeData.textColor,
+            border: `2px solid ${themeData.borderColor}`,
+          }}
         >
           {selected !== undefined ? options[selected] : placeholder}
           <div className="text-[#1a1a1a]">
@@ -48,7 +55,14 @@ const SingleSelect = ({
               exit={{ opacity: 0, y: -20, scaleY: 0.6 }}
               transition={{ duration: 0.1, ease: "easeIn" }}
             >
-              <div className="absolute z-[9999] mt-2 w-full rounded-lg bg-white shadow-xl ring-2 ring-[#d0d0d0]">
+              <div
+                className="absolute z-[9999] mt-2 w-full rounded-xl shadow-xl overflow-hidden"
+                style={{
+                  backgroundColor: themeData.bgColor,
+                  color: themeData.textColor,
+                  border: `2px solid ${themeData.borderColor}`,
+                }}
+              >
                 {options?.map((option, ind) => (
                   <div
                     key={ind}
@@ -56,7 +70,7 @@ const SingleSelect = ({
                       setSelected(ind);
                       setOpen(false);
                     }}
-                    className="cursor-pointer border border-[#d0d0d0] py-1.5 px-2 font-semibold hover:bg-[#d0d0d0]/40 focus:bg-[#d0d0d0]/40"
+                    className="cursor-pointer border py-1.5 px-2 font-semibold hover:bg-[#d0d0d0]/40 focus:bg-[#d0d0d0]/40"
                   >
                     {option}
                   </div>
@@ -75,6 +89,7 @@ interface Props {
   placeholder: string;
   selected: number | undefined;
   setSelected: (arg0: number) => void | Dispatch<SetStateAction<number>>;
+  themeData: ThemeData
 }
 
 export default SingleSelect;

@@ -23,6 +23,7 @@ import { FormPageObjectGSSPCompatible } from "~/models/form";
 import { formRouter } from "~/server/api/routers";
 import { authOptions } from "~/server/auth";
 import { prisma } from "~/server/db";
+import { ThemeData, themes } from "~/utils/themes";
 
 const FormDesign = ({
   title,
@@ -33,6 +34,8 @@ const FormDesign = ({
   slug,
   seoDescription,
   seoImage,
+  themeData,
+  theme
 }: // theme,
 // headerImage,
 // connectWallet,
@@ -54,7 +57,7 @@ InferGetServerSidePropsType<typeof getServerSideProps>) => {
     [key: string]: string | number | boolean | FileList;
   }> = (data) => console.log(data);
 
-  // useEffect(() => console.log(errors))
+  console.log("Theme", themeData)
 
   return (
     <>
@@ -99,7 +102,10 @@ InferGetServerSidePropsType<typeof getServerSideProps>) => {
         />
       </Head>
       <main>
-        <div className="h-full w-full overflow-y-auto bg-[#fff]/40">
+        <div className="h-full w-full overflow-y-auto" style={{
+          backgroundColor: themeData.bgColor,
+          color: themeData.textColor
+        }}>
           <div className="flex flex-1 flex-col items-center gap-y-3">
             {/* Cover Image */}
             <div
@@ -116,9 +122,13 @@ InferGetServerSidePropsType<typeof getServerSideProps>) => {
               }}
             ></div>
             {/* Form SEO/MetaData and Logo */}
-            <div className="relative -top-20 -mb-20 min-h-[300px] w-full max-w-lg rounded-md border bg-white px-6 pt-10 pb-5">
+            <div className="relative -top-20 -mb-20 min-h-[300px] w-full max-w-lg rounded-md border px-6 pt-10 pb-5" style={{
+              backgroundColor: themeData.bgColor,
+              color: themeData.textColor,
+              borderColor: themeData.borderColor
+            }}>
               <div
-                className={`flex h-16 w-16 justify-center gap-x-2 rounded-xl px-3 py-6 text-gray-400`}
+                className={`flex h-16 w-16 justify-center gap-x-2 rounded-xl px-3 py-6`}
                 style={{
                   backgroundImage: `url('${
                     logo
@@ -130,10 +140,10 @@ InferGetServerSidePropsType<typeof getServerSideProps>) => {
                   backgroundRepeat: "no-repeat",
                 }}
               ></div>
-              <h1 className="mt-4 w-full py-2 text-3xl font-semibold text-gray-500">
+              <h1 className="mt-4 w-full py-2 text-3xl font-semibold">
                 {title}
               </h1>
-              <h1 className="mt-1 w-full py-2 text-sm font-medium text-gray-500">
+              <h1 className="mt-1 w-full py-2 text-sm font-medium">
                 {description}
               </h1>
             </div>
@@ -157,9 +167,11 @@ InferGetServerSidePropsType<typeof getServerSideProps>) => {
                     register={register}
                     registerDataA={field.field.name}
                     registerDataB={field.required}
+                    themeData={themeData}
                   />
                 ) : field.field.type === "multilineText" ? (
                   <LongText
+                    themeData={themeData}
                     placeholder={field.helpText || ""}
                     maxLength={field.field?.options?.maxLength || undefined}
                     register={register}
@@ -174,6 +186,7 @@ InferGetServerSidePropsType<typeof getServerSideProps>) => {
                     register={register}
                     registerDataA={field.field.name}
                     registerDataB={field.required}
+                    themeData={themeData}
                   />
                 ) : field.field.type === "number" ? (
                   <NumberInput
@@ -184,12 +197,14 @@ InferGetServerSidePropsType<typeof getServerSideProps>) => {
                     register={register}
                     registerDataA={field.field.name}
                     registerDataB={field.required}
+                    themeData={themeData}
                   />
                 ) : field.field.type === "date" ? (
                   <DateInput
                     register={register}
                     registerDataA={field.field.name}
                     registerDataB={field.required}
+                    themeData={themeData}
                   />
                 ) : field.field.type === "currency" ? (
                   <CurrencyInput
@@ -197,12 +212,14 @@ InferGetServerSidePropsType<typeof getServerSideProps>) => {
                     maxLength={field.field?.options?.maxLength || undefined}
                     register={register}
                     registerDataA={field.field.name}
+                    themeData={themeData}
                     registerDataB={field.required}
                   />
                 ) : field.field.type === "duration" ? (
                   <DurationInput
                     register={register}
                     registerDataA={field.field.name}
+                    themeData={themeData}
                     registerDataB={field.required}
                   />
                 ) : field.field.type === "email" ? (
@@ -212,6 +229,7 @@ InferGetServerSidePropsType<typeof getServerSideProps>) => {
                     register={register}
                     registerDataA={field.field.name}
                     registerDataB={field.required}
+                    themeData={themeData}
                   />
                 ) : field.field.type === "multipleSelects" ? (
                   <MultiSelect
@@ -223,6 +241,7 @@ InferGetServerSidePropsType<typeof getServerSideProps>) => {
                     register={register}
                     registerDataA={field.field.name}
                     registerDataB={field.required}
+                    themeData={themeData}
                   />
                 ) : field.field.type === "percent" ? (
                   <PercentInput
@@ -231,6 +250,7 @@ InferGetServerSidePropsType<typeof getServerSideProps>) => {
                     register={register}
                     registerDataA={field.field.name}
                     registerDataB={field.required}
+                    themeData={themeData}
                   />
                 ) : field.field.type === "phoneNumber" ? (
                   <PhoneInput
@@ -238,6 +258,7 @@ InferGetServerSidePropsType<typeof getServerSideProps>) => {
                     register={register}
                     registerDataA={field.field.name}
                     registerDataB={field.required}
+                    themeData={themeData}
                   />
                 ) : field.field.type === "rating" ? (
                   <RatingInput
@@ -246,6 +267,7 @@ InferGetServerSidePropsType<typeof getServerSideProps>) => {
                     maxRating={field.field.options.max}
                     register={register}
                     registerDataA={field.field.name}
+                    themeData={themeData}
                     registerDataB={field.required}
                   />
                 ) : field.field.type === "singleSelect" ? (
@@ -260,6 +282,7 @@ InferGetServerSidePropsType<typeof getServerSideProps>) => {
                     register={register}
                     registerDataA={field.field.name}
                     registerDataB={field.required}
+                    themeData={themeData}
                   />
                 ) : field.field.type === "url" ? (
                   <LinkInput
@@ -268,12 +291,14 @@ InferGetServerSidePropsType<typeof getServerSideProps>) => {
                     register={register}
                     registerDataA={field.field.name}
                     registerDataB={field.required}
+                    themeData={themeData}
                   />
                 ) : (
                   <FileInput
                     register={register}
                     registerDataA={field.field.name}
                     registerDataB={field.required}
+                    themeData={themeData}
                   />
                 )}
                 {errors[field.field.name] ? (
@@ -288,7 +313,11 @@ InferGetServerSidePropsType<typeof getServerSideProps>) => {
             <div className="flex w-full max-w-lg flex-col items-end">
               <button
                 type="submit"
-                className="rounded-lg bg-black py-2 px-4 font-semibold text-white outline-none transition duration-200 ease-in-out hover:bg-black/60 focus:bg-black/60"
+                className="rounded-lg py-2 px-4 font-semibold outline-none transition duration-200 ease-in-out"
+                style={{
+                  backgroundColor: themeData.buttonColor,
+                  color: themeData.bgColor,
+                }}
               >
                 Submit
               </button>
@@ -300,8 +329,10 @@ InferGetServerSidePropsType<typeof getServerSideProps>) => {
   );
 };
 
+
+
 export const getServerSideProps: GetServerSideProps<
-  FormPageObjectGSSPCompatible
+  FormPageObjectGSSPCompatible & { themeData: ThemeData }
 > = async (context) => {
   const caller = formRouter.createCaller({
     session: await getServerSession(context.req, context.res, authOptions),
@@ -312,6 +343,7 @@ export const getServerSideProps: GetServerSideProps<
     domain: "test.com",
     slug: context.params?.id as string,
   });
+
 
   return {
     props: {
@@ -333,6 +365,7 @@ export const getServerSideProps: GetServerSideProps<
       contraints: res.contraints,
       themeColor: res.themeColor,
       submitMsg: res.submitMsg,
+      themeData: res.theme === "monochromatic" ? themes[res.theme](res.themeColor || undefined) : themes[res.theme](),
     },
   };
 };

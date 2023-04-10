@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
+import { createTRPCRouter, protectedProcedure, publicProcedure } from "~/server/api/trpc";
 import { TRPCError } from "@trpc/server";
 import { FormObjectValidator, FormPageObjectValidator, FullFormObjectValidator } from "~/models/form";
 
@@ -79,7 +79,7 @@ export const formRouter = createTRPCRouter({
       return form;
     }),
 
-  getFormPage: protectedProcedure.input(z.object({
+  getFormPage: publicProcedure.input(z.object({
     slug: z.string(),
     domain: z.string()
   })).output(FormPageObjectValidator).query(async ({ ctx, input }) => {

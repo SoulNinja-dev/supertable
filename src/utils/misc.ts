@@ -1,4 +1,5 @@
 import { UseFormRegister, FieldValues } from "react-hook-form";
+import { ThemeData } from "./themes";
 
 export const isProperSlug = (slug: string): string => {
   if (slug.length === 0) {
@@ -27,4 +28,5 @@ export interface RHFProps {
   register: UseFormRegister<FieldValues>;
   registerDataA: string;
   registerDataB: boolean;
+  themeData: ThemeData;
 }

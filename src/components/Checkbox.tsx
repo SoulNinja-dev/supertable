@@ -9,6 +9,7 @@ const Checkbox = ({
   register,
   registerDataA,
   registerDataB,
+  themeData,
 }: Props & RHFProps) => {
   return (
     <div className="flex flex-row gap-3 items-center">
@@ -24,7 +25,12 @@ const Checkbox = ({
           onClick={() => setChecked(!checked)}
           className={`${
             className as string
-          }  flex h-4 w-4 cursor-pointer items-center justify-center rounded bg-[#1a1a1a] ring-2 ring-[#1a1a1a]`}
+          }  flex h-6 w-6 cursor-pointer items-center justify-center rounded bg-[#1a1a1a] outline-none ring-2 ring-[#aeaeae]/40`}
+          style={{
+            backgroundColor: themeData.bgColor,
+            color: themeData.textColor,
+            border: `2px solid ${themeData.borderColor}`,
+          }}
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -32,7 +38,10 @@ const Checkbox = ({
             viewBox="0 0 24 24"
             strokeWidth={3}
             stroke="currentColor"
-            className="h-3 w-3 stroke-white"
+            className="h-4 w-4"
+            style={{
+              stroke: themeData.textColor,
+            }}
           >
             <path
               strokeLinecap="round"
@@ -46,7 +55,12 @@ const Checkbox = ({
           onClick={() => setChecked(!checked)}
           className={`${
             className as string
-          }  h-4 w-4 cursor-pointer rounded bg-white ring-2 ring-[#d0d0d0]`}
+          }  h-6 w-6 cursor-pointer rounded`}
+          style={{
+            backgroundColor: themeData.bgColor,
+            color: themeData.textColor,
+            border: `2px solid ${themeData.borderColor}`,
+          }}
         ></div>
       )}
     </div>
