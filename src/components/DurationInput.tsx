@@ -41,12 +41,12 @@ const DurationInput = ({
         <div
           className={`${
             className as string
-          }  min-w-[14rem] cursor-pointer rounded-lg px-4 py-1.5 font-semibold outline-none ring-2 ring-gray-50/0 focus:ring-[#aeaeae]/40`}
+          }  min-w-[14rem] cursor-pointer rounded-lg px-4 py-1.5 font-semibold outline-none`}
           onClick={() => setOpen(!open)}
           style={{
-            backgroundColor: themeData.bgColor,
+            backgroundColor: themeData.inputBgColor,
             color: themeData.textColor,
-            border: `2px solid ${themeData.borderColor}`,
+            border: open ? `2.5px solid ${themeData.borderFocusedColor}` : `2.5px solid ${themeData.borderColor}`,
           }}
         >
           {hour?.toString() && minute?.toString() ? time : "hh:mm"}
@@ -62,9 +62,9 @@ const DurationInput = ({
               <div
                 className="absolute z-[9999] mt-2 flex w-full flex-col gap-2 rounded-lg py-2 px-4 shadow-xl ring-2 ring-gray-50/0"
                 style={{
-                  backgroundColor: themeData.bgColor,
+                  backgroundColor: themeData.inputBgColor,
                   color: themeData.textColor,
-                  border: `2px solid ${themeData.borderColor}`,
+                  border: open ? `2.5px solid ${themeData.borderFocusedColor}` : `2.5px solid ${themeData.borderColor}`,
                 }}
               >
                 <SingleSelect
@@ -73,13 +73,23 @@ const DurationInput = ({
                   setSelected={setHour}
                   placeholder="Hour"
                   themeData={themeData}
+                  register={(_: string, __: boolean) => {
+                    return;
+                  }}
+                  registerDataA=""
+                  registerDataB={false}
                 />
                 <SingleSelect
-                  themeData={themeData}
                   selected={minute}
                   setSelected={setMinute}
                   options={minutes}
                   placeholder="Minute"
+                  themeData={themeData}
+                  register={(_: string, __: boolean) => {
+                    return;
+                  }}
+                  registerDataA=""
+                  registerDataB={false}
                 />
               </div>
             </motion.div>

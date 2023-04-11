@@ -24,7 +24,13 @@ const years = [
   2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023,
 ];
 
-const DateInput = ({ className, register, registerDataA, registerDataB }: Props & RHFProps) => {
+const DateInput = ({
+  className,
+  register,
+  registerDataA,
+  registerDataB,
+  themeData,
+}: Props & RHFProps) => {
   const [open, setOpen] = useState(false);
   const [month, setMonth] = useState<number>();
   const [day, setDay] = useState<number>();
@@ -72,9 +78,15 @@ const DateInput = ({ className, register, registerDataA, registerDataB }: Props 
         <div
           className={`${
             className as string
-          }  min-w-[14rem] cursor-pointer rounded-lg bg-white px-4 py-1.5 font-semibold ${
+          }  min-w-[14rem] cursor-pointer rounded-lg px-4 py-1.5 font-semibold ${
             day && month && year ? "text-[#1a1a1a]" : "text-[#d0d0d0]"
-          } outline-none ring-2 ring-[#d0d0d0] focus:ring-[#1a1a1a]`}
+          } outline-none`}
+          style={{
+            backgroundColor: themeData.inputBgColor,
+            border: open
+              ? `2.5px solid ${themeData.borderFocusedColor}`
+              : `2.5px solid ${themeData.borderColor}`,
+          }}
           onClick={() => setOpen(!open)}
         >
           {day && month && year ? date : "dd/mm/yyyy"}
@@ -87,24 +99,50 @@ const DateInput = ({ className, register, registerDataA, registerDataB }: Props 
               exit={{ opacity: 0, y: 20, scale: 0.6 }}
               transition={{ duration: 0.3, ease: "easeIn" }}
             >
-              <div className="absolute z-[9999] mt-2 flex w-full flex-col gap-2 rounded-lg bg-white py-2 px-4 shadow-xl ring-2 ring-[#d0d0d0]">
+              <div
+                className="absolute z-[9999] mt-2 flex w-full flex-col gap-2 rounded-lg py-2 px-4 shadow-xl"
+                style={{
+                  backgroundColor: themeData.inputBgColor,
+                  border: open
+                    ? `2.5px solid ${themeData.borderFocusedColor}`
+                    : `2.5px solid ${themeData.borderColor}`,
+                }}
+              >
                 <SingleSelect
                   options={months}
                   selected={month}
                   setSelected={setMonth}
                   placeholder="Month"
+                  register={(_: string, __: boolean) => {
+                    return;
+                  }}
+                  registerDataA=""
+                  registerDataB={false}
+                  themeData={themeData}
                 />
                 <SingleSelect
                   selected={day}
                   setSelected={setDay}
                   options={days}
                   placeholder="Day"
+                  register={(_: string, __: boolean) => {
+                    return;
+                  }}
+                  registerDataA=""
+                  registerDataB={false}
+                  themeData={themeData}
                 />
                 <SingleSelect
                   options={years}
                   placeholder="Year"
                   selected={year}
                   setSelected={setYear}
+                  register={(_: string, __: boolean) => {
+                    return;
+                  }}
+                  registerDataA=""
+                  registerDataB={false}
+                  themeData={themeData}
                 />
               </div>
             </motion.div>
