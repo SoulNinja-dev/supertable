@@ -16,12 +16,12 @@ export const themes: Record<Theme, (color?: string) => ThemeData> = {
   classic: () => {
     return {
       bgColor: "#ffffff",
-      inputBgColor: "#ffffff",
-      popupColor: "#ffffff",
+      inputBgColor: "#f2f2f2",
+      popupColor: "#fafafa",
       placeholderColor: "",
       textColor: "#000000",
-      buttonColor: "#3F51B5",
-      borderFocusedColor: "#aeaeae",
+      buttonColor: "#000000",
+      borderFocusedColor: "#000000",
       borderColor: "#aeaeae",
     };
   },
