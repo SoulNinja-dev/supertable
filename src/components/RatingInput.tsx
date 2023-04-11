@@ -13,7 +13,7 @@ const RatingInput = ({
 }: Props & RHFProps) => {
   return (
     <div className={`${className as string} flex flex-row gap-0.5`}>
-      <input type="number" className="hidden" value={rating} {...register(registerDataA, { required: registerDataB })} />
+      <input type="number" className="hidden" value={rating} {...register(registerDataA, { required: registerDataB, min: 1, max: maxRating })} />
       {Array.from({ length: maxRating }).map((_, ind) => (
         <svg
           xmlns="http://www.w3.org/2000/svg"
