@@ -28,12 +28,12 @@ export const themes: Record<Theme, (color?: string) => ThemeData> = {
   dark: () => {
     return {
       bgColor: "#232323",
-      inputBgColor: "#232323",
-      popupColor: "#232323",
+      inputBgColor: "#303030",
+      popupColor: "#2b2b2b",
       placeholderColor: "",
       textColor: "#ffffff",
       buttonColor: "#fff",
-      borderFocusedColor: "#464646",
+      borderFocusedColor: "#8f8d8d",
       borderColor: "#464646",
     };
   },
