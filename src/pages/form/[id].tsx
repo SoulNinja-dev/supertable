@@ -120,10 +120,9 @@ InferGetServerSidePropsType<typeof getServerSideProps>) => {
               }}
             ></div>
             {/* Form SEO/MetaData and Logo */}
-            <div className="relative -top-20 -mb-20 min-h-[300px] w-full max-w-lg rounded-md border px-6 pt-10 pb-5" style={{
-              backgroundColor: themeData.bgColor,
+            <div className="relative -top-20 -mb-20 min-h-[300px] w-full max-w-lg rounded-md px-6 pt-10 pb-5" style={{
+              backgroundColor: themeData.popupColor,
               color: themeData.textColor,
-              borderColor: themeData.borderColor
             }}>
               <div
                 className={`flex h-16 w-16 justify-center gap-x-2 rounded-xl px-3 py-6`}
