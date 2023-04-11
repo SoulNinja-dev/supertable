@@ -9,6 +9,7 @@ export interface ThemeData {
   buttonColor: string;
   borderColor: string;
   borderFocusedColor: string;
+  popupColor: string;
 }
 
 export const themes: Record<Theme, (color?: string) => ThemeData> = {
@@ -16,6 +17,7 @@ export const themes: Record<Theme, (color?: string) => ThemeData> = {
     return {
       bgColor: "#ffffff",
       inputBgColor: "#ffffff",
+      popupColor: "#ffffff",
       placeholderColor: "",
       textColor: "#000000",
       buttonColor: "#3F51B5",
@@ -27,6 +29,7 @@ export const themes: Record<Theme, (color?: string) => ThemeData> = {
     return {
       bgColor: "#232323",
       inputBgColor: "#232323",
+      popupColor: "#232323",
       placeholderColor: "",
       textColor: "#ffffff",
       buttonColor: "#fff",
@@ -46,7 +49,8 @@ function generateMonochromaticColors(baseColor: string): ThemeData {
   const bgColor = color.lighten(0.97).hex();
   const inputBgColor = color.lighten(0.9).hex();
   const borderFocusedColor = color.lighten(0.3).hex();
-  const borderColor = color.lighten(0.7).hex();
+  const borderColor = color.lighten(0.6).hex();
+  const popupColor = color.lighten(0.94).hex();
 
   // Choose textColor based on the higher contrast ratio
   const textColor =
@@ -62,6 +66,7 @@ function generateMonochromaticColors(baseColor: string): ThemeData {
     textColor,
     borderColor,
     borderFocusedColor,
+    popupColor,
     placeholderColor: "",
   };
 }
