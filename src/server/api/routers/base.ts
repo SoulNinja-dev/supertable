@@ -142,43 +142,4 @@ export const baseRouter = createTRPCRouter({
 
       return data;
     }),
-
-  editBase: protectedProcedure
-    .input(
-      z.object({
-        baseId: z.string(),
-        domain: z.string().optional(),
-        theme: z.string().optional(),
-        seoDescription: z.string().optional(),
-        seoImage: z.string().optional(),
-      })
-    )
-    .output(
-      z.object({
-        success: z.boolean(),
-      })
-    )
-    .query(async ({ ctx, input }) => {
-      const prisma = ctx.prisma;
-      const baseId = input.baseId;
-
-      try {
-        await prisma.base.update({
-          where: {
-            id: baseId,
-          },
-          data: {
-            domain: input.domain != null ? input.domain : undefined,
-            theme: input.theme != null ? input.theme : undefined,
-            seoDescription:
-              input.seoDescription != null ? input.seoDescription : undefined,
-            seoImage: input.seoImage != null ? input.seoImage : undefined,
-          },
-        });
-        return { success: true };
-      } catch (e) {
-        console.log(e);
-        return { success: false };
-      }
-    }),
 });

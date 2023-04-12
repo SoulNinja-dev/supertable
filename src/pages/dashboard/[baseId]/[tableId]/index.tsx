@@ -165,7 +165,7 @@ const Sidebar: React.FC<{ refetchTable: () => Promise<any> }> = ({
         <div className="mt-10 flex flex-col items-start gap-y-5">
           <button
             className="flex w-full flex-row items-center justify-center gap-2 rounded bg-black py-2 px-4 font-semibold text-white outline-none transition duration-200 ease-in-out hover:bg-black/60 focus:bg-black/60"
-            onClick={() => console.log("hii")}
+            onClick={handleCreateForm}
           >
             <Image src="/plus.svg" height={20} width={20} alt="plus sign" className="invert" />
             Create Form

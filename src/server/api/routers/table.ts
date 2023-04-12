@@ -275,9 +275,6 @@ export const tableRouter = createTRPCRouter({
     .input(
       z.object({
         id: z.string(),
-        theme: z.string().optional(),
-        seoDescription: z.string().optional(),
-        seoImage: z.string().optional(),
         customDomain: z.string().optional(),
       })
     )
@@ -295,10 +292,6 @@ export const tableRouter = createTRPCRouter({
           id,
         },
         data: {
-          theme: input.theme != null ? input.theme : undefined,
-          seoDescription:
-            input.seoDescription != null ? input.seoDescription : undefined,
-          seoImage: input.seoImage != null ? input.seoImage : undefined,
           customDomain:
             input.customDomain != null ? input.customDomain : undefined,
         },

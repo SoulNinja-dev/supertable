@@ -86,9 +86,6 @@ model Table {
   baseId         String
   name           String
   description    String
-  theme          String?
-  seoDescription String?
-  seoImage       String?
   customDomain         String?
 
   forms  Form[]

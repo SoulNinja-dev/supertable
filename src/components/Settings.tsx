@@ -27,13 +27,28 @@ const Settings = () => {
             placeholder="choose base"
             selected={selected}
             setSelected={handleBaseChange}
+            register={(_: string, __: boolean) => {
+              return;
+            }}
+            registerDataA=""
+            registerDataB={false}
+            themeData={{
+              bgColor: "#ffffff",
+              inputBgColor: "#f2f2f2",
+              popupColor: "#fafafa",
+              placeholderColor: "",
+              textColor: "#000000",
+              buttonColor: "#000000",
+              borderFocusedColor: "#000000",
+              borderColor: "#aeaeae",
+            }}
           />
         </div>
       </div>
 
       {
         tables && tables[selected] && (
-          <SettingsForm tableId={tables[selected].id as string} />
+          <SettingsForm tableId={tables[selected]?.id as string} />
         )
       }
     </div>

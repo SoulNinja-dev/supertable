@@ -23,9 +23,7 @@ export const useTableStore = create<TableStore>()((set) => ({
     forms: [],
     updatedAt: new Date(),
     createdAt: new Date(),
-    theme: "",
-    seoImage: "",
-    seoDescription: "",
+    customDomain: "",
   },
   updateTableForm: ({ id, title }) => {
     set((state) => {

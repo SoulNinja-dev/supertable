@@ -80,9 +80,6 @@ export const FullTableObjectValidator = z.object({
   createdAt: z.date(),
   updatedAt: z.date(),
   airtable: z.string(),
-  theme: z.string().nullable(),
-  seoDescription: z.string().nullable(),
-  seoImage: z.string().nullable(),
 
   fields: z.array(FieldValidator),
   forms: z.array(z.object({
