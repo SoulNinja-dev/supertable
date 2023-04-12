@@ -30,7 +30,9 @@ import { UnsafeBurnerWalletAdapter } from '@solana/wallet-adapter-wallets';
 import {
   WalletModalProvider,
   WalletDisconnectButton,
-  WalletMultiButton
+  WalletMultiButton,
+  WalletConnectButton,
+  WalletModalButton
 } from '@solana/wallet-adapter-react-ui';
 import { clusterApiUrl } from '@solana/web3.js';
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
@@ -191,7 +193,7 @@ const FormDesign = ({
                 >
                   {connectWallet ?
                     (<div>
-                      <WalletMultiButton />
+                      <WalletModalButton />
                     </div>) : null}
                   {fields.map((field) => (
                     <div className="flex w-full max-w-lg flex-col gap-2">
