@@ -4,7 +4,7 @@ import { RHFProps } from "~/utils/misc";
 const curs = [
   "USD",
   "EUR",
-  "IND",
+  "INR",
   "GBP",
   "JPY",
   "CAD",
