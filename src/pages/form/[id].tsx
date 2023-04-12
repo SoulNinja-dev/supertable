@@ -81,18 +81,8 @@ const FormDesign = ({
     [network]
   );
 
-  const [balance, setBalance] = useState(0)
   const { connection } = useConnection()
   const { publicKey } = useWallet()
-
-  useEffect(() => {
-    if (!connection || !publicKey) { return }
-
-    connection.getAccountInfo(publicKey).then(info => {
-      if (!info) { return }
-      setBalance(info.lamports)
-    })
-  }, [connection, publicKey])
 
   const onSubmit: SubmitHandler<{
     [key: string]: string | number | boolean | FileList | number[];
