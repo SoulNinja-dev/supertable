@@ -24,21 +24,24 @@ import { formRouter } from "~/server/api/routers";
 import { authOptions } from "~/server/auth";
 import { prisma } from "~/server/db";
 import { ThemeData, themes } from "~/utils/themes";
-import { ConnectionProvider, WalletProvider } from '@solana/wallet-adapter-react';
-import { WalletAdapterNetwork } from '@solana/wallet-adapter-base';
-import { UnsafeBurnerWalletAdapter } from '@solana/wallet-adapter-wallets';
+import {
+  ConnectionProvider,
+  WalletProvider,
+} from "@solana/wallet-adapter-react";
+import { WalletAdapterNetwork } from "@solana/wallet-adapter-base";
+import { UnsafeBurnerWalletAdapter } from "@solana/wallet-adapter-wallets";
 import {
   WalletModalProvider,
   WalletDisconnectButton,
   WalletMultiButton,
   WalletConnectButton,
-  WalletModalButton
-} from '@solana/wallet-adapter-react-ui';
-import { clusterApiUrl } from '@solana/web3.js';
-import { useConnection, useWallet } from '@solana/wallet-adapter-react';
+  WalletModalButton,
+} from "@solana/wallet-adapter-react-ui";
+import { clusterApiUrl } from "@solana/web3.js";
+import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 
 // Default styles that can be overridden by your app
-require('@solana/wallet-adapter-react-ui/styles.css');
+require("@solana/wallet-adapter-react-ui/styles.css");
 
 // theme
 // headerImage,
@@ -56,10 +59,8 @@ const FormDesign = ({
   seoDescription,
   seoImage,
   themeData,
-  connectWallet
-}:
-  InferGetServerSidePropsType<typeof getServerSideProps>) => {
-
+  connectWallet,
+}: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const [checked, setChecked] = useState(false);
   const [rating, setRating] = useState(0);
   const [value, setValue] = useState(0);
@@ -74,15 +75,10 @@ const FormDesign = ({
   const network = WalletAdapterNetwork.Devnet;
   const endpoint = useMemo(() => clusterApiUrl(network), [network]);
 
-  const wallets = useMemo(
-    () => [
-      new UnsafeBurnerWalletAdapter(),
-    ],
-    [network]
-  );
+  const wallets = useMemo(() => [new UnsafeBurnerWalletAdapter()], [network]);
 
-  const { connection } = useConnection()
-  const { publicKey } = useWallet()
+  const { connection } = useConnection();
+  const { publicKey } = useWallet();
 
   const onSubmit: SubmitHandler<{
     [key: string]: string | number | boolean | FileList | number[];
@@ -134,36 +130,44 @@ const FormDesign = ({
         <WalletProvider wallets={wallets}>
           <WalletModalProvider>
             <main>
-              <div className="h-full w-full overflow-y-auto" style={{
-                backgroundColor: themeData.bgColor,
-                color: themeData.textColor
-              }}>
+              <div
+                className="h-full w-full overflow-y-auto"
+                style={{
+                  backgroundColor: themeData.bgColor,
+                  color: themeData.textColor,
+                }}
+              >
                 <div className="flex flex-1 flex-col items-center gap-y-3">
                   {/* Cover Image */}
                   <div
                     className="flex h-[200px] w-full cursor-pointer items-center justify-center bg-gray-200"
                     style={{
-                      backgroundImage: `url('${coverImage
-                        ? coverImage
-                        : "https://billfish.org/wp-content/uploads/2019/08/placeholder-image.jpg"
-                        }')`,
+                      backgroundImage: `url('${
+                        coverImage
+                          ? coverImage
+                          : "https://billfish.org/wp-content/uploads/2019/08/placeholder-image.jpg"
+                      }')`,
                       backgroundSize: "cover",
                       backgroundPosition: "center",
                       backgroundRepeat: "no-repeat",
                     }}
                   ></div>
                   {/* Form SEO/MetaData and Logo */}
-                  <div className="relative -top-20 -mb-20 min-h-[300px] w-full max-w-lg rounded-md px-6 pt-10 pb-5" style={{
-                    backgroundColor: themeData.popupColor,
-                    color: themeData.textColor,
-                  }}>
+                  <div
+                    className="relative -top-20 -mb-20 min-h-[300px] w-full max-w-lg rounded-md px-6 pt-10 pb-5"
+                    style={{
+                      backgroundColor: themeData.popupColor,
+                      color: themeData.textColor,
+                    }}
+                  >
                     <div
                       className={`flex h-16 w-16 justify-center gap-x-2 rounded-xl px-3 py-6`}
                       style={{
-                        backgroundImage: `url('${logo
-                          ? logo
-                          : "https://billfish.org/wp-content/uploads/2019/08/placeholder-image.jpg"
-                          }')`,
+                        backgroundImage: `url('${
+                          logo
+                            ? logo
+                            : "https://billfish.org/wp-content/uploads/2019/08/placeholder-image.jpg"
+                        }')`,
                         backgroundSize: "cover",
                         backgroundPosition: "center",
                         backgroundRepeat: "no-repeat",
@@ -181,10 +185,11 @@ const FormDesign = ({
                   className="flex h-full flex-col items-center gap-8 py-20 px-96"
                   onSubmit={handleSubmit(onSubmit)}
                 >
-                  {connectWallet ?
-                    (<div>
+                  {connectWallet ? (
+                    <div>
                       <WalletModalButton />
-                    </div>) : null}
+                    </div>
+                  ) : null}
                   {fields.map((field) => (
                     <div className="flex w-full max-w-lg flex-col gap-2">
                       <label className="flex flex-row items-center gap-2 text-lg font-medium">
@@ -196,7 +201,9 @@ const FormDesign = ({
                       {field.field.type === "singleLineText" ? (
                         <ShortText
                           placeholder={field.helpText || ""}
-                          maxLength={field.field?.options?.maxLength || undefined}
+                          maxLength={
+                            field.field?.options?.maxLength || undefined
+                          }
                           register={register}
                           registerDataA={field.field.name}
                           registerDataB={field.required}
@@ -206,7 +213,9 @@ const FormDesign = ({
                         <LongText
                           themeData={themeData}
                           placeholder={field.helpText || ""}
-                          maxLength={field.field?.options?.maxLength || undefined}
+                          maxLength={
+                            field.field?.options?.maxLength || undefined
+                          }
                           register={register}
                           registerDataA={field.field.name}
                           registerDataB={field.required}
@@ -226,7 +235,9 @@ const FormDesign = ({
                           value={value}
                           setValue={setValue}
                           placeholder={field.helpText || ""}
-                          maxLength={field.field?.options?.maxLength || undefined}
+                          maxLength={
+                            field.field?.options?.maxLength || undefined
+                          }
                           register={register}
                           registerDataA={field.field.name}
                           registerDataB={field.required}
@@ -242,7 +253,9 @@ const FormDesign = ({
                       ) : field.field.type === "currency" ? (
                         <CurrencyInput
                           placeholder={field.helpText || ""}
-                          maxLength={field.field?.options?.maxLength || undefined}
+                          maxLength={
+                            field.field?.options?.maxLength || undefined
+                          }
                           register={register}
                           registerDataA={field.field.name}
                           themeData={themeData}
@@ -258,7 +271,9 @@ const FormDesign = ({
                       ) : field.field.type === "email" ? (
                         <EmailInput
                           placeholder={field.helpText || ""}
-                          maxLength={field.field?.options?.maxLength || undefined}
+                          maxLength={
+                            field.field?.options?.maxLength || undefined
+                          }
                           register={register}
                           registerDataA={field.field.name}
                           registerDataB={field.required}
@@ -274,7 +289,9 @@ const FormDesign = ({
                       ) : field.field.type === "percent" ? (
                         <PercentInput
                           placeholder={field.helpText || ""}
-                          maxLength={field.field?.options?.maxLength || undefined}
+                          maxLength={
+                            field.field?.options?.maxLength || undefined
+                          }
                           register={register}
                           registerDataA={field.field.name}
                           registerDataB={field.required}
@@ -301,8 +318,11 @@ const FormDesign = ({
                       ) : field.field.type === "singleSelect" ? (
                         <SingleSelect
                           options={field.field.options.choices.map(
-                            (choice: { id: string; color: string; name: string }) =>
-                              choice.name
+                            (choice: {
+                              id: string;
+                              color: string;
+                              name: string;
+                            }) => choice.name
                           )}
                           selected={selected}
                           setSelected={setSelected}
@@ -315,7 +335,9 @@ const FormDesign = ({
                       ) : field.field.type === "url" ? (
                         <LinkInput
                           placeholder={field.helpText || ""}
-                          maxLength={field.field?.options?.maxLength || undefined}
+                          maxLength={
+                            field.field?.options?.maxLength || undefined
+                          }
                           register={register}
                           registerDataA={field.field.name}
                           registerDataB={field.required}
@@ -336,16 +358,22 @@ const FormDesign = ({
                                 }) => choice.name
                               )}
                               {...field_}
-                              placeholder={field.helpText || "No options selected"}
+                              placeholder={
+                                field.helpText || "No options selected"
+                              }
                             />
                           )}
                         />
                       )}
                       {errors[field.field.name] ? (
                         <div className="text-sm font-medium text-red-400">
-                          {(errors[field.field.name]?.type as string) === "required"
+                          {(errors[field.field.name]?.type as string) ===
+                          "required"
                             ? "This field is required"
-                            : (errors[field.field.name]?.type as string) === "pattern" ? (errors[field.field.name]?.message as string) : (errors[field.field.name]?.type as string)}
+                            : (errors[field.field.name]?.type as string) ===
+                              "pattern"
+                            ? (errors[field.field.name]?.message as string)
+                            : (errors[field.field.name]?.type as string)}
                         </div>
                       ) : null}
                     </div>
@@ -372,8 +400,6 @@ const FormDesign = ({
   );
 };
 
-
-
 export const getServerSideProps: GetServerSideProps<
   FormPageObjectGSSPCompatible & { themeData: ThemeData }
 > = async (context) => {
@@ -382,34 +408,47 @@ export const getServerSideProps: GetServerSideProps<
     prisma: prisma,
   });
 
-  const res = await caller.getFormPage({
-    domain: "test.com",
-    slug: context.params?.id as string,
-  });
+  try {
+    const res = await caller.getFormPage({
+      domain: "test.com",
+      slug: context.params?.id as string,
+    });
 
-
+    return {
+      props: {
+        title: res.title,
+        description: res.description,
+        coverImage: res.coverImage,
+        logo: res.logo,
+        fields: res.fields,
+        id: res.id,
+        createdAt: res.createdAt.toISOString(),
+        updatedAt: res.updatedAt.toISOString(),
+        tableId: res.tableId,
+        slug: res.slug,
+        seoDescription: res.seoDescription,
+        seoImage: res.seoImage,
+        theme: res.theme,
+        headerImage: res.headerImage,
+        connectWallet: res.connectWallet,
+        contraints: res.contraints,
+        themeColor: res.themeColor,
+        submitMsg: res.submitMsg,
+        themeData:
+          res.theme === "monochromatic"
+            ? themes[res.theme](res.themeColor || undefined)
+            : themes[res.theme](),
+      },
+    };
+  } catch (e: any) {
+    if (e?.code === "NOT_FOUND") {
+      return {
+        notFound: true,
+      };
+    }
+  }
   return {
-    props: {
-      title: res.title,
-      description: res.description,
-      coverImage: res.coverImage,
-      logo: res.logo,
-      fields: res.fields,
-      id: res.id,
-      createdAt: res.createdAt.toISOString(),
-      updatedAt: res.updatedAt.toISOString(),
-      tableId: res.tableId,
-      slug: res.slug,
-      seoDescription: res.seoDescription,
-      seoImage: res.seoImage,
-      theme: res.theme,
-      headerImage: res.headerImage,
-      connectWallet: res.connectWallet,
-      contraints: res.contraints,
-      themeColor: res.themeColor,
-      submitMsg: res.submitMsg,
-      themeData: res.theme === "monochromatic" ? themes[res.theme](res.themeColor || undefined) : themes[res.theme](),
-    },
+    notFound: true,
   };
 };
 

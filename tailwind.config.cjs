@@ -6,10 +6,11 @@ const config = {
   theme: {
     extend: {
       fontFamily: {
-        inter: ["Inter", ...defaultTheme.fontFamily.sans],
+        manrope: ["Manrope", ...defaultTheme.fontFamily.sans],
       },
       colors: {
-        sidebar: "#f5f5f5",
+        bg: "#1e1d1e",
+        accent: "#00af86",
       }
     },
   },

@@ -4,13 +4,10 @@ import type {
   NextPage,
 } from "next";
 import Head from "next/head";
-import { useState } from "react";
-import Settings from "~/components/Settings";
 import DashboardComponent from "~/components/Dashboard";
 import Sidebar from "~/components/Sidebar";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "~/server/auth";
-import { useSession } from "next-auth/react";
 
 const Dashboard: NextPage<
   InferGetServerSidePropsType<typeof getServerSideProps>
@@ -22,7 +19,7 @@ const Dashboard: NextPage<
       <Head>
         <title>Supertable | Dashboard</title>
       </Head>
-      <div className="h-screen bg-white font-inter text-white">
+      <div className="h-screen bg-bg font-manrope text-white">
         <div className="grid grid-cols-5 gap-4">
           <Sidebar page={"dashboard"}/>
           <main className="col-span-4 h-screen overflow-y-scroll">
