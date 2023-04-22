@@ -8,6 +8,7 @@ import Settings from "~/components/Settings";
 import Sidebar from "~/components/Sidebar";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "~/server/auth";
+import Navbar from "~/components/Navbar";
 
 const SettingsPage: NextPage<
   InferGetServerSidePropsType<typeof getServerSideProps>
@@ -19,10 +20,11 @@ const SettingsPage: NextPage<
       <Head>
         <title>Supertable | Dashboard</title>
       </Head>
-      <div className="h-screen bg-bg font-inter text-white">
+      <div className="h-screen bg-bg font-inter text-white overflow-hidden">
+        <Navbar />
         <div className="grid grid-cols-5 gap-4">
           <Sidebar page={"settings"}/>
-          <main className="col-span-4 h-screen overflow-y-scroll">
+          <main className="col-span-4 overflow-y-scroll">
             <Settings />
           </main>
         </div>

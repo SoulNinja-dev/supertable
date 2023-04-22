@@ -5,9 +5,9 @@ import { useRouter } from "next/router";
 const TableCard = ({ name, desc, id, baseId }: Props) => {
   const router = useRouter();
   return (
-    <div className="w-80 overflow-hidden rounded-md bg-sidebar shadow-sm">
+    <div className="w-80 overflow-hidden rounded-lg bg-[#f9f9f9] shadow-sm">
       <Image
-        src={`https://picsum.photos/seed/tu${id}/320/128`}
+        src={`https://picsum.photos/seed/${id}/320/128`}
         alt={name}
         width={320}
         height={128}

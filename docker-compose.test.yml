@@ -6,7 +6,7 @@ services:
     environment:
       - POSTGRES_PASSWORD=password
       - POSTGRES_USER=root
-      - POSTGRES_DB=supertable
+      - POSTGRES_DB=supertablenew
     ports:
       - 5432:5432
     volumes:

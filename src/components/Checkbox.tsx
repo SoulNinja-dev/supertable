@@ -8,7 +8,6 @@ const Checkbox = ({
   label,
   register,
   registerDataA,
-  registerDataB,
   themeData,
 }: Props & RHFProps) => {
   return (
@@ -17,7 +16,7 @@ const Checkbox = ({
         className="hidden"
         type="checkbox"
         checked={checked}
-        {...register(registerDataA, { required: registerDataB })}
+        {...register(registerDataA, { required: false })}
       />
       {label ? <div>{label}</div> : null}
       {checked ? (

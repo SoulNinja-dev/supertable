@@ -9,8 +9,8 @@ const config = {
         manrope: ["Manrope", ...defaultTheme.fontFamily.sans],
       },
       colors: {
-        bg: "#1e1d1e",
-        accent: "#00af86",
+        bg: "#ffffff",
+        accent: "#e6defc",
       }
     },
   },
