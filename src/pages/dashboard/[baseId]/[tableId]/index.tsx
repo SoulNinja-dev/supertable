@@ -50,13 +50,13 @@ const TablePage: NextPage<{ baseId: string; tableId: string }> = ({
       <div className="h-screen overflow-hidden">
         <Navbar />
         <div className="grid grid-cols-5 gap-4">
-          <Sidebar page="settings" />
+          <Sidebar page="table" refetchTable={refetch as any} />
           <main className="h-[calc(100vh-268px)] flex-1 col-span-4">
-            <FormBuilder />
-            {/* {!currentForm.id && !isInitialLoading && (
-              <div className="flex h-2/3 w-full items-center justify-center">
-                {"No forms available :("}
-              </div>
+            
+             {!currentForm.id && !isInitialLoading && (
+               <div className="flex h-2/3 w-full items-center justify-center">
+                 {"No forms available :("}
+               </div>
             )}
             {isInitialLoading && (
               <div className="flex h-2/3 w-full items-center justify-center">
@@ -81,7 +81,8 @@ const TablePage: NextPage<{ baseId: string; tableId: string }> = ({
                   ></path>
                 </svg>
               </div>
-            )} */}
+            )}
+            {currentForm.id && <FormBuilder />}
           </main>
         </div>
       </div>

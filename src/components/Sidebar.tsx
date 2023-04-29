@@ -1,12 +1,19 @@
+import classNames from "classnames";
 import Link from "next/link";
-
-const Sidebar = ({ page }: Props) => {
+import { useRouter } from "next/router";
+import { useEffect } from "react";
+import { useFormStore } from "~/stores/formStore";
+import { useTableStore } from "~/stores/tableStore";
+import { api } from "~/utils/api";
+const Sidebar = ({ page, refetchTable }: Props) => {
   return (
     <aside className="col-span-1 flex h-[calc(100vh-64px)] flex-col justify-between gap-4 bg-[#f9f9f9] px-5 py-10 font-semibold text-black">
       <div className="flex flex-col gap-4">
         <Link
           href="/dashboard"
-          className={`flex flex-row items-center gap-2 rounded-lg ${page === "dashboard" ? "bg-accent" : ""} py-3 px-3`}
+          className={`flex flex-row items-center gap-2 rounded-lg ${
+            page === "dashboard" ? "bg-accent" : ""
+          } py-3 px-3`}
         >
           <svg
             width="20"
@@ -24,24 +31,9 @@ const Sidebar = ({ page }: Props) => {
           </svg>
           Dashboard
         </Link>
-        <Link
-          href="/dashboard"
-          className="flex flex-row items-center gap-2 rounded-lg bg-black py-3 px-3 text-white"
-        >
-          <svg
-            width="20"
-            height="20"
-            viewBox="0 0 18 18"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M8.25 8.25V3.75H9.75V8.25H14.25V9.75H9.75V14.25H8.25V9.75H3.75V8.25H8.25Z"
-              fill="#F5A60B"
-            />
-          </svg>
-          Create Form
-        </Link>
+        {page === "table" && refetchTable && (
+          <FormList refetchTable={refetchTable} />
+        )}
       </div>
       <Link
         href="/dashboard/settings"
@@ -73,7 +65,8 @@ const Sidebar = ({ page }: Props) => {
 };
 
 interface Props {
-  page: string;
+  page: "dashboard" | "settings" | "table";
+  refetchTable?: () => Promise<void>;
 }
 
 interface Base {
@@ -81,5 +74,91 @@ interface Base {
   name: string;
   permissionLevel: string;
 }
+
+const FormList: React.FC<{ refetchTable: () => Promise<void> }> = ({
+  refetchTable,
+}) => {
+  const [table] = useTableStore((s) => [s.table]);
+
+  const router = useRouter();
+
+  const [setForm] = useFormStore((state) => [state.setForm]);
+  // const { data: forms, refetch: refetchForms } = api.form.getForms.useQuery({
+  //   tableId: router.query.tableId as string,
+  // });
+  const { mutateAsync } = api.form.createForm.useMutation();
+  const { data: currentForm, mutateAsync: fetchCurrentForm } =
+    api.form.getForm.useMutation();
+
+  const handleCreateForm = async () => {
+    const res = await mutateAsync({
+      tableId: router.query.tableId as string,
+      baseId: router.query.baseId as string,
+      title: "Untitled Form",
+      description: "No description",
+    });
+    await refetchTable();
+    handleSelectForm(res.id);
+  };
+
+  const handleSelectForm = async (formId: string) => {
+    const currentForm = await fetchCurrentForm({ formId });
+    setForm(currentForm);
+    // add query param formid to url
+    router.push(
+      `/dashboard/${router.query.baseId}/${router.query.tableId}?formId=${formId}`,
+      undefined,
+      { shallow: true }
+    );
+  };
+
+  useEffect(() => {
+    if (!currentForm) {
+      if (router.query.formId) {
+        handleSelectForm(router.query.formId as string);
+      } else if (table.forms && table.forms[0]) {
+        console.log(table);
+        handleSelectForm(table.forms[0].id);
+      }
+    }
+  }, [router.query, table]);
+
+  return (
+    <>
+      <button
+        className="flex flex-row items-center gap-2 rounded-lg bg-black py-3 px-3 text-white"
+        onClick={() => handleCreateForm()}
+      >
+        <svg
+          width="20"
+          height="20"
+          viewBox="0 0 18 18"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M8.25 8.25V3.75H9.75V8.25H14.25V9.75H9.75V14.25H8.25V9.75H3.75V8.25H8.25Z"
+            fill="#F5A60B"
+          />
+        </svg>
+        Create Form
+      </button>
+      {table?.forms.map((form) => (
+        <button
+          key={form.id}
+          className={classNames(
+            "flex flex-row items-center gap-2 rounded-lg py-3 px-3  font-semibold",
+            {
+              "bg-accent": currentForm?.id === form.id,
+            }
+          )}
+          onClick={() => handleSelectForm(form.id)}
+        >
+          {form.title}
+        </button>
+      ))}
+    </>
+  );
+};
 
 export default Sidebar;
