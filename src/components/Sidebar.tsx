@@ -125,6 +125,9 @@ const FormList: React.FC<{ refetchTable: () => Promise<void> }> = ({
 
   return (
     <>
+    <div className="text-2xl pl-3">
+      {table.name}
+    </div>
       <button
         className="flex flex-row items-center gap-2 rounded-lg bg-black py-3 px-3 text-white"
         onClick={() => handleCreateForm()}
