@@ -4,7 +4,7 @@ import { z } from "zod";
 import { FullTableObjectValidator, type FullTableObject } from "~/models/table";
 
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
-import getAccessToken from "~/utils/getAccessToken";
+import getAccessToken from "~/utils/getAccesstoken";
 import getBaseSchema from "~/utils/getBaseSchema";
 
 const TableObjectValidator = z.object({

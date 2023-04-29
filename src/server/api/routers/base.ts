@@ -2,7 +2,7 @@ import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
-import getAccessToken from "~/utils/getAccessToken";
+import getAccessToken from "~/utils/getAccesstoken";
 import getBases from "~/utils/getBases";
 
 const BaseObjectValidator = z.object({

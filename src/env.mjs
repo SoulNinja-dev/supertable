@@ -18,10 +18,12 @@ const server = z.object({
     // VERCEL_URL doesn't include `https` so it cant be validated as a URL
     process.env.VERCEL ? z.string().min(1) : z.string().url()
   ),
-  AIRTABLE_CLIENT_ID: z.string().min(1),
-  AIRTABLE_SECRET: z.string().min(1),
+
   AWS_ACCESSKEY: z.string().min(1),
   AWS_SECRET_ACCESS_KEY: z.string().min(1),
+
+  GOOGLE_CLIENT_ID: z.string().min(1),
+  GOOGLE_CLIENT_SECRET: z.string().min(1),
 
   // Add `.min(1) on ID and SECRET if you want to make sure they're not empty
 });
@@ -45,10 +47,10 @@ const processEnv = {
   NODE_ENV: process.env.NODE_ENV,
   NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET,
   NEXTAUTH_URL: process.env.NEXTAUTH_URL,
-  AIRTABLE_CLIENT_ID: process.env.AIRTABLE_CLIENT_ID,
-  AIRTABLE_SECRET: process.env.AIRTABLE_SECRET,
   AWS_ACCESSKEY: process.env.AWS_ACCESSKEY,
   AWS_SECRET_ACCESS_KEY: process.env.AWS_SECRET_ACCESS_KEY,
+  GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
+  GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
   // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
 };
 

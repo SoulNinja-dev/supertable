@@ -44,7 +44,10 @@ const Home: NextPage<
               <button
                 className="rounded bg-accent py-2 px-4 font-bold text-white outline-none transition duration-200 ease-in-out hover:bg-accent/60 focus:bg-accent/60"
                 onClick={() => {
-                  signIn("airtable").catch((e) => {
+                  signIn("google", {
+                    redirect: true,
+                    callbackUrl: "/airtable?redirect=true",
+                  }).catch((e) => {
                     console.log(e);
                   });
                 }}

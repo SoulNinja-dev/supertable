@@ -12,7 +12,7 @@ import {
   protectedProcedure,
 } from "~/server/api/trpc";
 import { TRPCError } from "@trpc/server";
-import getAccessToken from "~/utils/getAccessToken";
+import getAccessToken from "~/utils/getAccesstoken";
 import { FullTableObjectValidator } from "~/models/table";
 
 const BaseObjectValidator = z.object({
