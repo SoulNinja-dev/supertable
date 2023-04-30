@@ -18,6 +18,8 @@ const FormBuilder = dynamic(() => import("~/components/FormBuilder"), {
   ssr: false,
 });
 
+
+
 const TablePage: NextPage<{ baseId: string; tableId: string }> = ({
   baseId,
   tableId,

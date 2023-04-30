@@ -36,6 +36,9 @@ const AirtableConfigPage: NextPage = () => {
       </Head>
       <main className="min-h-screen bg-bg font-manrope">
         <div className="flex min-h-screen flex-col items-center justify-center">
+            <p className="text-gray-500 max-w-md w-full mb-2 ml-4 text-sm">
+              Get your token  <a href="https://airtable.com/create/tokens" className="text-blue-600 underline hover:text-blue-700 hover:no-underline" target="_blank" rel="noopener noreferrer">here</a>
+            </p>
           <input
             type="text"
             placeholder="Enter Airtable Personal Token"
@@ -73,6 +76,7 @@ const AirtableConfigPage: NextPage = () => {
 };
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
+  const redirect = !!context.query.redirect;
   const session = await getServerSession(context.req, context.res, authOptions);
   console.log("Session:", session);
   if (!session) {
@@ -91,14 +95,15 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
   const res = await userApi.verifyAirtable();
 
-  if (res) {
-    return {
-      redirect: {
-        destination: "/dashboard",
-        permanent: false,
-      },
-    };
+  if (res && redirect) {
+      return {
+        redirect: {
+          destination: "/dashboard",
+          permanent: false,
+        },
+      };
   } else {
+    
     return {
       props: {},
     };
