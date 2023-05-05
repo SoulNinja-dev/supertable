@@ -29,11 +29,11 @@ export const userRouter = createTRPCRouter({
       try {
         await getAirtableUser(user.airtablePersonalAccessToken);
         return true;
-      } catch (err) {
-        console.error(err);
+      } catch (err: any) {
+        const message: string | undefined = err?.response?.data?.error?.message;
         throw new TRPCError({
           code: "BAD_REQUEST",
-          message: "Could not verify Airtable access token",
+          message: message || "Could not verify Airtable access token",
         });
       }
     }),

@@ -27,6 +27,7 @@ export const baseRouter = createTRPCRouter({
       // 3. update existing properties
       // 4. filter bases using airtable ids which they sent
       // 5. then send
+      console.log("getBases called")
 
       const accessToken = await getAccessToken(ctx);
       const bases: BaseObject[] = await getBases({ accessToken });

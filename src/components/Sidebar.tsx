@@ -5,7 +5,11 @@ import { useEffect } from "react";
 import { useFormStore } from "~/stores/formStore";
 import { useTableStore } from "~/stores/tableStore";
 import { api } from "~/utils/api";
+
 const Sidebar = ({ page, refetchTable }: Props) => {
+  const router = useRouter();
+  console.log(router)
+  const tableId = router.query.tableId as string;
   return (
     <aside className="col-span-1 flex h-[calc(100vh-64px)] flex-col justify-between gap-4 bg-[#f9f9f9] px-5 py-10 font-semibold text-black">
       <div className="flex flex-col gap-4">
@@ -35,8 +39,8 @@ const Sidebar = ({ page, refetchTable }: Props) => {
           <FormList refetchTable={refetchTable} />
         )}
       </div>
-      <Link
-        href="/dashboard/settings"
+      {page === "table" && tableId && <Link
+        href={"/dashboard/table-settings/" + tableId}
         className="flex flex-row items-center justify-center gap-1 rounded-lg text-[#666666]"
       >
         <svg
@@ -58,8 +62,8 @@ const Sidebar = ({ page, refetchTable }: Props) => {
             </clipPath>
           </defs>
         </svg>
-        Settings
-      </Link>
+        Table Settings
+      </Link>}
     </aside>
   );
 };

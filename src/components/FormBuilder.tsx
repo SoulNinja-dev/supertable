@@ -335,20 +335,15 @@ export const FormFieldsColumn: React.FC = () => {
         {
           currentTab === "settings" && <FormSettings/>
         }
-      {/* <FormSettings /> */}
+        {
+          currentTab === "preview" && <p className="text-center pt-32">
+            Coming Soon...
+          </p>
+        }
     </div>
   );
 };
 
-const getTableFieldStyle = (isDragging: boolean, draggableStyle: any) => ({
-  ...draggableStyle,
-  height: "40px",
-  background: isDragging ? "#fff" : "transparent",
-  borderRadius: "2px",
-  padding: "8px",
-  marginBottom: "0px",
-  border: isDragging ? "1px solid #ccc" : "none",
-});
 
 const getFormFieldStyle = (isDragging: boolean, draggableStyle: any) => ({
   ...draggableStyle,

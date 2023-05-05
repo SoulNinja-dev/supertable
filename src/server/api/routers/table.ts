@@ -162,37 +162,6 @@ export const tableRouter = createTRPCRouter({
               },
             },
           });
-
-          // await prisma.field.createMany({
-          //   data: airtableTable.fields.map(({id, name, type, description, options}) => ({
-          //     id,
-          //     name,
-          //     type: type as FieldTypeEnum,
-          //     description: description || "",
-          //     options: options || undefined,
-          //     tableId: airtableTable.id,
-          //   })),
-          //   skipDuplicates: true,
-          // });
-
-          // await prisma.field.deleteMany({
-          //   where: {
-          //     tableId: airtableTable.id,
-          //     AND: {
-          //       NOT: {
-          //         id: {
-          //           in: airtableTable.fields.map((field) => field.id),
-          //         },
-          //       },
-          //     }
-          //   },
-          // });
-
-          // await prisma.field.updateMany({
-          //   where: {
-          //     tableId: airtableTable.id,
-          //   }
-          // })
         }
       }
 
@@ -237,6 +206,37 @@ export const tableRouter = createTRPCRouter({
 
       return tables;
     }),
+
+    // getTableInfo: protectedProcedure
+    // .input(z.string())
+    // .output(
+     
+    //     z.object({
+    //       id: z.string(),
+    //       name: z.string(),
+    //     })
+      
+    // )
+    // .query(async ({ ctx, input }) => {
+    //   const table = await ctx.prisma.table.findUnique({
+    //     where: {
+    //       id: input,
+    //     },
+    //     select: {
+    //       id: true,
+    //       name: true,
+    //     },
+    //   });
+
+    //   if (!table || table == null) {
+    //     throw new TRPCError({
+    //       code: "BAD_REQUEST",
+    //       message: "table not found",
+    //     });
+    //   }
+
+    //   return table;
+    // }),
 
   getTable: protectedProcedure
     .input(

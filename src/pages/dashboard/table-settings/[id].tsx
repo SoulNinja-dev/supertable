@@ -12,8 +12,7 @@ import Navbar from "~/components/Navbar";
 
 const SettingsPage: NextPage<
   InferGetServerSidePropsType<typeof getServerSideProps>
-> = () => {
-
+> = ({id}) => {
 
   return (
     <div className="h-screen bg-black">
@@ -25,7 +24,7 @@ const SettingsPage: NextPage<
         <div className="grid grid-cols-5 gap-4">
           <Sidebar page={"settings"}/>
           <main className="col-span-4 overflow-y-scroll">
-            <Settings />
+            <Settings tableId={id} />
           </main>
         </div>
       </div>
@@ -35,7 +34,7 @@ const SettingsPage: NextPage<
 
 export default SettingsPage;
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
+export const getServerSideProps: GetServerSideProps<{id: string}> = async (context) => {
   const session = await getServerSession(context.req, context.res, authOptions);
 
   if (!session?.user) {
@@ -48,6 +47,8 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   }
 
   return {
-    props: {},
+    props: {
+      id: context.params?.id as string
+    },
   };
 };

@@ -93,7 +93,8 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     prisma: prisma,
   });
 
-  const res = await userApi.verifyAirtable();
+  try {
+    const res = await userApi.verifyAirtable();
 
   if (res && redirect) {
       return {
@@ -107,6 +108,15 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     return {
       props: {},
     };
+  }
+  } catch (error: any) {
+  
+    return {
+      redirect: {
+        destination: "/?error="+error.message,
+        permanent: false,
+      }
+    }
   }
 };
 

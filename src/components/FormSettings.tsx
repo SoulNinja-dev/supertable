@@ -66,11 +66,13 @@ const FormSettings = () => {
     );
     console.log(solanaAddrField);
     if (!solanaAddrField) {
-      console.log(
-        "You need to have a field called 'solana-addr' in your table to enable wallet connect"
-      );
       toast.error(
         "You need to have a field called 'solana-addr' in your table to enable wallet connect"
+      );
+      return;
+    } else if (solanaAddrField.type !== "singleLineText") {
+      toast.error(
+        "The field 'solana-addr' needs to be of type 'Single line text' to enable wallet connect"
       );
       return;
     }
@@ -123,7 +125,7 @@ const FormSettings = () => {
               Wallet
               <div className="text-sm font-semibold text-gray-400">
                 Solana Wallet Connect. (Have a field called <br /> "solana-addr"
-                in your table)
+                in your table of type "Single line text")
               </div>
             </div>
             <div className="scale-[.8]">

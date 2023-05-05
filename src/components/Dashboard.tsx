@@ -1,10 +1,10 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { BaseObject } from "~/server/api/routers/base";
 import { api } from "~/utils/api";
 import TableCard from "./TableCard";
 
 const DashboardComponent = () => {
-  const { data } = api.base.getBases.useQuery();
+  const { data, error, isLoading, refetch } = api.base.getBases.useQuery();
 
   return (
     <div className="flex flex-col gap-8 p-10 text-black">
@@ -69,10 +69,11 @@ const DashboardComponent = () => {
           Create Form
         </button>
       </div> */}
-
-      {data ? (
-        data.bases.map((base) => <BaseSection key={base.id} {...base} />)
-      ) : (
+      {!isLoading &&
+        data &&
+        data.bases.map((base) => <BaseSection key={base.id} {...base} />)}
+      
+      {isLoading && (
         <div className="flex h-[calc(100vh-268px)] w-full items-center justify-center">
           <svg
             className="-ml-1 mr-3 h-6 w-6 animate-spin text-[#a09c9b]"
@@ -104,7 +105,7 @@ const BaseSection: React.FC<BaseObject> = ({ id: baseId, name }) => {
   const { data } = api.table.getTables.useQuery({ baseId });
   return (
     <div>
-      <h3 className="text-4xl mb-4">{name}</h3>
+      <h3 className="mb-4 text-4xl">{name}</h3>
 
       <div>
         {data ? (
