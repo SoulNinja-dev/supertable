@@ -41,7 +41,7 @@ export const TableFieldsColumn: React.FC = () => {
   }, []);
 
   return (
-    <div className="flex h-full flex-col items-start gap-3 py-5 px-5 font-manrope">
+    <div className="flex h-full flex-col items-start gap-3 py-5 px-5 font-manrope w-[350px]">
       <div className="rounded-md bg-[#f2f2f2] py-0.5 px-2 text-sm font-semibold text-[#666666]">
         &larr; Back
       </div>
@@ -57,7 +57,7 @@ export const TableFieldsColumn: React.FC = () => {
               // style={getListStyle(snapshot.isDraggingOver, false)}
               {...provided.droppableProps}
               className={classNames({
-                "relative flex flex-row flex-wrap gap-3": true,
+                "relative flex flex-row flex-wrap gap-3 max-w-[220px]": true,
                 "bg-gray-100": snapshot.isDraggingOver,
                 "bg-white": !snapshot.isDraggingOver,
               })}
@@ -206,7 +206,7 @@ export const FormFieldsColumn: React.FC = () => {
           Form Preview
         </div>
       </div>
-      <div className="flex flex-1 flex-col items-center gap-y-3">
+      {currentTab === "form" && <div className="flex flex-1 flex-col items-center gap-y-3">
         {/* Cover Image */}
         <CoverImage />
         {/* Form SEO/MetaData and Logo */}
@@ -256,7 +256,7 @@ export const FormFieldsColumn: React.FC = () => {
 
         {/* {winReady && children} */}
         {winReady && (
-          <div className="min-h-[150px] w-full px-24 pt-10">
+          <div className="min-h-[150px] w-full px-24 pt-10 pb-60">
             <Droppable droppableId={"formFields"}>
               {(provided, snapshot) => (
                 <div
@@ -331,7 +331,10 @@ export const FormFieldsColumn: React.FC = () => {
             </Droppable>
           </div>
         )}
-      </div>
+      </div>}
+        {
+          currentTab === "settings" && <FormSettings/>
+        }
       {/* <FormSettings /> */}
     </div>
   );
@@ -430,7 +433,7 @@ const FormBuilder: React.FC = () => {
 
   return (
     <DragDropContext onDragEnd={onDragEnd}>
-      <div className="grid h-[calc(100vh-64px)] grid-cols-4 divide-x divide-[#d9d9d9] bg-white">
+      <div className=" h-[calc(100vh-64px)] flex  divide-x divide-[#d9d9d9] bg-white">
         <TableFieldsColumn />
         <FormFieldsColumn />
       </div>

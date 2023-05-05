@@ -42,7 +42,7 @@ const Home: NextPage<
               <span>Logged in as {session.data.user.id}</span>
             ) : (
               <button
-                className="rounded bg-accent py-2 px-4 font-bold text-white outline-none transition duration-200 ease-in-out hover:bg-accent/60 focus:bg-accent/60"
+                className="rounded bg-blue-400 py-2 px-4 font-bold text-white outline-none transition duration-200 ease-in-out hover:bg-blue-500 focus:bg-blue-600/60"
                 onClick={() => {
                   signIn("google", {
                     redirect: true,
@@ -52,7 +52,7 @@ const Home: NextPage<
                   });
                 }}
               >
-                Login with Airtable
+                Login with Google
               </button>
             )}
           </motion.div>

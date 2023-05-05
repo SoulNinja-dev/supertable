@@ -98,7 +98,7 @@ const FormSettings = () => {
   };
 
   return (
-    <div className="mt-8 flex w-full justify-center bg-sidebar px-10 pt-6 pb-60">
+    <div className="flex w-full justify-center bg-sidebar px-10 pb-60">
       <div className="w-full max-w-2xl">
         <div className="flex flex-col gap-8 p-6 text-black">
           <div className="text-3xl font-semibold">Form Settings</div>
@@ -264,7 +264,7 @@ const SelectTheme = () => {
 
   return (
     <div className="relative">
-      <div className="flex items-center gap-x-4">
+      <div className="flex items-center justify-center gap-x-4">
         {form.theme === "monochromatic" && (
           <PopoverPicker
             color={form.themeColor || "#3F51B5"}
@@ -304,12 +304,12 @@ const SelectTheme = () => {
         {showDropdown && (
           <OutsideClickHandler onOutsideClick={(e) => setShowDropdown(false)}>
             <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.9 }}
-              transition={{ duration: 0.2 }}
+              initial={{ opacity: 0, scale: 0.6, y: -20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.8, y: -20 }}
+              transition={{ duration: 0.1 }}
               id="dropdownHover"
-              className="absolute top-12 right-0 z-10 w-44 divide-y divide-gray-100 rounded-lg bg-white shadow dark:bg-gray-700"
+              className="absolute top-12 -left-2.5 z-10 w-44 divide-y divide-gray-100 rounded-lg bg-white shadow dark:bg-gray-700"
             >
               <ul
                 className="py-2 text-sm text-gray-700 dark:text-gray-200"

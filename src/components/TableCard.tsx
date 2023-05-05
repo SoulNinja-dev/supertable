@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 const TableCard = ({ name, desc, id, baseId }: Props) => {
   const router = useRouter();
   return (
-    <div className="w-80 overflow-hidden rounded-lg bg-[#f9f9f9] shadow-sm">
+    <div className="w-80 overflow-hidden rounded-lg bg-[#f9f9f9] border border-gray-200 shadow-sm hover:shadow-xl transition-shadow duration-200 ease-in-out flex flex-col">
       <Image
         src={`https://picsum.photos/seed/${id}/320/128`}
         alt={name}
@@ -13,10 +13,10 @@ const TableCard = ({ name, desc, id, baseId }: Props) => {
         height={128}
         className="h-32 w-full"
       />
-      <div className="p-4 font-semibold text-black">
+      <div className="p-4 font-semibold text-black flex flex-col flex-1">
         <div className="text-xl">{name}</div>
         <div className="text-sm text-gray-500">{desc}</div>
-        <div className="flex flex-row items-center justify-between pt-4">
+        <div className="flex flex-row justify-between pt-4 flex-1 items-end">
           <div></div>
           <div className="flex flex-row items-center gap-3">
             <Link

@@ -36,21 +36,6 @@ const DashboardComponent = () => {
           />
         </div>
       </div>
-      <button className="flex flex-row items-center gap-0.5 text-sm font-semibold text-[#666666]">
-        Select Table
-        <svg
-          width="20"
-          height="20"
-          viewBox="0 0 20 20"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            d="M9.99983 10.9762L14.1247 6.8514L15.3032 8.02991L9.99983 13.3333L4.69653 8.02991L5.87505 6.8514L9.99983 10.9762Z"
-            fill="#666666"
-          />
-        </svg>
-      </button>
       {/* <div className="flex font-semibold h-[calc(100vh-268px)] flex-col items-center justify-center gap-3">
         <svg
           width="65"
@@ -119,43 +104,47 @@ const BaseSection: React.FC<BaseObject> = ({ id: baseId, name }) => {
   const { data } = api.table.getTables.useQuery({ baseId });
   return (
     <div>
-      {data ? (
-        <div className="flex flex-row flex-wrap items-stretch gap-6">
-          {data &&
-            data.tables.map(({ name, id, description }) => (
-              <TableCard
-                baseId={baseId}
-                name={name}
-                desc={description}
-                id={id}
-                key={id}
-              />
-            ))}
-        </div>
-      ) : (
-        <div className="flex h-[calc(100vh-268px)] w-full items-center justify-center">
-          <svg
-            className="-ml-1 mr-3 h-6 w-6 animate-spin text-[#a09c9b]"
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-          >
-            <circle
-              className="opacity-100"
-              cx="12"
-              cy="12"
-              r="10"
-              stroke="currentColor"
-              strokeWidth="4"
-            ></circle>
-            <path
-              className="opacity-50"
-              fill="#000"
-              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-            ></path>
-          </svg>
-        </div>
-      )}
+      <h3 className="text-4xl mb-4">{name}</h3>
+
+      <div>
+        {data ? (
+          <div className="flex flex-row flex-wrap items-stretch gap-6">
+            {data &&
+              data.tables.map(({ name, id, description }) => (
+                <TableCard
+                  baseId={baseId}
+                  name={name}
+                  desc={description}
+                  id={id}
+                  key={id}
+                />
+              ))}
+          </div>
+        ) : (
+          <div className="flex h-[calc(100vh-268px)] w-full items-center justify-center">
+            <svg
+              className="-ml-1 mr-3 h-6 w-6 animate-spin text-[#a09c9b]"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <circle
+                className="opacity-100"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                strokeWidth="4"
+              ></circle>
+              <path
+                className="opacity-50"
+                fill="#000"
+                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+              ></path>
+            </svg>
+          </div>
+        )}
+      </div>
     </div>
   );
 };

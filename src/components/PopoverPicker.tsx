@@ -27,7 +27,7 @@ const PopoverPicker = ({ color: defaultColor, onChange }: Props) => {
   }, [color]);
 
   return (
-    <div className="relative">
+    <div className="relative z-10">
       <div
         className="h-7 w-7 cursor-pointer rounded-lg border-2 border-gray-300"
         style={{ backgroundColor: color }}
@@ -40,10 +40,11 @@ const PopoverPicker = ({ color: defaultColor, onChange }: Props) => {
               initial={{ opacity: 0, y: 20, scale: 0.8 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 20, scale: 0.6 }}
-              transition={{ duration: 0.3, ease: "easeIn" }}
+              transition={{ duration: 0.1, ease: "easeIn" }}
+              
             >
               <div
-                className="absolute top-[calc(100%+2px)] left-0 rounded-[0.5625rem] shadow-2xl"
+                className="absolute z-10 top-[calc(100%+2px)] left-0 rounded-[0.5625rem] shadow-2xl"
                 ref={popover}
               >
                 <HexColorPicker
