@@ -20,6 +20,7 @@ import FormSettings from "./FormSettings";
 import LogoImage from "./LogoImage";
 import TableField from "./TableField";
 import { useFormBuilderStore } from "~/stores/formBuilderStore";
+import FormPreview from "./FormPreview";
 
 resetServerContext();
 
@@ -337,7 +338,7 @@ export const FormFieldsColumn: React.FC = () => {
         }
         {
           currentTab === "preview" && <p className="text-center pt-32">
-            Coming Soon...
+            <FormPreview />
           </p>
         }
     </div>

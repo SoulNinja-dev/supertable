@@ -11,13 +11,12 @@ import { api } from "~/utils/api";
 
 const AirtableConfigPage: NextPage = () => {
   const [value, setValue] = useState("");
-  const router = useRouter()
-  const { mutate, isLoading } =
-    api.user.updateAirtableAccessToken.useMutation({
-      onSuccess(data, variables, context) {
-          router.push("/dashboard")
-      },
-    });
+  const router = useRouter();
+  const { mutate, isLoading } = api.user.updateAirtableAccessToken.useMutation({
+    onSuccess(data, variables, context) {
+      router.push("/dashboard");
+    },
+  });
 
   const handleSave = async () => {
     try {
@@ -36,9 +35,20 @@ const AirtableConfigPage: NextPage = () => {
       </Head>
       <main className="min-h-screen bg-bg font-manrope">
         <div className="flex min-h-screen flex-col items-center justify-center">
-            <p className="text-gray-500 max-w-md w-full mb-2 ml-4 text-sm">
-              Get your token  <a href="https://airtable.com/create/tokens" className="text-blue-600 underline hover:text-blue-700 hover:no-underline" target="_blank" rel="noopener noreferrer">here</a>
-            </p>
+          <p className="mb-2 ml-4 w-full max-w-md text-sm text-gray-500">
+            Get your token{" "}
+            <a
+              href="https://airtable.com/create/tokens"
+              className="text-blue-600 underline hover:text-blue-700 hover:no-underline"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              here
+            </a>
+            <br />
+            <span>Add these following scopes to your token: <strong>data:records:read, data:records:write, schema:bases:read, schema:bases:write</strong></span>
+          </p>
+
           <input
             type="text"
             placeholder="Enter Airtable Personal Token"
@@ -61,9 +71,7 @@ const AirtableConfigPage: NextPage = () => {
                     onClick={handleSave}
                     className="mt-4 w-full max-w-md rounded-[12px] bg-blue-400 py-2 px-5 text-lg font-semibold text-white transition-colors duration-200 ease-in-out hover:bg-blue-500"
                   >
-                    {
-                      isLoading ? "Saving..." : "Save"
-                    }
+                    {isLoading ? "Saving..." : "Save"}
                   </button>
                 </motion.div>
               )}
@@ -96,27 +104,25 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   try {
     const res = await userApi.verifyAirtable();
 
-  if (res && redirect) {
+    if (res && redirect) {
       return {
         redirect: {
           destination: "/dashboard",
           permanent: false,
         },
       };
-  } else {
-    
-    return {
-      props: {},
-    };
-  }
+    } else {
+      return {
+        props: {},
+      };
+    }
   } catch (error: any) {
-  
     return {
       redirect: {
-        destination: "/?error="+error.message,
+        destination: "/?error=" + error.message,
         permanent: false,
-      }
-    }
+      },
+    };
   }
 };
 
