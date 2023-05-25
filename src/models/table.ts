@@ -17,6 +17,8 @@ const FieldTypeValidator = z.enum([
   "rating",
   "email",
   "singleSelect",
+  "multipleRecordLinks",
+  "multipleLookupValues"
 ]);
 
 export type FieldType = z.infer<typeof FieldTypeValidator>;
