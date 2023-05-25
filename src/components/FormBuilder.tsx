@@ -66,8 +66,8 @@ export const TableFieldsColumn: React.FC = () => {
                 .length > 0 ? (
                 table.fields
                   .filter(
-                    ({ id, name }) =>
-                      !formFields.includes(id) && name !== "solana-addr"
+                    ({ id, name, type }) =>
+                      !formFields.includes(id) && name !== "solana-addr" && type !== "multipleLookupValues"
                   )
                   .map(({ id, name, type, options }, index) => {
                     return (

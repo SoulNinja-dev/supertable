@@ -129,8 +129,8 @@ model FieldsOnForms {
   index   Int
   required Boolean @default(false)
   helpText String?
-  form    Form   @relation(fields: [formId], references: [id])
-  field   Field  @relation(fields: [fieldId], references: [id])
+  form    Form   @relation(fields: [formId], references: [id], onDelete: Cascade)
+  field   Field  @relation(fields: [fieldId], references: [id], onDelete: Cascade)
 
   @@id([fieldId, formId])
 }

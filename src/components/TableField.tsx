@@ -24,6 +24,8 @@ const icons: Record<FieldType, string> = {
   rating: "/field-icons/rating.svg",
   email: "/field-icons/email.svg",
   singleSelect: "/field-icons/select.svg",
+  multipleRecordLinks: "/field-icons/multi.svg",
+  multipleLookupValues: "/field-icons/multi.svg",
 };
 
 const TableField = React.forwardRef<HTMLDivElement, TableFieldProps>(
