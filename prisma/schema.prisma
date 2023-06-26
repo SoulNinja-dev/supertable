@@ -65,7 +65,7 @@ model Base {
   // seoImage       String?
   tables         Table[]
 
-  user User @relation(fields: [userId], references: [id])
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Table {
@@ -82,7 +82,7 @@ model Table {
   forms  Form[]
   fields Field[]
 
-  base Base @relation(fields: [baseId], references: [id])
+  base Base @relation(fields: [baseId], references: [id], onDelete: Cascade)
 }
 
 model Form {
@@ -106,7 +106,7 @@ model Form {
   coverImage     String?
   logo           String?
 
-  table Table @relation(fields: [tableId], references: [id])
+  table Table @relation(fields: [tableId], references: [id], onDelete: Cascade)
 }
 
 model Field {
@@ -120,7 +120,7 @@ model Field {
 
   forms FieldsOnForms[]
 
-  table Table @relation(fields: [tableId], references: [id])
+  table Table @relation(fields: [tableId], references: [id], onDelete: Cascade)
 }
 
 model FieldsOnForms {
