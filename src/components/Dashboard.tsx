@@ -36,43 +36,17 @@ const DashboardComponent = () => {
           />
         </div>
       </div>
-      {/* <div className="flex font-semibold h-[calc(100vh-268px)] flex-col items-center justify-center gap-3">
-        <svg
-          width="65"
-          height="64"
-          viewBox="0 0 65 64"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            d="M29.8333 29.3333V13.3333H35.1666V29.3333H51.1666V34.6667H35.1666V50.6667H29.8333V34.6667H13.8333V29.3333H29.8333Z"
-            fill="#F5A60B"
-          />
-        </svg>
-        <div className="text-2xl font-bold">You don&apos;t have any form yet!</div>
-        <div className="text-[#666666]">
-          Create a new form or select a different table to see forms here.
-        </div>
-        <button className="flex flex-row items-center gap-2 rounded-lg bg-black py-2 px-3 text-white">
-          <svg
-            width="20"
-            height="20"
-            viewBox="0 0 18 18"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M8.25 8.25V3.75H9.75V8.25H14.25V9.75H9.75V14.25H8.25V9.75H3.75V8.25H8.25Z"
-              fill="#F5A60B"
-            />
-          </svg>
-          Create Form
-        </button>
-      </div> */}
       {!isLoading &&
         data &&
         data.bases.map((base) => <BaseSection key={base.id} {...base} />)}
-      
+      {!isLoading && data && data.bases.length === 0 && (
+        <div className="mt-10 flex w-full justify-center">
+          <h1 className="max-w-[500px] text-center text-3xl">
+            You don't have any bases yet. Create one on Airtable and Try again
+          </h1>
+        </div>
+      )}
+
       {isLoading && (
         <div className="flex h-[calc(100vh-268px)] w-full items-center justify-center">
           <svg
