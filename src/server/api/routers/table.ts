@@ -29,6 +29,28 @@ export const tableRouter = createTRPCRouter({
       })
     )
     .query(async ({ ctx, input }) => {
+      const { baseId } = input;
+      const tables = await ctx.prisma.table.findMany({
+        where: {
+          baseId,
+        },
+      });
+
+      return { tables };
+    }),
+
+  reloadTables: protectedProcedure
+    .input(
+      z.object({
+        baseId: z.string(),
+      })
+    )
+    .output(
+      z.object({
+        success: z.boolean(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
       const accessToken: string = await getAccessToken(ctx);
       const { baseId } = input;
       const airtable = await ctx.prisma.base
@@ -179,7 +201,7 @@ export const tableRouter = createTRPCRouter({
         },
       });
 
-      return { tables: filtered };
+      return { success: true };
     }),
 
   getAllTableInfos: protectedProcedure
